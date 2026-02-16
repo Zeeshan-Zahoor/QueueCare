@@ -4,6 +4,7 @@ import PatientLayout from "../layouts/PatientLayout";
 import ClinicLayout from "../layouts/ClinicLayout";
 
 import Home from "../pages/patient/Home";
+import Doctors from "../pages/patient/Doctors";
 import DoctorDetails from "../pages/patient/DoctorDetails";
 import QueueStatus from "../pages/patient/QueueStatus";
 
@@ -19,6 +20,10 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 element: <Home />
+            },
+            {
+                path: 'doctors',
+                element: <Doctors />
             },
             {
                 path: 'doctor/:id',
