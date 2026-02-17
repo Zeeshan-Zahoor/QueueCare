@@ -11,6 +11,7 @@ import QueueStatus from "../pages/patient/QueueStatus";
 import ClinicLogin from "../pages/clinic/ClinicLogin";
 import Dashboard from "../pages/clinic/Dashboard";
 import Settings from "../pages/clinic/Settings";
+import ClinicDetails from "../pages/patient/ClinicDetails";
 
 export const router = createBrowserRouter([
     {
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
             {
                 path: 'doctors',
                 element: <Doctors />
+            },
+            {
+                path: 'clinic/:id',
+                element: <ClinicDetails />
             },
             {
                 path: 'doctor/:id',

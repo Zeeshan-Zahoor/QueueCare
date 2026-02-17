@@ -9,10 +9,10 @@ export default function DoctorCard({ doctor }) {
     <div 
     onClick={() => navigate(`/doctor/${doctor.id}`)}
 
-    className='bg-white m-auto rounded-2xl shadow-xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300 p-4 flex gap-3 items-center mb-2 w-13/14'>
+    className='bg-white m-auto rounded-2xl shadow-[0_5px_15px_rgba(0,0,0,0.2)] hover:shadow-[0_5px_15px_rgba(0,0,0,0.25)] hover:-translate-y-1 transition-all duration-300 p-4 flex gap-3 items-center mb-2'>
         
         {/* Doctor Image */}
-        <div className="w-30 h-30 rounded-xl overflow-hidden flex-shrink-0">
+        <div className="w-30 h-30 rounded-xl overflow-hidden shrink-0">
             <img 
                 src= {doctor.image}
                 alt= {doctor.name}
