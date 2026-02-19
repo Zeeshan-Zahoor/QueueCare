@@ -16,7 +16,11 @@ export default function ClinicDetails() {
 
       <div className="space-y-4">
         {clinic.doctors.map((doctor) => (
-          <DoctorCard key={doctor.id} doctor={doctor}/>
+          <DoctorCard 
+            key={doctor.id} 
+            doctor={doctor}
+            clinicName={clinic.name}  
+          />
         ))}
       </div>
     </div>

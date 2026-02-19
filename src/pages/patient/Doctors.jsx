@@ -7,12 +7,11 @@ import { clinics } from '../../data/mockData';
 
 export default function Doctors() {
   const navigate = useNavigate();
-  const doctors = clinics.flatMap((clinic) =>
-    clinic.doctors.map((doc) => (
+  const allDoctors = clinics.flatMap((clinic) =>
+    clinic.doctors.map((doctor) => (
       {
-        ...doc, 
-        clinicName: clinic.name, 
-        clinicLocation: clinic.location,
+        ...doctor, 
+        clinicName: clinic.name,
       }
     ))
   )
@@ -23,6 +22,7 @@ export default function Doctors() {
       <div className='w-full flex items-center px-3 mt-5 mb-5 relative'>
         <ArrowLeft 
         onClick={() => navigate("/")}
+        className='text-[#374151]'
         />
 
         <h1 className='font-sans absolute left-1/2 -translate-x-1/2 text-2xl font-bold text-[#374151]'>
@@ -42,9 +42,13 @@ export default function Doctors() {
 
       {/* Doctor List */}
       <div className='space-y-4'>
-        {doctors.map((doctor) => (
-          <DoctorCard key={doctor.id} doctor={doctor} />
-        ))}
+  
+        {allDoctors.map((doctor) => (
+            <DoctorCard 
+              key={doctor.id} 
+              doctor={doctor} 
+              clinicName={doctor.clinicName}/>
+          ))}
       </div>
     </div>
   )
