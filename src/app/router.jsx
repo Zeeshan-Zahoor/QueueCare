@@ -27,15 +27,15 @@ export const router = createBrowserRouter([
                 element: <Doctors />
             },
             {
-                path: 'clinic/:id',
+                path: 'clinic/:doctorId',
                 element: <ClinicDetails />
             },
             {
-                path: 'doctor/:id',
+                path: 'doctor/:doctorId',
                 element: <DoctorDetails />
             },
             {
-                path: 'queue-status/:token',
+                path: 'queue-status/:doctorId',
                 element: <QueueStatus />
             },
         ]

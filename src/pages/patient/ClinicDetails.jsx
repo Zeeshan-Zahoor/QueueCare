@@ -4,8 +4,8 @@ import DoctorCard from '../../components/patient/DoctorCard'
 import { clinics } from '../../data/mockData';
 
 export default function ClinicDetails() {
-  const { id } = useParams();
-  const clinic = clinics.find((c) => c.id == Number(id));
+  const { doctorId } = useParams();
+  const clinic = clinics.find((c) => c.id == Number(doctorId));
   if(!clinic) return <p>Clinic not found</p>
 
   return (
