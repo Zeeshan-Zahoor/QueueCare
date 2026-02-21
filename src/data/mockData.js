@@ -19,8 +19,8 @@ export const clinics = [
           name: "Dr. Ajaz Bande",
           specialization: "Urologist",
           maxTokens: 20,      // total allowed today
-          tokensBooked: 14,    // how many joined
-          currentlyServing: 15,     // current token 
+          tokensBooked: 18,    // how many joined
+          currentlyServing: 13,     // current token 
           consultationTime: 15, // minutes per patient
           image: "https://tse1.mm.bing.net/th/id/OIP.yE8zyTz-OJwswooF9QFC1AHaLH?rs=1&pid=ImgDetMain&o=7&rm=3",
         },
@@ -38,7 +38,7 @@ export const clinics = [
           name: "Dr. Sultan Khawaja",
           specialization: "General",
           maxTokens: 30,      // total allowed today
-          tokensBooked: 12,    // how many joined
+          tokensBooked: 19,    // how many joined
           currentlyServing: 15,     // current token 
           consultationTime: 25, // minutes per patient
           image: "https://tse1.explicit.bing.net/th/id/OIP.iFrQzYQ-Pc8LtwbwzjiVswAAAA?pid=ImgDet&w=204&h=306&c=7&o=7&rm=3",
@@ -48,7 +48,7 @@ export const clinics = [
           name: "Dr. Riyaz Ahmad",
           specialization: "ENT",
           maxTokens: 20,      // total allowed today
-          tokensBooked: 12,    // how many joined
+          tokensBooked: 22,    // how many joined
           currentlyServing: 15,     // current token 
           consultationTime: 5, // minutes per patient
           image: "https://tse2.mm.bing.net/th/id/OIP.yY20jvQ_48lWbIwlirpVkAHaE7?w=626&h=417&rs=1&pid=ImgDetMain&o=7&rm=3",

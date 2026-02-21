@@ -2,6 +2,7 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import DoctorCard from '../../components/patient/DoctorCard'
 import { clinics } from '../../data/mockData';
+import Header from '../../components/common/Header';
 
 export default function ClinicDetails() {
   const { doctorId } = useParams();
@@ -10,11 +11,11 @@ export default function ClinicDetails() {
 
   return (
     <div className="max-w-md mx-auto px-4 py-6">
-      <h1 className="text-xl font-bold text-slate-800 mb-4">
-        {clinic.name}
-      </h1>
-
-      <div className="space-y-4">
+      <Header 
+        path='/'
+        title={clinic.name}
+      />
+      <div className="space-y-4  pt-1">
         {clinic.doctors.map((doctor) => (
           <DoctorCard 
             key={doctor.id} 

@@ -1,5 +1,7 @@
 import React from 'react'
 import { useState } from 'react';
+import { MapPin, ArrowLeft, Clock } from 'lucide-react';
+import Header from '../../components/common/Header';
 import { clinics } from "../../data/mockData";
 import { useParams, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
@@ -19,7 +21,7 @@ function DoctorDetails() {
     ))
   ))
 
-  if(!clinic) return <p>Doctor not found!</p>;
+  if (!clinic) return <p>Doctor not found!</p>;
 
   const doctor = clinic.doctors.find((d) => (d.id === id));
 
@@ -27,12 +29,12 @@ function DoctorDetails() {
 
   const doctorInfo = doctorData[doctor.id] || doctor;
 
-  const tokensLeft =  doctorInfo.maxTokens - doctorInfo.tokensBooked;
+  const tokensLeft = doctorInfo.maxTokens - doctorInfo.tokensBooked;
 
   const isFull = tokensLeft <= 0;
 
   const handleJoinQueue = () => {
-    if(tokensLeft <= 0) return;
+    if (tokensLeft <= 0) return;
 
     const userToken = joinQueue(doctor.id, doctorInfo);
 
@@ -44,54 +46,93 @@ function DoctorDetails() {
   const estimatedWait = peopleAhead * doctorInfo.consultationTime;
 
   return (
-    <div className='max-w-md mx-auto px-4 py-6 space-y-4'>
+    <div className="max-w-md h-screen mx-auto px-4 py-5 flex flex-col">
+      {/* Header */}
+      <Header 
+        path="/"
+        title="Doctor Details"
+      />
 
-      {/* Doctor info */}
-      <div className='bg-white p-4 rounded-xl shadow'>
-        <h2 className='text-lg font-semibold'>{doctor.name}</h2>
-        <p className='text-sm  text-gray-500'>
-          {doctor.specialization}
-        </p>
-        <p className='text-sm text-gray-500'>
-          {clinic.name}
-        </p>
+      {/* Content wrapper */}
+      <div className="space-y-4">
+
+        {/* Doctor info */}
+        <div className="bg-white p-4 rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.3)] flex space-x-3">
+          <div className="w-31 h-31 rounded-xl overflow-hidden shrink-0">
+            <img
+              src={doctor.image}
+              alt={doctor.name}
+              className='w-full h-full object-cover'
+            />
+          </div>
+          <div className='flex-1'>
+            <h2 className="text-lg text-[#1C2A3A] font-bold mb-2">{doctor.name}</h2>
+            <hr className='text-[#D0D3D9]' />
+            <p className="text-sm font-bold text-gray-600">
+              {doctor.specialization}
+            </p>
+            <div className='flex items-center gap-1 mt-1'>
+              <MapPin className='w-4 h-4' />
+              <span className="text-sm text-gray-500">
+                {clinic.name}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Queue Status */}
+        <div className="bg-white p-4 rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
+          <p className="text-lg font-bold text-slate-800">
+            Today's Queue Status
+          </p>
+
+          <hr className='text-[#D0D3D9] mt-1' />
+
+          {/* Token badge */}
+            <div className='mt-2'>
+                {isFull ? (
+                    <span className='inline-flex items-center gap-2 bg-red-100 text-red-600 text-xs font-medium px-3 py-2 rounded-full'>
+                        <span className='w-3 h-3 bg-red-500 rounded-full'></span>
+                        Full
+                    </span>
+                ) : (
+                    <span className='inline-flex items-center gap-2 bg-green-100 text-green-700 text-xs font-medium px-3 py-2 rounded-full'>
+                        <span className='w-3 h-3 bg-green-700 rounded-full'></span>
+                        {tokensLeft} tokens
+                    </span>
+                )}
+            </div>
+
+          <div className='flex items-center gap-1 mt-1'>
+            <Clock className='w-4 h-4 text-gray-500'/>
+            <p className="text-sm text-gray-500">
+            ~{estimatedWait} min wait
+          </p>
+          </div>
+
+          <hr className='text-[#D0D3D9] mt-1 mb-2' />
+
+          <span className="text-slate-800 font-medium">
+            Currently seeing token 
+          </span>
+          <span className="text-lg text-slate-800 font-bold ml-2">
+            #{doctorInfo.currentlyServing}
+          </span>
+        </div>
       </div>
 
-      {/* Queue Status */}
-      <div className='bg-gray-100 p-4 rounded-xl'>
-        <p className='text-sm font-medium text-slate-700'>
-          Today's Queue Status
-        </p>
-
-        <p className='text-sm text-green-600 mt-2'>
-          {tokensLeft} tokens
-        </p>
-
-        <p className='text-sm text-gray-500'>
-          ~{estimatedWait} min wait
-        </p>
-
-        <p className= 'mt-3 text-slate-800'>
-          Currently Seeing Token 
-        </p>
-        <p className="text-lg text-slate-800 font-semibold">
-           #{doctorInfo.currentlyServing}
-        </p>
-      </div>
-
-      {/* Join button */}
+      {/* Push button to bottom */}
       <button
         onClick={handleJoinQueue}
         disabled={isFull}
-        className='w-full bg-green-600 text-white py-3 rounded-xl font-medium disabled:bg-gray-400'
+        className="mt-auto w-full bg-[#1C2A3A] text-white py-3 rounded-4xl font-medium disabled:bg-[#455970]"
       >
-        {isFull ? 
-        ("Queue Full") : 
-        ("Get Token")}
+        {isFull ? "No more tokens" : "Get Token"}
       </button>
 
     </div>
   )
+
 }
 
 export default DoctorDetails

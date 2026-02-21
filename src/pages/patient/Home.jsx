@@ -52,7 +52,7 @@ export default function Home() {
       {/* Quick Access Section */}
       <div>
         <h3 className="text-lg font-semibold text-slate-700 mb-2 mt-4">
-          Nearby Clinics
+          Nearby Medical Centers
         </h3>
 
         <div className="space-y-3">

@@ -3,6 +3,7 @@ import DoctorCard from '../../components/patient/DoctorCard'
 import { Search, ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { clinics } from '../../data/mockData';
+import Header from '../../components/common/Header';
 
 
 export default function Doctors() {
@@ -17,18 +18,12 @@ export default function Doctors() {
   )
 
   return (
-    <div className='max-w-md mx-auto px-4 py-3 space-y-2'>
+    <div className='max-w-md mx-auto px-4 py-5 space-y-2'>
       {/* Header */}
-      <div className='w-full flex items-center px-3 mt-5 mb-5 relative'>
-        <ArrowLeft 
-        onClick={() => navigate("/")}
-        className='text-[#374151]'
-        />
-
-        <h1 className='font-sans absolute left-1/2 -translate-x-1/2 text-2xl font-bold text-[#374151]'>
-          All Doctors
-        </h1>
-      </div>
+      <Header 
+        path='/'
+        title="All Doctors"
+      />
 
       {/* Search Bar */}
       <div className=' bg-gray-200/65 flex items-center rounded-lg mb-6 m-auto px-3'>

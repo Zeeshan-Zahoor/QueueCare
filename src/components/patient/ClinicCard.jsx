@@ -11,7 +11,7 @@ export default function ClinicCard({ clinic }) {
             className="bg-white rounded-xl shadow-[0_10px_25px_rgba(0,0,0,0.2)] p-4 cursor-pointer hover:shadow-[0_20px_40px_rgba(0,0,0,0.25)] transition duration-300"
 
         >
-            <div className="w-full h-44 overflow-hidden rounded-xl">
+            <div className="w-full h-44 overflow-hidden rounded-xl mb-2">
                 <img
                     src={clinic.image}
                     alt={clinic.name}
