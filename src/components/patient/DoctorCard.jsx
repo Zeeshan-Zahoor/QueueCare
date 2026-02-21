@@ -3,8 +3,11 @@ import { MapPin, Clock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
 
 export default function DoctorCard({ doctor, clinicName }) {
-    const isFull = doctor.status === "Full";
-    const waitTime = doctor.consultationTime * doctor.currentTokenCount;
+    const tokensLeft = doctor.maxTokens - doctor.tokensBooked;
+    const isFull = tokensLeft <= 0;
+
+    const peopleAhead = doctor.tokensBooked - doctor.currentlyServing;
+    const waitTime = peopleAhead * doctor.consultationTime;
     const navigate = useNavigate();
   return (
     <div 
@@ -41,7 +44,7 @@ export default function DoctorCard({ doctor, clinicName }) {
                 ) : (
                     <span className='inline-flex items-center gap-2 bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full'>
                         <span className='w-2 h-2 bg-green-500 rounded-full'></span>
-                        {doctor.currentTokenCount} tokens
+                        {tokensLeft} tokens left
                     </span>
                 )}
             </div>

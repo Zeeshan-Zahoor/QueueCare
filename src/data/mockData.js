@@ -8,18 +8,20 @@ export const clinics = [
           id: 101,
           name: "Dr. Jessica Turner",
           specialization: "Gynecologist",
-          currentTokenCount: 5,
+          maxTokens: 20,      // total allowed today
+          tokensBooked: 18,    // how many joined
+          currentlyServing: 15,     // current token being served
           consultationTime: 10, // minutes per patient
-          status: "Open",
           image: "https://tse1.mm.bing.net/th/id/OIP.zkty80FhzzrzCJ0uBg1zIwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3",
         },
         {
           id: 102,
           name: "Dr. Ajaz Bande",
           specialization: "Urologist",
-          currentTokenCount: 0,
+          maxTokens: 20,      // total allowed today
+          tokensBooked: 14,    // how many joined
+          currentlyServing: 15,     // current token 
           consultationTime: 15, // minutes per patient
-          status: "Full",
           image: "https://tse1.mm.bing.net/th/id/OIP.yE8zyTz-OJwswooF9QFC1AHaLH?rs=1&pid=ImgDetMain&o=7&rm=3",
         },
       ],
@@ -35,18 +37,20 @@ export const clinics = [
           id: 201,
           name: "Dr. Sultan Khawaja",
           specialization: "General",
-          currentTokenCount: 2,
+          maxTokens: 30,      // total allowed today
+          tokensBooked: 12,    // how many joined
+          currentlyServing: 15,     // current token 
           consultationTime: 25, // minutes per patient
-          status: "Open",
           image: "https://tse1.explicit.bing.net/th/id/OIP.iFrQzYQ-Pc8LtwbwzjiVswAAAA?pid=ImgDet&w=204&h=306&c=7&o=7&rm=3",
         },
         {
           id: 202,
           name: "Dr. Riyaz Ahmad",
           specialization: "ENT",
-          currentTokenCount: 0,
+          maxTokens: 20,      // total allowed today
+          tokensBooked: 12,    // how many joined
+          currentlyServing: 15,     // current token 
           consultationTime: 5, // minutes per patient
-          status: "Full",
           image: "https://tse2.mm.bing.net/th/id/OIP.yY20jvQ_48lWbIwlirpVkAHaE7?w=626&h=417&rs=1&pid=ImgDetMain&o=7&rm=3",
         },
       ],

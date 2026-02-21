@@ -1,7 +1,10 @@
 import React from 'react'
+import { useState } from 'react';
 import { clinics } from "../../data/mockData";
 import { useParams, useNavigate } from 'react-router-dom';
-import { Hand } from 'lucide-react';
+import { useContext } from 'react';
+import { QueueContext } from '../../contexts/QueueContext';
+
 
 function DoctorDetails() {
 
@@ -20,13 +23,25 @@ function DoctorDetails() {
 
   const doctor = clinic.doctors.find((d) => (d.id === id));
 
-  const estimatedWait = doctor.currentTokenCount * doctor.consultationTime;
+  const { joinQueue, doctorData } = useContext(QueueContext);
+
+  const doctorInfo = doctorData[doctor.id] || doctor;
+
+  const tokensLeft =  doctorInfo.maxTokens - doctorInfo.tokensBooked;
+
+  const isFull = tokensLeft <= 0;
 
   const handleJoinQueue = () => {
-    //generate new token
-    const newToken = doctor.currentTokenCount + 1;
-    navigate(`/queue-status/${doctor.id}?token=${newToken}`);
+    if(tokensLeft <= 0) return;
+
+    const userToken = joinQueue(doctor.id, doctorInfo);
+
+    navigate(`/queue-status/${doctor.id}?token=${userToken}`);
   }
+
+  const peopleAhead = doctorInfo.tokensBooked - doctorInfo.currentlyServing;
+
+  const estimatedWait = peopleAhead * doctorInfo.consultationTime;
 
   return (
     <div className='max-w-md mx-auto px-4 py-6 space-y-4'>
@@ -49,21 +64,28 @@ function DoctorDetails() {
         </p>
 
         <p className='text-sm text-green-600 mt-2'>
-          {doctor.currentTokenCount} tokens
+          {tokensLeft} tokens
         </p>
 
         <p className='text-sm text-gray-500'>
           ~{estimatedWait} min wait
+        </p>
+
+        <p className= 'mt-3 text-slate-800'>
+          Currently Seeing Token 
+        </p>
+        <p className="text-lg text-slate-800 font-semibold">
+           #{doctorInfo.currentlyServing}
         </p>
       </div>
 
       {/* Join button */}
       <button
         onClick={handleJoinQueue}
-        disabled={doctor.status === "Full"}
+        disabled={isFull}
         className='w-full bg-green-600 text-white py-3 rounded-xl font-medium disabled:bg-gray-400'
       >
-        {doctor.status === "Full" ? 
+        {isFull ? 
         ("Queue Full") : 
         ("Get Token")}
       </button>

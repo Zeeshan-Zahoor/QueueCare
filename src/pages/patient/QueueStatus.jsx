@@ -1,15 +1,17 @@
-import React from 'react'
-import { useParams, useLocation } from 'react-router-dom'
-import { clinics } from '../../data/mockData'
+import React from 'react';
+import { useParams, useLocation } from 'react-router-dom';
+import { clinics } from '../../data/mockData';
+import { useContext } from 'react';
+import { QueueContext } from '../../contexts/QueueContext';
 
 export default function QueueStatus() {
-
+  
   const { doctorId  } = useParams();
   const id = Number(doctorId);
   const location = useLocation();
 
   const searchParams = new URLSearchParams(location.search);
-  const token = searchParams.get("token");
+  const token = Number(searchParams.get("token"));
   
 
   const clinic = clinics.find((c) => (
@@ -19,6 +21,16 @@ export default function QueueStatus() {
   if(!clinic)  return <p>Doctor not found</p>
 
   const doctor = clinic.doctors.find((d) => d.id === id);
+
+  const { doctorData } = useContext(QueueContext);
+
+  const doctorInfo = doctorData[id] || doctor;
+
+  const currentToken = doctorInfo.currentlyServing;
+
+  const peopleAhead = token - doctorInfo.currentlyServing;
+
+  const estimatedWait = peopleAhead * doctorInfo.consultationTime;
 
   return (
     <div className="max-w-md mx-auto px-4 py-6 space-y-6">
@@ -31,11 +43,16 @@ export default function QueueStatus() {
 
       <div className="bg-white p-4 rounded-xl shadow"> 
         <p className="text-sm text-gray-500">
-          Currently seeing token #
+          Currently seeing token # 
         </p>
-        <p className="text-lg font-semibold">
-          {doctor.currentTokenCount}
+        <p className="text-lg text-slate-800 font-semibold">
+          {currentToken}
         </p>
+      </div>
+
+      <div>
+        <h2 className="text-sm text-gray-800">Estimated Waiting Time</h2>
+        <p className="text-sm text-gray-800">~{estimatedWait} minutes</p>
       </div>
     </div>
   )
