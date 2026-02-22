@@ -29,7 +29,9 @@ export default function ClinicCard({ clinic }) {
                 <span>{clinic.location}</span>
             </div>
 
-            <div className="flex justify-between items-center mt-3 text-sm">
+            <hr className='text-[#D0D3D9] mt-2'/>
+
+            <div className="flex justify-between items-center mt-1 text-sm">
                 <span>{clinic.doctors.length} Doctors</span>
 
                 <span

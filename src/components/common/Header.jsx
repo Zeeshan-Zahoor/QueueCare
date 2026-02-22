@@ -2,17 +2,20 @@ import React from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-function Header({
-    path='/',
-    title,
-    className=""
-}) {
+function Header({ title }) {
 
     const navigate = useNavigate();
+    const handleBack = () => {
+      if (window.history.length > 1) {
+        navigate(-1);
+      } else {
+        navigate("/");
+      }
+    };
   return (
-      <div className={`w-full flex items-center px-3 mb-5 relative ${className}`}>
+      <div className='w-full flex items-center px-3 mb-5 relative'>
         <ArrowLeft 
-        onClick={() => navigate(`${path}`)}
+        onClick={handleBack}
         className='text-[#374151]'
         />
 

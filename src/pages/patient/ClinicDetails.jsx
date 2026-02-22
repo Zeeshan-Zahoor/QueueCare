@@ -11,8 +11,7 @@ export default function ClinicDetails() {
 
   return (
     <div className="max-w-md mx-auto px-4 py-6">
-      <Header 
-        path='/'
+      <Header
         title={clinic.name}
       />
       <div className="space-y-4  pt-1">

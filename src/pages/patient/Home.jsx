@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Search, MapPin } from 'lucide-react'
 import ClinicCard from '../../components/patient/ClinicCard';
 import { clinics } from '../../data/mockData';
+import heroImage from "../../assets/heroImage.png"
 
 export default function Home() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function Home() {
       <span className='text-sm text-slate-500'>Location</span>
       <div className='flex items-center gap-2 text-slate-700'>
         <MapPin className='w-5 h-5 text-[#1C2A3A]' />
-        <span className='font-medium'>Sopore, Kashmir</span>
+        <span className='text-sm font-medium'>Sopore, Kashmir</span>
       </div>
 
       {/* Search Bar */}
@@ -28,14 +29,12 @@ export default function Home() {
       </div>
 
       {/* Hero section */}
-      <div className='bg-black/40 rounded-2xl p-5 bg-center bg-cover'
+      <div className='bg-black/40 rounded-2xl p-5 bg-cover bg-center'
         style={{
-          backgroundImage:
-            "url('https://t3.ftcdn.net/jpg/09/69/95/60/360_F_969956061_TwfepEoAmode24utUIeBg5iDigYrRfPB.jpg')",
-
+          backgroundImage: `url(${heroImage})`,
         }}
       >
-        <h2 className='text-lg font-semibold text-white'>
+        <h2 className='text-lg font-bold text-white'>
           Get today's token
         </h2>
         <p className="w-1/2 text-sm text-white mt-1">
@@ -43,7 +42,7 @@ export default function Home() {
         </p>
         <button
           onClick={() => navigate("/doctors")}
-          className='mt-4 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium cursor-pointer'>
+          className='mt-4 bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-medium cursor-pointer'>
           Find Doctors
         </button>
       </div>

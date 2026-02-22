@@ -6,6 +6,7 @@ import { clinics } from '../../data/mockData';
 import Header from '../../components/common/Header';
 
 
+
 export default function Doctors() {
   const navigate = useNavigate();
   const allDoctors = clinics.flatMap((clinic) =>
@@ -20,8 +21,7 @@ export default function Doctors() {
   return (
     <div className='max-w-md mx-auto px-4 py-5 space-y-2'>
       {/* Header */}
-      <Header 
-        path='/'
+      <Header
         title="All Doctors"
       />
 
@@ -31,7 +31,7 @@ export default function Doctors() {
         <input
           type="text"
           placeholder='Search doctor or clinic...'
-          className='text-[#374151] rounded-lg p-3 outline-none flex-1'
+          className='text-[#374151] rounded-lg p-2 outline-none flex-1'
         />
       </div>
 

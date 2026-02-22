@@ -48,8 +48,7 @@ function DoctorDetails() {
   return (
     <div className="max-w-md h-screen mx-auto px-4 py-5 flex flex-col">
       {/* Header */}
-      <Header 
-        path="/"
+      <Header
         title="Doctor Details"
       />
 
@@ -58,7 +57,7 @@ function DoctorDetails() {
 
         {/* Doctor info */}
         <div className="bg-white p-4 rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.3)] flex space-x-3">
-          <div className="w-31 h-31 rounded-xl overflow-hidden shrink-0">
+          <div className="w-28 h-28 rounded-xl overflow-hidden shrink-0">
             <img
               src={doctor.image}
               alt={doctor.name}
@@ -68,7 +67,7 @@ function DoctorDetails() {
           <div className='flex-1'>
             <h2 className="text-lg text-[#1C2A3A] font-bold mb-2">{doctor.name}</h2>
             <hr className='text-[#D0D3D9]' />
-            <p className="text-sm font-bold text-gray-600">
+            <p className="text-sm font-bold text-gray-600 mt-2">
               {doctor.specialization}
             </p>
             <div className='flex items-center gap-1 mt-1'>

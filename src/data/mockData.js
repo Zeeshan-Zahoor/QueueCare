@@ -10,7 +10,7 @@ export const clinics = [
           specialization: "Gynecologist",
           maxTokens: 20,      // total allowed today
           tokensBooked: 18,    // how many joined
-          currentlyServing: 15,     // current token being served
+          currentlyServing: 17,     // current token being served
           consultationTime: 10, // minutes per patient
           image: "https://tse1.mm.bing.net/th/id/OIP.zkty80FhzzrzCJ0uBg1zIwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3",
         },
