@@ -19,7 +19,7 @@ export default function Doctors() {
   )
 
   return (
-    <div className='max-w-md mx-auto px-4 py-5 space-y-2'>
+    <div className='max-w-md mx-auto px-4 py-5 space-y-2 h-dvh'>
       {/* Header */}
       <Header
         title="All Doctors"

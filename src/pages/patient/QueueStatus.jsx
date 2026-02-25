@@ -37,7 +37,7 @@ export default function QueueStatus() {
   const estimatedWait = peopleAhead * doctorInfo.consultationTime;
 
   return (
-    <div className="max-w-md mx-auto px-4 py-6 space-y-6">
+    <div className="max-w-md mx-auto px-4 py-6 space-y-6 h-dvh">
       {/* Header */}
       <Header
         title="Queue Status"
@@ -92,19 +92,13 @@ export default function QueueStatus() {
         {/* Top Pills */}
         <div className="flex w-3/5 justify-between">
           <div className="px-3 py-2 rounded-xl bg-white shadow text-[#299D7C] font-semibold text-lg">
-            {currentToken + 1 <= doctorInfo.tokensBooked ? (
-              <>#{currentToken + 1}</>
-            ) : ("")}
+            {doctorInfo.queue[0].token || "NA"}
           </div>
           <div className="px-3 py-2 rounded-xl bg-white shadow text-[#82D0BA] font-semibold text-lg">
-            {currentToken + 2 <= doctorInfo.tokensBooked ? (
-              <>#{currentToken + 2}</>
-            ) : ("NA")}
+            {doctorInfo.queue[1].token || "NA"}
           </div>
           <div className="px-3 py-2 rounded-xl bg-white shadow text-[#C77934] font-semibold text-lg">
-            {currentToken + 3 <= doctorInfo.tokensBooked ? (
-              <>#{currentToken + 3}</>
-            ) : ("NA")}
+            {doctorInfo.queue[2].token || "NA"}
           </div>
         </div>
 

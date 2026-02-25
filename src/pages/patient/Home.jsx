@@ -9,7 +9,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <div className='max-w-md mx-auto px-4 py-3 space-y-2'>
+    <div className='max-w-md mx-auto px-4 py-3 space-y-2 h-dvh'>
 
       {/* Location */}
       <span className='text-sm text-slate-500'>Location</span>

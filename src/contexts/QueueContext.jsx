@@ -5,26 +5,32 @@ export const QueueContext = createContext();
 export function QueueProvider( {children} ) {
     const [doctorData, setDoctorData] = useState({});
 
-    const joinQueue = (doctorId, doctorData) => {
-        let newToken;
+    const joinQueue = (doctorId, doctorInfo, patientData) => {
+        const current = doctorData[doctorId] || doctorInfo;
+        const queue = current.queue || [];
+
+        if(queue.length >= current.maxTokens) {
+                return null; //Queue Full.
+        }
+
+        const newToken = (current.currentlyServing || 0) + queue.length + 1;
 
         setDoctorData((prev) => {
-            const current = prev[doctorId] || doctorData;
-
-            if(current.tokensBooked >= current.maxTokens) {
-                return prev; //Queue Full.
-            }
-
-            newToken = current.tokensBooked + 1;
-
             return {
                 ...prev, 
                 [doctorId]: {
                     ...current, 
-                    tokensBooked: newToken, 
-                }
-            }
-        })
+                    queue: [
+                        ...queue, 
+                        {
+                            token: newToken, 
+                            name: patientData.name, 
+                            phone: patientData.phone,
+                        },
+                    ],
+                },
+            };
+        });
         return newToken;
     }
 

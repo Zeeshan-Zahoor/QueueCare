@@ -6,6 +6,7 @@ import { clinics } from "../../data/mockData";
 import { useParams, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { QueueContext } from '../../contexts/QueueContext';
+import SuccessTick from "../../assets/shield_tick.svg?react";
 
 
 function DoctorDetails() {
@@ -13,6 +14,14 @@ function DoctorDetails() {
   const { doctorId } = useParams();
   const id = Number(doctorId)
   const navigate = useNavigate();
+
+  const [showForm, setShowForm] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+  })
+  const [myToken, setMyToken] = useState(null);
 
   // find the doctor across all the clinics
   const clinic = clinics.find((c) => (
@@ -29,31 +38,33 @@ function DoctorDetails() {
 
   const doctorInfo = doctorData[doctor.id] || doctor;
 
-  const tokensLeft = doctorInfo.maxTokens - doctorInfo.tokensBooked;
+  const tokensLeft = doctorInfo.maxTokens - doctorInfo.queue.length;
 
   const isFull = tokensLeft <= 0;
 
-  const handleJoinQueue = () => {
-    if (tokensLeft <= 0) return;
+  const handleConfirmJoin = () => {
+    if (!formData.name || !formData.phone) return;
 
-    const userToken = joinQueue(doctor.id, doctorInfo);
+    const token = joinQueue(doctor.id, doctorInfo, formData);
 
-    navigate(`/queue-status/${doctor.id}?token=${userToken}`);
+    setMyToken(token);
+    setShowForm(false);
+    setShowSuccess(true);
   }
 
-  const peopleAhead = doctorInfo.tokensBooked - doctorInfo.currentlyServing;
+  const peopleAhead = doctorInfo.queue.length;
 
   const estimatedWait = peopleAhead * doctorInfo.consultationTime;
 
   return (
-    <div className="max-w-md h-screen mx-auto px-4 py-5 flex flex-col">
-      {/* Header */}
-      <Header
-        title="Doctor Details"
-      />
+    <div className="max-w-md min-h-dvh mx-auto px-4 py-5 flex flex-col">
 
       {/* Content wrapper */}
       <div className="space-y-4">
+        {/* Header */}
+        <Header
+          title="Doctor Details"
+        />
 
         {/* Doctor info */}
         <div className="bg-white p-4 rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.3)] flex space-x-3">
@@ -88,31 +99,31 @@ function DoctorDetails() {
           <hr className='text-[#D0D3D9] mt-1' />
 
           {/* Token badge */}
-            <div className='mt-2'>
-                {isFull ? (
-                    <span className='inline-flex items-center gap-2 bg-red-100 text-red-600 text-xs font-medium px-3 py-2 rounded-full'>
-                        <span className='w-3 h-3 bg-red-500 rounded-full'></span>
-                        Full
-                    </span>
-                ) : (
-                    <span className='inline-flex items-center gap-2 bg-green-100 text-green-700 text-xs font-medium px-3 py-2 rounded-full'>
-                        <span className='w-3 h-3 bg-green-700 rounded-full'></span>
-                        {tokensLeft} tokens
-                    </span>
-                )}
-            </div>
+          <div className='mt-2'>
+            {isFull ? (
+              <span className='inline-flex items-center gap-2 bg-red-100 text-red-600 text-xs font-medium px-3 py-2 rounded-full'>
+                <span className='w-3 h-3 bg-red-500 rounded-full'></span>
+                Full
+              </span>
+            ) : (
+              <span className='inline-flex items-center gap-2 bg-green-100 text-green-700 text-xs font-medium px-3 py-2 rounded-full'>
+                <span className='w-3 h-3 bg-green-700 rounded-full'></span>
+                {tokensLeft} tokens
+              </span>
+            )}
+          </div>
 
           <div className='flex items-center gap-1 mt-1'>
-            <Clock className='w-4 h-4 text-gray-500'/>
+            <Clock className='w-4 h-4 text-gray-500' />
             <p className="text-sm text-gray-500">
-            ~{estimatedWait} min wait
-          </p>
+              ~{estimatedWait} min wait
+            </p>
           </div>
 
           <hr className='text-[#D0D3D9] mt-1 mb-2' />
 
           <span className="text-slate-800 font-medium">
-            Currently seeing token 
+            Currently seeing token
           </span>
           <span className="text-lg text-slate-800 font-bold ml-2">
             #{doctorInfo.currentlyServing}
@@ -122,13 +133,93 @@ function DoctorDetails() {
 
       {/* Push button to bottom */}
       <button
-        onClick={handleJoinQueue}
+        onClick={() => setShowForm(true)}
         disabled={isFull}
         className="mt-auto w-full bg-[#1C2A3A] text-white py-3 rounded-4xl font-medium disabled:bg-[#455970]"
       >
         {isFull ? "No more tokens" : "Get Token"}
       </button>
 
+
+      {/* Form Display Logic */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+          <div className="bg-white p-7 px-10 rounded-4xl w-80 space-y-4 text-center">
+            <h3 className="text-xl font-semibold">Enter Details</h3>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleConfirmJoin();
+              }}
+              className="space-y-4"
+            >
+              <input
+                type="text"
+                placeholder="Your Name"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                className="w-full border p-2 rounded-lg"
+              />
+
+              <input
+                type="text"
+                placeholder="Phone Number"
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
+                className="w-full border p-2 rounded-lg"
+              />
+
+              <button
+                type="submit"
+                className="w-full bg-slate-800 text-white py-2 rounded-4xl cursor-pointer"
+              >
+                Confirm
+              </button>
+            </form>
+
+            <button
+              onClick={() => setShowForm(false)}
+              className="w-full font-medium py-2 rounded-4xl cursor-pointer bg-gray-200 text-slate-800 -mt-5"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+
+      {/* Success Modal */}
+      {showSuccess && (
+        <div className="fixed inset-0 bg-black/30 bg-opacity-40 flex items-center justify-center">
+          <div className="bg-white p-7 px-10 rounded-4xl w-80 text-center space-y-4">
+            <div className="w-28 h-28 mx-auto bg-[#A4CFC3] rounded-full flex items-center justify-center text-2xl">
+              <img src={SuccessTick} alt="✔️" />
+            </div>
+
+            <h3 className="text-lg font-bold text-slate-800 ">
+              You're in the queue
+            </h3>
+
+            <p className="text-gray-500 text-sm">
+              You have joined today's queue. Your token is <strong>#{myToken}</strong>
+            </p>
+
+            <button
+              onClick={() =>
+                navigate(`/queue-status/${doctor.id}?token=${myToken}`)
+              }
+              className="w-full mt-4 bg-slate-800 text-white py-2.5 rounded-4xl cursor-pointer"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 

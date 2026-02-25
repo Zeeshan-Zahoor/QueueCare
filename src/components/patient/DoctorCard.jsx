@@ -3,10 +3,10 @@ import { MapPin, Clock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
 
 export default function DoctorCard({ doctor, clinicName }) {
-    const tokensLeft = doctor.maxTokens - doctor.tokensBooked;
+    const tokensLeft = doctor.maxTokens - doctor.queue.length;
     const isFull = tokensLeft <= 0;
 
-    const peopleAhead = doctor.tokensBooked - doctor.currentlyServing;
+    const peopleAhead = doctor.queue.length
     const waitTime = peopleAhead * doctor.consultationTime;
     const navigate = useNavigate();
   return (
