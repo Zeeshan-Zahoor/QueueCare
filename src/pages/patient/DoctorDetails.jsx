@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from 'react';
-import { MapPin, ArrowLeft, Clock } from 'lucide-react';
+import { MapPin, Clock, BanIcon} from 'lucide-react';
 import Header from '../../components/common/Header';
 import { clinics } from "../../data/mockData";
 import { useParams, useNavigate } from 'react-router-dom';
@@ -22,6 +22,7 @@ function DoctorDetails() {
     phone: "",
   })
   const [myToken, setMyToken] = useState(null);
+  const [showDuplicatePatient, setShowDuplicatePatient] = useState(false);
 
   // find the doctor across all the clinics
   const clinic = clinics.find((c) => (
@@ -47,8 +48,13 @@ function DoctorDetails() {
 
     const token = joinQueue(doctor.id, doctorInfo, formData);
 
+    if(token === -1) {
+      setShowDuplicatePatient(true);
+      setShowForm(false);
+      return;
+    }
+
     setMyToken(token);
-    setShowForm(false);
     setShowSuccess(true);
   }
 
@@ -216,6 +222,21 @@ function DoctorDetails() {
               className="w-full mt-4 bg-slate-800 text-white py-2.5 rounded-4xl cursor-pointer"
             >
               Done
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* duplicate patient popup */}
+      {showDuplicatePatient && (
+        <div className="fixed inset-0 bg-black/30 bg-opacity-40 flex items-center justify-center">
+          <div className="bg-white p-7 px-10 rounded-4xl w-80 text-center space-y-4 flex flex-col items-center">
+            <BanIcon className='w-15 h-15 text-red-600'/>
+            <h2 className='text-lg font-semibold'>You cannot book more then one token</h2>
+            <button 
+              onClick={() => setShowDuplicatePatient(false)}
+              className="w-full mt-4 bg-slate-800 text-white py-2.5 rounded-4xl cursor-pointer">
+              Close
             </button>
           </div>
         </div>

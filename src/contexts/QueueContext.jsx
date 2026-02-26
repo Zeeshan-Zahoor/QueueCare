@@ -13,6 +13,13 @@ export function QueueProvider( {children} ) {
                 return null; //Queue Full.
         }
 
+        //check if there the patient with same phone number already exists.
+        const patientExists = queue.some((patient) => patient.phone === patientData.phone)
+
+        if(patientExists) {
+            return -1;  // indicates patient exists 
+        }
+
         const newToken = (current.currentlyServing || 0) + queue.length + 1;
 
         setDoctorData((prev) => {
