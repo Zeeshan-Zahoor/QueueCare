@@ -1,14 +1,18 @@
-import React from 'react';
+import { useState } from 'react';
 import Header from '../../components/common/Header';
 import doctorIcon from "../../assets/doctorIcon.png";
 import consultingIcon from "../../assets/consultingIcon.png";
-import { Clock } from 'lucide-react';
+import { Clock, CircleXIcon, BanIcon } from 'lucide-react';
 import { useParams, useLocation } from 'react-router-dom';
 import { clinics } from '../../data/mockData';
 import { useContext } from 'react';
 import { QueueContext } from '../../contexts/QueueContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function QueueStatus() {
+  const navigate = useNavigate();
+  const [showCancel, setShowCancel] = useState(false);
+  const [notAllowedModal, setNotAllowedModal] = useState(false);
 
   const { doctorId } = useParams();
   const id = Number(doctorId);
@@ -26,7 +30,7 @@ export default function QueueStatus() {
 
   const doctor = clinic.doctors.find((d) => d.id === id);
 
-  const { doctorData } = useContext(QueueContext);
+  const { doctorData, exitQueue } = useContext(QueueContext);
 
   const doctorInfo = doctorData[id] || doctor;
 
@@ -35,6 +39,24 @@ export default function QueueStatus() {
   const peopleAhead = token - doctorInfo.currentlyServing;
 
   const estimatedWait = peopleAhead * doctorInfo.consultationTime;
+
+  const canCancel = token > doctorInfo.currentlyServing;
+
+  const handleCancelToken = () => {
+    const allowed = exitQueue(id, token, doctorInfo);
+
+    if(!allowed) {
+      setNotAllowedModal(true);
+      setShowCancel(false);
+      return;
+    }
+
+    setShowCancel(false);
+    console.log("Token cancelled!");
+    navigate("/");
+  
+    return;
+  }
 
   return (
     <div className="max-w-md mx-auto px-4 py-6 space-y-6 h-dvh">
@@ -77,7 +99,7 @@ export default function QueueStatus() {
       </div>
 
       {/* Queue progress bar section */}
-      <div className='flex justify-between items-end-safe gap-2 py-5'>
+      <div className='flex justify-between items-end-safe gap-2 py-2'>
         {/* consulting icon */}
         <div className='w-12 h-12'>
           <img 
@@ -92,13 +114,13 @@ export default function QueueStatus() {
         {/* Top Pills */}
         <div className="flex w-3/5 justify-between">
           <div className="px-3 py-2 rounded-xl bg-white shadow text-[#299D7C] font-semibold text-lg">
-            {doctorInfo.queue[0].token || "NA"}
+            {doctorInfo.queue?.[0]?.token || "NA"}
           </div>
           <div className="px-3 py-2 rounded-xl bg-white shadow text-[#82D0BA] font-semibold text-lg">
-            {doctorInfo.queue[1].token || "NA"}
+            {doctorInfo.queue?.[1]?.token || "NA"}
           </div>
           <div className="px-3 py-2 rounded-xl bg-white shadow text-[#C77934] font-semibold text-lg">
-            {doctorInfo.queue[2].token || "NA"}
+            {doctorInfo.queue?.[2]?.token || "NA"}
           </div>
         </div>
 
@@ -133,6 +155,55 @@ export default function QueueStatus() {
         </p>
       </div>
 
+      {/* token cancelation button */}
+      <div className='w-full p-2 flex flex-col space-y-2'>
+        <h2 className='font-semibold text-slate-800'>Manage Appointment</h2>
+        <div 
+          role='button'
+          disabled={!canCancel}
+          onClick={() => setShowCancel(true)}
+          className='w-full flex gap-2 rounded-lg border-2 border-red-800 p-2 hover:bg-red-200 transition'>
+          <CircleXIcon className='text-red-900'/>
+          <span className='text-red-800 font-semibold'>Cancel My Token</span>
+        </div>
+        <p className='text-sm text-gray-500 font-semibold'>Cancelling will remove you from today's queue. <br /> This action cannot be undone.</p>
+      </div>
+
+
+      {/* Cancel Token confirmation modal */}
+      {showCancel && (
+        <div className="fixed inset-0 bg-black/30 bg-opacity-40 flex items-center justify-center">
+          <div className="bg-white p-7 px-10 rounded-4xl w-80 text-center space-y-4 flex flex-col items-center">
+            <h1 className='text-5xl'>⚠️</h1>
+            <h2 className='text-lg font-semibold'>Are you sure you want to cancel your token?</h2>
+            <button 
+              onClick={handleCancelToken}
+              className="w-full mt-4 bg-slate-800 text-white py-2.5 rounded-4xl cursor-pointer">
+              Confirm
+            </button>
+            <button 
+              onClick={() => setShowCancel(false)}
+              className="w-full bg-gray-200 text-slate-800 py-2.5 rounded-4xl cursor-pointer font-semibold">
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* cancel not allowed pop up model */}
+      {notAllowedModal && (
+        <div className="fixed inset-0 bg-black/30 bg-opacity-40 flex items-center justify-center">
+          <div className="bg-white p-7 px-10 rounded-4xl w-80 text-center space-y-4 flex flex-col items-center">
+            <BanIcon className='w-10 h-10 text-gray-500'/>
+            <h2 className='text-lg font-semibold'>Token cannot be cancelled now.</h2>
+            <button 
+              onClick={() => setNotAllowedModal(false)}
+              className="w-full mt-4 bg-slate-800 text-white py-2.5 rounded-4xl cursor-pointer">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

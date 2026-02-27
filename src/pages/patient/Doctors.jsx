@@ -1,21 +1,23 @@
-import React from 'react'
 import DoctorCard from '../../components/patient/DoctorCard'
-import { Search, ArrowLeft } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { Search } from 'lucide-react'
 import { clinics } from '../../data/mockData';
 import Header from '../../components/common/Header';
-
+import { useContext } from 'react';
+import { QueueContext } from '../../contexts/QueueContext';
 
 
 export default function Doctors() {
-  const navigate = useNavigate();
+
+  const { doctorData } = useContext(QueueContext);
+
   const allDoctors = clinics.flatMap((clinic) =>
-    clinic.doctors.map((doctor) => (
-      {
-        ...doctor, 
+    clinic.doctors.map((doctor) => {
+      const doctorInfo = doctorData[doctor.id] || doctor;
+      return {
+        ...doctorInfo, 
         clinicName: clinic.name,
       }
-    ))
+    })
   )
 
   return (

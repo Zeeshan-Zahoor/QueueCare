@@ -39,7 +39,7 @@ function DoctorDetails() {
 
   const doctorInfo = doctorData[doctor.id] || doctor;
 
-  const tokensLeft = doctorInfo.maxTokens - doctorInfo.queue.length;
+  const tokensLeft = doctorInfo.maxTokens - (doctorInfo.currentlyServing + doctorInfo.queue.length);
 
   const isFull = tokensLeft <= 0;
 
@@ -190,7 +190,7 @@ function DoctorDetails() {
 
             <button
               onClick={() => setShowForm(false)}
-              className="w-full font-medium py-2 rounded-4xl cursor-pointer bg-gray-200 text-slate-800 -mt-5"
+              className="w-full font-medium py-2 rounded-4xl cursor-pointer bg-gray-200 text-slate-800 -mt-5 mb-4"
             >
               Cancel
             </button>
