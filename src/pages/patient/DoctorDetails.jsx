@@ -7,7 +7,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { QueueContext } from '../../contexts/QueueContext';
 import SuccessTick from "../../assets/shield_tick.svg?react";
-
+import BottomNav from '../../components/common/BottomNav';
 
 function DoctorDetails() {
 
@@ -53,7 +53,13 @@ function DoctorDetails() {
       setShowForm(false);
       return;
     }
+    let storedToken = localStorage.getItem("activeToken");
+    storedToken = {
+      doctorId: doctor.id, 
+      token: token, 
+    }
 
+    localStorage.setItem("activeToken", JSON.stringify(storedToken));
     setMyToken(token);
     setShowSuccess(true);
   }

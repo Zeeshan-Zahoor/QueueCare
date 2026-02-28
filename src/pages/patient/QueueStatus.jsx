@@ -8,6 +8,7 @@ import { clinics } from '../../data/mockData';
 import { useContext } from 'react';
 import { QueueContext } from '../../contexts/QueueContext';
 import { useNavigate } from 'react-router-dom';
+import BottomNav from '../../components/common/BottomNav';
 
 export default function QueueStatus() {
   const navigate = useNavigate();
@@ -52,8 +53,10 @@ export default function QueueStatus() {
     }
 
     setShowCancel(false);
+    localStorage.setItem("activeToken", null);
+
     console.log("Token cancelled!");
-    navigate("/");
+    navigate(`/doctor/${id}`);
   
     return;
   }
@@ -156,7 +159,7 @@ export default function QueueStatus() {
       </div>
 
       {/* token cancelation button */}
-      <div className='w-full p-2 flex flex-col space-y-2'>
+      <div className='w-full p-2 flex flex-col space-y-2 pb-25'>
         <h2 className='font-semibold text-slate-800'>Manage Appointment</h2>
         <div 
           role='button'
@@ -169,6 +172,9 @@ export default function QueueStatus() {
         <p className='text-sm text-gray-500 font-semibold'>Cancelling will remove you from today's queue. <br /> This action cannot be undone.</p>
       </div>
 
+
+      {/* Bottom Navigation */}
+      <BottomNav />
 
       {/* Cancel Token confirmation modal */}
       {showCancel && (

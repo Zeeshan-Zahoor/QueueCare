@@ -5,6 +5,7 @@ import { clinics } from '../../data/mockData';
 import Header from '../../components/common/Header';
 import { useContext } from 'react';
 import { QueueContext } from '../../contexts/QueueContext';
+import BottomNav from '../../components/common/BottomNav';
 
 export default function ClinicDetails() {
   const { doctorData } = useContext(QueueContext);
@@ -33,6 +34,9 @@ export default function ClinicDetails() {
           />
         ))}
       </div>
+
+      {/* bottom nav */}
+        <BottomNav />
     </div>
   )
 }

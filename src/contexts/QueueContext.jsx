@@ -1,9 +1,21 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const QueueContext = createContext();
 
 export function QueueProvider( {children} ) {
     const [doctorData, setDoctorData] = useState({});
+
+    useEffect(() => {
+        const storedDoctorData = JSON.parse(localStorage.getItem("storedDoctorData"));
+
+        if(storedDoctorData) {
+            setDoctorData(storedDoctorData);
+        }
+    }, [])
+
+    useEffect(() => {
+        localStorage.setItem("storedDoctorData", JSON.stringify(doctorData));
+    }, [doctorData])
 
     const joinQueue = (doctorId, doctorInfo, patientData) => {
         let result = null;
@@ -15,7 +27,7 @@ export function QueueProvider( {children} ) {
             const queue = current.queue || [];
 
             //Queue Full
-            if (queue.length >= current.maxTokens) {
+            if (current.maxTokens - (current.currentlyServing + queue.length) <= 0) {
                 result = null;
                 return prev;
             }

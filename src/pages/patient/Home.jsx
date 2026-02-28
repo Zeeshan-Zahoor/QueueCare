@@ -4,6 +4,7 @@ import { Search, MapPin } from 'lucide-react'
 import ClinicCard from '../../components/patient/ClinicCard';
 import { clinics } from '../../data/mockData';
 import heroImage from "../../assets/heroImage.png"
+import BottomNav from '../../components/common/BottomNav';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -61,6 +62,9 @@ export default function Home() {
         </div>
       </div>
 
+
+      {/* Bottom Navigation bar */}
+      <BottomNav />
     </div>
   )
 }
