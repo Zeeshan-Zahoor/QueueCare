@@ -1,6 +1,7 @@
 import { Home, MapPin, Calendar, User } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState, useContext } from "react";
+import { QueueContext } from "../../contexts/QueueContext";
 
 const navItems = [
   { to: "/", icon: Home },
@@ -9,18 +10,11 @@ const navItems = [
 ];
 
 export default function BottomNav() {
+  const { activeToken } = useContext(QueueContext);
   const location = useLocation();
   const navigate = useNavigate();
   const [noTokenModal, setNoTokenModal] = useState(false);
-  const [activeToken, setActiveToken] = useState(null);
 
-  // Load active token once
-  useEffect(() => {
-    const stored = localStorage.getItem("activeToken");
-    if (stored) {
-      setActiveToken(JSON.parse(stored));
-    }
-  }, []);
 
   const handleMyTokenClick = () => {
     if (!activeToken) {

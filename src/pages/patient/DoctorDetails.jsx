@@ -53,13 +53,6 @@ function DoctorDetails() {
       setShowForm(false);
       return;
     }
-    let storedToken = localStorage.getItem("activeToken");
-    storedToken = {
-      doctorId: doctor.id, 
-      token: token, 
-    }
-
-    localStorage.setItem("activeToken", JSON.stringify(storedToken));
     setMyToken(token);
     setShowSuccess(true);
   }

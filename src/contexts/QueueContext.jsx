@@ -4,7 +4,9 @@ export const QueueContext = createContext();
 
 export function QueueProvider( {children} ) {
     const [doctorData, setDoctorData] = useState({});
+    const [activeToken, setActiveToken] = useState(null);
 
+    //for persisting doctor data
     useEffect(() => {
         const storedDoctorData = JSON.parse(localStorage.getItem("storedDoctorData"));
 
@@ -16,6 +18,23 @@ export function QueueProvider( {children} ) {
     useEffect(() => {
         localStorage.setItem("storedDoctorData", JSON.stringify(doctorData));
     }, [doctorData])
+
+
+    //for patient token accessibility
+    useEffect(() => {
+        const stored = localStorage.getItem("activeToken");
+        if(stored) {
+            setActiveToken(JSON.parse(stored));
+        }
+    }, [])
+
+    useEffect(() => {
+        if(activeToken) {
+            localStorage.setItem("activeToken", JSON.stringify(activeToken))
+        } else {
+            localStorage.removeItem("activeToken");
+        }
+    }, [activeToken])
 
     const joinQueue = (doctorId, doctorInfo, patientData) => {
         let result = null;
@@ -48,7 +67,7 @@ export function QueueProvider( {children} ) {
                 ...prev, 
                 [doctorId]: {
                     ...current, 
-                    lastIssuedToken: (current.lastIssuedToken) + 1,
+                    lastIssuedToken: newToken,
                     queue: [
                         ...queue, 
                         {
@@ -60,6 +79,14 @@ export function QueueProvider( {children} ) {
                 }
             }
         })
+
+        if(typeof result === "number") {
+            setActiveToken({
+                doctorId, 
+                token: result,
+            })
+        }
+
         return result;
     }
 
@@ -99,11 +126,16 @@ export function QueueProvider( {children} ) {
                 }
             }
         })
+
+        if(result) {
+            setActiveToken(null);
+        }
+
         return result;
     }
  
     return (
-        <QueueContext.Provider value={{joinQueue, doctorData, exitQueue}}>
+        <QueueContext.Provider value={{joinQueue, doctorData, exitQueue, activeToken}}>
             {children}
         </QueueContext.Provider>
     )

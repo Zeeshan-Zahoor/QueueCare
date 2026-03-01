@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../../components/common/Header';
 import doctorIcon from "../../assets/doctorIcon.png";
 import consultingIcon from "../../assets/consultingIcon.png";
@@ -53,7 +53,6 @@ export default function QueueStatus() {
     }
 
     setShowCancel(false);
-    localStorage.setItem("activeToken", null);
 
     console.log("Token cancelled!");
     navigate(`/doctor/${id}`);
