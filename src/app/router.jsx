@@ -44,18 +44,15 @@ export const router = createBrowserRouter([
         path: "/clinic", 
         element: <ClinicLayout />,
         children: [
+            { index: true, element: <ClinicLogin /> },
+
             {
-                index: true,
-                element: <ClinicLogin />
-            },
-            {
-                path: "dashboard",
-                element: <Dashboard />
-            },
-            {
-                path: "settings",
-                element: <Settings />
-            },
+                path: "clinicId", 
+                children: [
+                    { path: "dashboard", element: <Dashboard /> }, 
+                    { path: "settings", element: <Settings /> }
+                ]
+            }
         ],
     },
 ]);
