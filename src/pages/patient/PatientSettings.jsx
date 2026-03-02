@@ -7,8 +7,10 @@ import {
   ChevronRight,
   Building2,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function PatientSettings() {
+  const navigate = useNavigate();
   return (
     <div className="max-w-md min-h-dvh mx-auto px-4 py-5 bg-gray-50 flex flex-col">
 
@@ -57,7 +59,9 @@ function PatientSettings() {
           Login as Clinic / Hospital
         </h2>
 
-        <button className="w-full bg-slate-800 hover:bg-slate-900 text-white rounded-2xl px-4 py-2 flex items-center justify-between transition">
+        <button 
+        onClick={() => navigate('/clinic')}
+        className="w-full bg-slate-800 hover:bg-slate-900 text-white rounded-2xl px-4 py-2 flex items-center justify-between transition">
 
           <div className="flex items-center gap-3">
             <div className="bg-white/10 p-2 rounded-lg">

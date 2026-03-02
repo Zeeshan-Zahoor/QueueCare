@@ -38,6 +38,8 @@ export const clinics = [
     status: "Open",
     image:
       "https://tse4.mm.bing.net/th/id/OIP.QMMhjZmbEYUPjpewCN1P3QHaHa?rs=1&pid=ImgDetMain&o=7&rm=3",
+    phone: '6006368678',
+    password: 'Qwerty123@'
   },
   {
     id: 2,
@@ -79,5 +81,7 @@ export const clinics = [
     status: "Open",
     image:
       "https://i.pinimg.com/originals/42/d8/de/42d8de07f715d3ffbaa6a94363734c97.png",
+    phone: '6005089716',
+    password: 'Asdf1234A'
   },
 ];
