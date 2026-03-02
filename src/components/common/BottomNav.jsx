@@ -1,4 +1,4 @@
-import { Home, MapPin, Calendar, User } from "lucide-react";
+import { Home, MapPin, Settings2, User } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useState, useContext } from "react";
 import { QueueContext } from "../../contexts/QueueContext";
@@ -6,7 +6,7 @@ import { QueueContext } from "../../contexts/QueueContext";
 const navItems = [
   { to: "/", icon: Home },
   { to: "/doctors", icon: MapPin },
-  { to: "/clinic/1", icon: Calendar },
+  { to: "/settings", icon: Settings2 },
 ];
 
 export default function BottomNav() {

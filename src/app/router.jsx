@@ -7,6 +7,7 @@ import Home from "../pages/patient/Home";
 import Doctors from "../pages/patient/Doctors";
 import DoctorDetails from "../pages/patient/DoctorDetails";
 import QueueStatus from "../pages/patient/QueueStatus";
+import PatientSettings from "../pages/patient/PatientSettings";
 
 import ClinicLogin from "../pages/clinic/ClinicLogin";
 import Dashboard from "../pages/clinic/Dashboard";
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
             {
                 path: 'doctors',
                 element: <Doctors />
+            },
+            {
+                path: 'settings',
+                element: <PatientSettings />
             },
             {
                 path: 'clinic/:doctorId',
@@ -47,7 +52,7 @@ export const router = createBrowserRouter([
             { index: true, element: <ClinicLogin /> },
 
             {
-                path: "clinicId", 
+                path: ":clinicId", 
                 children: [
                     { path: "dashboard", element: <Dashboard /> }, 
                     { path: "settings", element: <Settings /> }
