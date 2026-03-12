@@ -1,18 +1,86 @@
-import React from "react";
+import React, { useState } from "react";
 import { Building2 } from "lucide-react";
+import cloudIcon from "../../assets/cloud_icon.jpg";
+import { useParams } from "react-router-dom";
+import { clinics } from "../../data/mockData";
+
+function DoctorCard({
+  doctor, 
+  clickHandler
+}) {
+
+  const tokensLeft = doctor.maxTokens - (doctor.currentlyServing + doctor.queue.length);
+  const isFull = tokensLeft <= 0;
+
+  return (
+    <div 
+    role="button"
+    onClick={clickHandler}
+    className='bg-white m-auto rounded transition-all border border-gray-400 duration-300 p-2 flex gap-3 items-start mb-2'>
+      <div className="w-20 h-20 rounded-sm shadow-xl border border-gray-300 overflow-hidden shrink-0">
+        <img
+          src={doctor.image}
+          alt={doctor.name}
+          className='w-full h-full object-cover'
+        />
+      </div>
+
+      <div className='flex-1'>
+        <div className='flex justify-between items-start'>
+          <h2 className='text-sm mb-1 font-bold text-slate-800'>
+            {doctor.name}
+          </h2>
+        </div>
+
+        <div>
+          {isFull ? (
+            <span className='inline-flex items-center gap-2 bg-red-100 text-red-600 text-xs font-medium px-3 py-1.5 rounded-full'>
+              <span className='w-3 h-3 bg-red-500 rounded-full'></span>
+              Full
+            </span>
+          ) : (
+            <span className='inline-flex items-center gap-2 bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full'>
+              <span className='w-3 h-3 bg-green-600 rounded-full'></span>
+              {tokensLeft} tokens
+            </span>
+          )}
+        </div>
+
+        <p className='mt-1 text-sm font-medium text-slate-700'>
+          {doctor.specialization}
+        </p>
+      </div>
+    </div>
+  )
+}
 
 export default function Dashboard() {
-  const patients = [
-    { token: 18, name: "Ali K.", source: "Walk-in", status: "In Consultation", current: true },
-    { token: 19, name: "Rehana A.", source: "Online", status: "Waiting" },
-    { token: 20, name: "Arif Malik.", source: "Walk-in", status: "Waiting" },
-    { token: 21, name: "Sameer H.", source: "Online", status: "Waiting" },
-    { token: 22, name: "Gh. Mohd Shah.", source: "Walk-in", status: "Waiting" },
-    { token: 23, name: "Zoona Begum.", source: "Online", status: "Waiting" },
-  ];
+  const [doctorSelected, setDoctorSelected] = useState(false);
+  const [doctor, setDoctor] = useState({});
+  const [patients, setPatients] =  useState([]);
 
+  const { clinicId } = useParams();
 
-  const isFull = false;
+  const clinic = clinics.find((c) => (
+    c.id === Number(clinicId)
+  ))
+  
+  if (!clinic) {
+      return (
+        <div className="p-4 text-center">
+          <p className="text-red-500">Clinic not found</p>
+        </div>
+      );
+    }
+
+  console.log("Clinic: ", clinic);
+
+  const handleDoctorClick = (doctor) => {
+    setDoctorSelected(true);
+    setPatients(doctor.queue);
+    setDoctor(doctor);
+  }
+
   return (
     <div className="flex flex-col max-w-380 m-auto h-screen">
       {/* Top Bar - unchanged */}
@@ -58,133 +126,122 @@ export default function Dashboard() {
           <div className="p-3 space-y-2">
             <h2 className="text-lg text-slate-800 font-bold">Doctors</h2>
 
-            <div className='bg-white m-auto rounded transition-all border border-gray-400 duration-300 p-2 flex gap-3 items-start mb-2'>
-              <div className="w-20 h-20 rounded-sm shadow-xl border border-gray-300 overflow-hidden shrink-0">
-                <img
-                  src={"https://tse1.explicit.bing.net/th/id/OIP.iFrQzYQ-Pc8LtwbwzjiVswAAAA?pid=ImgDet&w=204&h=306&c=7&o=7&rm=3"}
-                  alt={""}
-                  className='w-full h-full object-cover'
+            {clinic.doctors.map((doctor) => (
+              <DoctorCard 
+                key={doctor.id}
+                doctor={doctor}
+                clickHandler={() => handleDoctorClick(doctor)}
                 />
-              </div>
+            ))}
 
-              <div className='flex-1'>
-                <div className='flex justify-between items-start'>
-                  <h2 className='text-sm mb-1 font-bold text-slate-800'>
-                    Asadullah Khan
-                  </h2>
-                </div>
-
-                <div>
-                  {isFull ? (
-                    <span className='inline-flex items-center gap-2 bg-red-100 text-red-600 text-xs font-medium px-3 py-1.5 rounded-full'>
-                      <span className='w-3 h-3 bg-red-500 rounded-full'></span>
-                      Full
-                    </span>
-                  ) : (
-                    <span className='inline-flex items-center gap-2 bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full'>
-                      <span className='w-3 h-3 bg-green-600 rounded-full'></span>
-                      5 tokens
-                    </span>
-                  )}
-                </div>
-
-                <p className='mt-1 text-sm font-medium text-slate-700'>
-                  Urologist
-                </p>
-              </div>
-            </div>
           </div>
         </div>
 
         {/* Main - FIXED SECTION */}
-        <div className="flex flex-col flex-1 min-h-0"> {/* Added min-h-0 */}
+        {doctorSelected ? (
+          <div className="flex flex-col flex-1 min-h-0"> {/* Added min-h-0 */}
 
-          {/* Content */}
-          <div className="p-5 flex flex-col h-full gap-6 min-h-0"> {/* Added min-h-0 */}
+            {/* Content */}
+            <div className="p-5 flex flex-col h-full gap-6 min-h-0"> {/* Added min-h-0 */}
 
-            {/* Cards - fixed height, won't grow */}
-            <div className="grid grid-cols-3 gap-6 shrink-0"> {/* Added shrink-0 */}
-              <div className="bg-white p-6 rounded shadow-sm">
-                <p className="text-gray-500">Current Token</p>
-                <div className="text-4xl font-bold mt-2">#18</div>
-                <p className="text-gray-600 mt-1">Now Serving</p>
+              {/* Cards - fixed height, won't grow */}
+              <div className="grid grid-cols-3 gap-6 shrink-0"> {/* Added shrink-0 */}
+                <div className="bg-white p-6 rounded shadow-sm">
+                  <p className="text-gray-500">Current Token</p>
+                  <div className="text-4xl font-bold mt-2">#{doctor.currentlyServing}</div>
+                  <p className="text-gray-600 mt-1">Now Serving</p>
+                </div>
+
+                <div className="bg-white p-6 rounded shadow-sm">
+                  <p className="text-gray-500">Next in Queue</p>
+                  <div className="text-4xl font-bold text-green-600 mt-2">#{doctor?.queue?.[0].token}</div>
+                </div>
+
+                <div className="bg-white p-6 rounded shadow-sm">
+                  <p className="text-gray-500">Waiting Patients</p>
+                  <div className="text-3xl font-bold text-orange-500 mt-2">{doctor?.queue?.length} Patients</div>
+                </div>
               </div>
 
-              <div className="bg-white p-6 rounded shadow-sm">
-                <p className="text-gray-500">Next in Queue</p>
-                <div className="text-4xl font-bold text-green-600 mt-2">#19</div>
-              </div>
+              {/* Table Container - FIXED: This will scroll */}
+              <div className="bg-gray-200 rounded shadow-sm flex flex-col flex-1 min-h-0"> {/* Added min-h-0 */}
+                <div className="p-6 font-semibold text-lg border-b shrink-0"> {/* Added shrink-0 */}
+                  Today’s Queue
+                </div>
 
-              <div className="bg-white p-6 rounded shadow-sm">
-                <p className="text-gray-500">Waiting Patients</p>
-                <div className="text-3xl font-bold text-orange-500 mt-2">7 Patients</div>
-              </div>
-            </div>
-
-            {/* Table Container - FIXED: This will scroll */}
-            <div className="bg-gray-200 rounded shadow-sm flex flex-col flex-1 min-h-0"> {/* Added min-h-0 */}
-              <div className="p-6 font-semibold text-lg border-b shrink-0"> {/* Added shrink-0 */}
-                Today’s Queue
-              </div>
-
-              {/* Scrollable table area */}
-              <div className="flex-1 overflow-auto min-h-0"> {/* Added min-h-0 */}
-                <table className="w-full text-left">
-                  <thead className="bg-gray-100 text-gray-600 sticky top-0 z-10"> {/* Made header sticky */}
-                    <tr>
-                      <th className="p-4">Token</th>
-                      <th className="p-4">Patient Name</th>
-                      <th className="p-4">Source</th>
-                      <th className="p-4">Status</th>
-                      <th className="p-4">Actions</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {patients.map((p) => (
-                      <tr
-                        key={p.token}
-                        className={`border-t ${p.current ? "bg-green-50" : "bg-white"}`}
-                      >
-                        <td className="p-4 font-medium">{p.token}</td>
-                        <td className="p-4">{p.name}</td>
-                        <td className="p-4">{p.source}</td>
-                        <td className="p-4 text-gray-600">{p.status}</td>
-
-                        <td className="p-4">
-                          {p.current ? (
-                            <button className="bg-green-600 text-white px-4 py-2 rounded">
-                              Complete
-                            </button>
-                          ) : (
-                            <button className="bg-gray-800 text-white px-4 py-2 rounded">
-                              Call
-                            </button>
-                          )}
-                        </td>
+                {/* Scrollable table area */}
+                <div className="flex-1 overflow-auto min-h-0">
+                  <table className="w-full text-left">
+                    <thead className="bg-gray-100 text-gray-600 sticky top-0 z-10">
+                      <tr> {/* Remove any whitespace between thead and tr */}
+                        <th className="p-4">Token</th>
+                        <th className="p-4">Patient Name</th>
+                        <th className="p-4">Phone</th>
+                        <th className="p-4">Source</th>
+                        <th className="p-4">Status</th>
+                        <th className="p-4">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+
+                    <tbody>
+                      {patients.map((p) => (
+                        <tr
+                          key={p.token}
+                          className={`border-t ${p.current ? "bg-green-50" : "bg-white"}`}
+                        >
+                          <td className="p-4 font-medium">{p.token}</td>
+                          <td className="p-4">{p.name}</td>
+                          <td className="p-4">{p.phone}</td>
+                          <td className="p-4">{p.source}</td>
+                          <td className="p-4 text-gray-600">{"Waiting"}</td>
+
+                          <td className="p-4">
+                            {p.current ? (
+                              <button className="bg-green-600 text-white px-4 py-2 rounded min-w-30">
+                                Complete
+                              </button>
+                            ) : (
+                              <button className="bg-gray-800 text-white min-w-30 px-4 py-2 rounded">
+                                Call
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
 
-            {/* Bottom Buttons - fixed position, won't move */}
-            <div className="flex gap-4 shrink-0"> {/* Added shrink-0 */}
-              <button className="bg-gray-800 text-white px-5 py-3 rounded">
-                + Add Walk-in
-              </button>
+              {/* Bottom Buttons - fixed position, won't move */}
+              <div className="flex gap-4 shrink-0"> {/* Added shrink-0 */}
+                <button className="bg-gray-800 text-white px-5 py-3 rounded">
+                  + Add Walk-in
+                </button>
 
-              <button className="bg-orange-500 text-white px-5 py-3 rounded">
-                Delay Queue
-              </button>
+                <button className="bg-orange-500 text-white px-5 py-3 rounded">
+                  Delay Queue
+                </button>
 
-              <button className="bg-green-600 text-white px-5 py-3 rounded">
-                Call Next Patient →
-              </button>
+                <button className="bg-green-600 text-white px-5 py-3 rounded">
+                  Call Next Patient →
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        ) :
+          (
+            <div className="p-4 flex justify-center items-center flex-1">
+              <div className="text-center">
+                <img
+                  src={cloudIcon}
+                  className="w-50"
+                />
+                <h2 className="text-slate-400 text-lg font-bold">No Doctor Selected</h2>
+              </div>
+            </div>
+          )}
+
       </div>
     </div>
   );
