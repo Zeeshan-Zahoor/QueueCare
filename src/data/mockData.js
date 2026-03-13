@@ -81,6 +81,6 @@ export const clinics = [
     image:
       "https://i.pinimg.com/originals/42/d8/de/42d8de07f715d3ffbaa6a94363734c97.png",
     phone: '6005089716',
-    password: 'Asdf1234A'
+    password: 'asdf1234A'
   },
 ];

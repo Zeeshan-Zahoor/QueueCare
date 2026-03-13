@@ -1,106 +1,60 @@
 import React, { useState } from "react";
 import { Building2 } from "lucide-react";
 import cloudIcon from "../../assets/cloud_icon.jpg";
+import DoctorCardClinic from "../../components/clinic/DoctorCardClinic";
 import { useParams } from "react-router-dom";
 import { clinics } from "../../data/mockData";
+import { useContext } from "react";
+import { QueueContext } from "../../contexts/QueueContext";
 
-function DoctorCard({
-  doctor, 
-  clickHandler
-}) {
-
-  const tokensLeft = doctor.maxTokens - (doctor.currentlyServing + doctor.queue.length);
-  const isFull = tokensLeft <= 0;
-
-  return (
-    <div 
-    role="button"
-    onClick={clickHandler}
-    className='bg-white m-auto rounded transition-all border border-gray-400 duration-300 p-2 flex gap-3 items-start mb-2'>
-      <div className="w-20 h-20 rounded-sm shadow-xl border border-gray-300 overflow-hidden shrink-0">
-        <img
-          src={doctor.image}
-          alt={doctor.name}
-          className='w-full h-full object-cover'
-        />
-      </div>
-
-      <div className='flex-1'>
-        <div className='flex justify-between items-start'>
-          <h2 className='text-sm mb-1 font-bold text-slate-800'>
-            {doctor.name}
-          </h2>
-        </div>
-
-        <div>
-          {isFull ? (
-            <span className='inline-flex items-center gap-2 bg-red-100 text-red-600 text-xs font-medium px-3 py-1.5 rounded-full'>
-              <span className='w-3 h-3 bg-red-500 rounded-full'></span>
-              Full
-            </span>
-          ) : (
-            <span className='inline-flex items-center gap-2 bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full'>
-              <span className='w-3 h-3 bg-green-600 rounded-full'></span>
-              {tokensLeft} tokens
-            </span>
-          )}
-        </div>
-
-        <p className='mt-1 text-sm font-medium text-slate-700'>
-          {doctor.specialization}
-        </p>
-      </div>
-    </div>
-  )
-}
 
 export default function Dashboard() {
-  const [doctorSelected, setDoctorSelected] = useState(false);
-  const [doctor, setDoctor] = useState({});
-  const [patients, setPatients] =  useState([]);
-
-  const { clinicId } = useParams();
-
-  const clinic = clinics.find((c) => (
-    c.id === Number(clinicId)
-  ))
   
-  if (!clinic) {
-      return (
-        <div className="p-4 text-center">
-          <p className="text-red-500">Clinic not found</p>
-        </div>
-      );
-    }
+  const [selectedDoctorId, setSelectedDoctorId] = useState(null);
+  const { clinicId } = useParams();
+  
+    const clinic = clinics.find((c) => (
+      c.id === Number(clinicId)
+    ))
 
-  console.log("Clinic: ", clinic);
+    if (!clinic) {
+        return (
+          <div className="p-4 text-center">
+            <p className="text-red-500">Clinic not found</p>
+          </div>
+        );
+      }
+
+  const { doctorData } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
-    setDoctorSelected(true);
-    setPatients(doctor.queue);
-    setDoctor(doctor);
+    setSelectedDoctorId(doctor.id);
   }
 
+  const selectedDoctor = clinic.doctors.find(d => d.id === selectedDoctorId);
+
+  const doctorInfo = selectedDoctorId ? doctorData[selectedDoctorId] || selectedDoctor : null;
+  
   return (
-    <div className="flex flex-col max-w-380 m-auto h-screen">
+    <div className="flex flex-col max-w-screen-2xl m-auto h-screen">
       {/* Top Bar - unchanged */}
       <div className="bg-white border-b border-gray-400 px-8 py-4 flex items-center justify-end gap-8">
         <div className="flex items-center space-x-3 flex-1 bg-white">
           <Building2 />
-          <span className="text-slate-800 font-semibold text-lg">Al-Shifa Clinic</span>
+          <span className="text-slate-800 font-semibold text-lg">{clinic.name}</span>
         </div>
 
         <div className="flex items-center gap-2 text-gray-700">
           <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-          24th April 2024
+          {(new Date()).toDateString()}
         </div>
 
         <div className="flex items-center gap-2 text-gray-700">
           <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-          Clinic Active
+          {clinic.status === "Open" ? "Active" : "Closed"}
         </div>
 
-        <button className="bg-gray-800 text-white px-4 py-2 rounded">
+        <button className="bg-slate-800 text-white px-4 py-2 rounded">
           End Day
         </button>
       </div>
@@ -111,7 +65,7 @@ export default function Dashboard() {
         {/* Sidebar - unchanged */}
         <div className="w-60 bg-white border-r border-gray-300">
           <div className="p-4 space-y-2">
-            <button className="w-full flex items-center gap-3 bg-gray-900 text-white px-4 py-2 rounded">
+            <button className="w-full flex items-center gap-3 bg-slate-800 text-white px-4 py-2 rounded">
               Dashboard
             </button>
 
@@ -126,19 +80,23 @@ export default function Dashboard() {
           <div className="p-3 space-y-2">
             <h2 className="text-lg text-slate-800 font-bold">Doctors</h2>
 
-            {clinic.doctors.map((doctor) => (
-              <DoctorCard 
-                key={doctor.id}
-                doctor={doctor}
-                clickHandler={() => handleDoctorClick(doctor)}
+            {clinic.doctors.map((doctor) => {
+              const doctorInfo = doctorData[doctor.id] || doctor;
+              return (
+                <DoctorCardClinic 
+                key={doctorInfo.id}
+                doctor={doctorInfo}
+                clickHandler={() => handleDoctorClick(doctorInfo)}
+                active={selectedDoctorId === doctor.id}
                 />
-            ))}
+              )
+            })}
 
           </div>
         </div>
 
         {/* Main - FIXED SECTION */}
-        {doctorSelected ? (
+        {doctorInfo ? (
           <div className="flex flex-col flex-1 min-h-0"> {/* Added min-h-0 */}
 
             {/* Content */}
@@ -148,18 +106,18 @@ export default function Dashboard() {
               <div className="grid grid-cols-3 gap-6 shrink-0"> {/* Added shrink-0 */}
                 <div className="bg-white p-6 rounded shadow-sm">
                   <p className="text-gray-500">Current Token</p>
-                  <div className="text-4xl font-bold mt-2">#{doctor.currentlyServing}</div>
+                  <div className="text-4xl font-bold mt-2">#{doctorInfo.currentlyServing}</div>
                   <p className="text-gray-600 mt-1">Now Serving</p>
                 </div>
 
                 <div className="bg-white p-6 rounded shadow-sm">
                   <p className="text-gray-500">Next in Queue</p>
-                  <div className="text-4xl font-bold text-green-600 mt-2">#{doctor?.queue?.[0].token}</div>
+                  <div className="text-4xl font-bold text-green-600 mt-2">#{doctorInfo?.queue?.[0]?.token || "-"}</div>
                 </div>
 
                 <div className="bg-white p-6 rounded shadow-sm">
                   <p className="text-gray-500">Waiting Patients</p>
-                  <div className="text-3xl font-bold text-orange-500 mt-2">{doctor?.queue?.length} Patients</div>
+                  <div className="text-3xl font-bold text-orange-500 mt-2">{doctorInfo?.queue?.length || 0} Patients</div>
                 </div>
               </div>
 
@@ -184,27 +142,23 @@ export default function Dashboard() {
                     </thead>
 
                     <tbody>
-                      {patients.map((p) => (
+                      {doctorInfo?.queue?.map((p) => (
                         <tr
                           key={p.token}
-                          className={`border-t ${p.current ? "bg-green-50" : "bg-white"}`}
+                          className="border-t bg-white"
                         >
                           <td className="p-4 font-medium">{p.token}</td>
                           <td className="p-4">{p.name}</td>
                           <td className="p-4">{p.phone}</td>
-                          <td className="p-4">{p.source}</td>
-                          <td className="p-4 text-gray-600">{"Waiting"}</td>
+                          <td className="p-4">{p.source || "Online"}</td>
+                          <td className="p-4 text-gray-600">Waiting</td>
 
                           <td className="p-4">
-                            {p.current ? (
-                              <button className="bg-green-600 text-white px-4 py-2 rounded min-w-30">
-                                Complete
-                              </button>
-                            ) : (
-                              <button className="bg-gray-800 text-white min-w-30 px-4 py-2 rounded">
+                          
+                              <button className="bg-slate-800 text-white min-w-30 px-4 py-2 rounded">
                                 Call
                               </button>
-                            )}
+                           
                           </td>
                         </tr>
                       ))}
@@ -215,7 +169,7 @@ export default function Dashboard() {
 
               {/* Bottom Buttons - fixed position, won't move */}
               <div className="flex gap-4 shrink-0"> {/* Added shrink-0 */}
-                <button className="bg-gray-800 text-white px-5 py-3 rounded">
+                <button className="bg-slate-800 text-white px-5 py-3 rounded">
                   + Add Walk-in
                 </button>
 
