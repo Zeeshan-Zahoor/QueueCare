@@ -36,7 +36,7 @@ export function QueueProvider( {children} ) {
         }
     }, [activeToken])
 
-    const joinQueue = (doctorId, doctorInfo, patientData) => {
+    const joinQueue = (doctorId, doctorInfo, patientData, source) => {
         let result = null;
 
         setDoctorData((prev) => {
@@ -74,6 +74,7 @@ export function QueueProvider( {children} ) {
                             token: newToken, 
                             name: patientData.name, 
                             phone: patientData.phone,
+                            source,
                         }
                     ]
                 }

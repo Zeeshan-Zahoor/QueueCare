@@ -46,7 +46,7 @@ function DoctorDetails() {
   const handleConfirmJoin = () => {
     if (!formData.name || !formData.phone) return;
 
-    const token = joinQueue(doctor.id, doctorInfo, formData);
+    const token = joinQueue(doctor.id, doctorInfo, formData, "Online");
 
     if(token === -1) {
       setShowDuplicatePatient(true);

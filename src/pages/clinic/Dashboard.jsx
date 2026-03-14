@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Building2 } from "lucide-react";
+import { Building2, Phone, Plus, BanIcon } from "lucide-react";
 import cloudIcon from "../../assets/cloud_icon.jpg";
 import DoctorCardClinic from "../../components/clinic/DoctorCardClinic";
 import { useParams } from "react-router-dom";
@@ -9,23 +9,32 @@ import { QueueContext } from "../../contexts/QueueContext";
 
 
 export default function Dashboard() {
-  
+
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
+
+  const [showWalkInModal, setShowWalkInModal] = useState(false);
+  const [showDuplicatePatient, setShowDuplicatePatient] = useState(false);
+
+  const [walkInPatientData, setWalkInPatientData] = useState({
+    name: "",
+    phone: "",
+  })
+
   const { clinicId } = useParams();
-  
-    const clinic = clinics.find((c) => (
-      c.id === Number(clinicId)
-    ))
 
-    if (!clinic) {
-        return (
-          <div className="p-4 text-center">
-            <p className="text-red-500">Clinic not found</p>
-          </div>
-        );
-      }
+  const clinic = clinics.find((c) => (
+    c.id === Number(clinicId)
+  ))
 
-  const { doctorData, advanceToken } = useContext(QueueContext);
+  if (!clinic) {
+    return (
+      <div className="p-4 text-center">
+        <p className="text-red-500">Clinic not found</p>
+      </div>
+    );
+  }
+
+  const { doctorData, advanceToken, joinQueue } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor.id);
@@ -38,7 +47,26 @@ export default function Dashboard() {
   const handleCallNextPatient = () => {
     advanceToken(selectedDoctorId, doctorInfo);
   };
-  
+
+  const handleWalkInPatient = () => {
+    if (!walkInPatientData.name) return;
+
+    const token = joinQueue(selectedDoctorId, doctorInfo, walkInPatientData, "Walk-in");
+
+    if (token === -1) {
+      setShowDuplicatePatient(true);
+      return;
+    }
+
+    setShowWalkInModal(false);
+
+    setWalkInPatientData({
+      name: "",
+      phone: ""
+    });
+
+  }
+
   return (
     <div className="flex flex-col max-w-screen-2xl m-auto h-screen">
       {/* Top Bar - unchanged */}
@@ -87,11 +115,11 @@ export default function Dashboard() {
             {clinic.doctors.map((doctor) => {
               const doctorInfo = doctorData[doctor.id] || doctor;
               return (
-                <DoctorCardClinic 
-                key={doctorInfo.id}
-                doctor={doctorInfo}
-                clickHandler={() => handleDoctorClick(doctorInfo)}
-                active={selectedDoctorId === doctor.id}
+                <DoctorCardClinic
+                  key={doctorInfo.id}
+                  doctor={doctorInfo}
+                  clickHandler={() => handleDoctorClick(doctorInfo)}
+                  active={selectedDoctorId === doctor.id}
                 />
               )
             })}
@@ -154,15 +182,15 @@ export default function Dashboard() {
                           <td className="p-4 font-medium">{p.token}</td>
                           <td className="p-4">{p.name}</td>
                           <td className="p-4">{p.phone}</td>
-                          <td className="p-4">{p.source || "Online"}</td>
+                          <td className="p-4">{p.source}</td>
                           <td className="p-4 text-gray-600">Waiting</td>
 
                           <td className="p-4">
-                          
-                              <button className="bg-slate-800 text-white min-w-30 px-4 py-2 rounded">
-                                Call
-                              </button>
-                           
+
+                            <button className="bg-slate-800 text-white min-w-30 px-4 py-2 rounded">
+                              Call
+                            </button>
+
                           </td>
                         </tr>
                       ))}
@@ -173,7 +201,9 @@ export default function Dashboard() {
 
               {/* Bottom Buttons - fixed position, won't move */}
               <div className="flex gap-4 shrink-0"> {/* Added shrink-0 */}
-                <button className="bg-slate-800 text-white px-5 py-3 rounded">
+                <button
+                  onClick={() => setShowWalkInModal(true)}
+                  className="bg-slate-800 text-white px-5 py-3 rounded">
                   + Add Walk-in
                 </button>
 
@@ -204,6 +234,104 @@ export default function Dashboard() {
           )}
 
       </div>
+
+      {/* duplicate patient popup */}
+      {showDuplicatePatient && (
+        <div className="fixed inset-0 z-40 bg-black/30 bg-opacity-40 flex items-center justify-center">
+          <div className="bg-white p-7 px-20 rounded-xl w-100 text-center space-y-4 flex flex-col items-center">
+            <BanIcon className='w-15 h-15 text-red-600' />
+            <h2 className='text-lg font-semibold'>A patient can not me enrolled more then once. </h2>
+            <button
+              onClick={() => setShowDuplicatePatient(false)}
+              className="w-full mt-4 bg-slate-800 text-white py-2.5 rounded-xl cursor-pointer">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Add walk-in Modal */}
+      {showWalkInModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+
+          {/* Modal */}
+          <div className="w-160 rounded-lg bg-white shadow-xl">
+
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-gray-300 px-6 py-4 bg-[#E6E6E6] rounded-t-lg">
+              <h2 className="text-xl font-bold text-slate-800">
+                Add Walk-in Patient
+              </h2>
+            </div>
+
+            {/* Body */}
+            <div className="px-6 py-5 space-y-4">
+
+              {/* Patient Name */}
+              <div>
+                <label className="block text-lg font-semibold text-slate-800 mb-1">
+                  Patient Name
+                </label>
+
+                <input
+                  type="text"
+                  placeholder="Patient Name"
+                  value={walkInPatientData.name}
+                  onChange={(e) => setWalkInPatientData({
+                    ...walkInPatientData,
+                    name: e.target.value
+                  })}
+                  className="w-full rounded-md border border-gray-300 px-3 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Phone Number */}
+              <div>
+                <label className="block text-lg font-semibold text-slate-800 mb-1">
+                  Phone Number
+                  <span className="text-gray-400 text-sm ml-1">(optional)</span>
+                </label>
+
+                <div className="flex items-center border border-gray-300 rounded-md px-3 py-3">
+                  <Phone size={26} className="text-transparent mr-2 fill-gray-400 border-black" />
+
+                  <input
+                    type="text"
+                    value={walkInPatientData.phone}
+                    onChange={(e) => setWalkInPatientData({
+                      ...walkInPatientData,
+                      phone: e.target.value
+                    })}
+                    className="w-full outline-none border-l border-gray-400 pl-2 text-lg"
+                    placeholder="Phone"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex justify-end gap-3 border-t border-gray-300 px-6 py-5 mt-4">
+
+              <button
+                onClick={() => setShowWalkInModal(false)}
+                className="rounded-md bg-gray-300 px-6 py-2 font-semibold text-gray-800 hover:bg-gray-200 cursor-pointer"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleWalkInPatient}
+                className="flex items-center gap-2 rounded-md bg-slate-800 px-5 py-2 text-white cursor-pointer hover:bg-slate-700"
+              >
+                <Plus size={20} />
+                Add to Queue
+              </button>
+
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }
