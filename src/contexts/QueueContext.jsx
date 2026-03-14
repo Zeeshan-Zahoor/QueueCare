@@ -133,9 +133,32 @@ export function QueueProvider( {children} ) {
 
         return result;
     }
+
+    const advanceToken = (doctorId, doctorInfo) => {
+        setDoctorData((prev) => {
+            const current = prev[doctorId] || doctorInfo;
+
+            if(!current)  return prev;
+
+            const queue = current.queue || [];
+
+            if(queue.length === 0) return prev;
+
+            const newCurrentlyServing = queue[0].token;
+            const newQueue = queue.slice(1);
+            return {
+                ...prev, 
+                [doctorId]: {
+                    ...current, 
+                    queue: newQueue,
+                    currentlyServing: newCurrentlyServing
+                }
+            }
+        })
+    }
  
     return (
-        <QueueContext.Provider value={{joinQueue, doctorData, exitQueue, activeToken}}>
+        <QueueContext.Provider value={{joinQueue, doctorData, exitQueue, activeToken, advanceToken}}>
             {children}
         </QueueContext.Provider>
     )

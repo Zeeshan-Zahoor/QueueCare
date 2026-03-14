@@ -25,7 +25,7 @@ export default function Dashboard() {
         );
       }
 
-  const { doctorData } = useContext(QueueContext);
+  const { doctorData, advanceToken } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor.id);
@@ -34,6 +34,10 @@ export default function Dashboard() {
   const selectedDoctor = clinic.doctors.find(d => d.id === selectedDoctorId);
 
   const doctorInfo = selectedDoctorId ? doctorData[selectedDoctorId] || selectedDoctor : null;
+
+  const handleCallNextPatient = () => {
+    advanceToken(selectedDoctorId, doctorInfo);
+  };
   
   return (
     <div className="flex flex-col max-w-screen-2xl m-auto h-screen">
@@ -177,7 +181,10 @@ export default function Dashboard() {
                   Delay Queue
                 </button>
 
-                <button className="bg-green-600 text-white px-5 py-3 rounded">
+                <button
+                  onClick={handleCallNextPatient}
+                  disabled={doctorInfo.queue.length === 0}
+                  className="bg-green-600 text-white px-5 py-3 rounded cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed">
                   Call Next Patient →
                 </button>
               </div>
