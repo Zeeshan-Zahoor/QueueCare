@@ -64,8 +64,10 @@ export default function Dashboard() {
       name: "",
       phone: ""
     });
+  };
 
-  }
+  const tokensLeft = doctorInfo?.maxTokens - (doctorInfo?.currentlyServing + doctorInfo?.queue.length);
+  const isFull = tokensLeft <= 0;
 
   return (
     <div className="flex flex-col max-w-screen-2xl m-auto h-screen">
@@ -203,7 +205,8 @@ export default function Dashboard() {
               <div className="flex gap-4 shrink-0"> {/* Added shrink-0 */}
                 <button
                   onClick={() => setShowWalkInModal(true)}
-                  className="bg-slate-800 text-white px-5 py-3 rounded">
+                  disabled={isFull}
+                  className="bg-slate-800 text-white px-5 py-3 rounded disabled:bg-gray-400 disabled:cursor-not-allowed">
                   + Add Walk-in
                 </button>
 

@@ -1,5 +1,19 @@
 import { createContext, useEffect, useState } from "react";
 
+import {
+    loadDoctorData, 
+    saveDoctorData,
+    loadActiveToken, 
+    saveActiveToken, 
+    clearActiveToken
+} from "../utlis/storage.js";
+
+import { 
+    joinQueueLogic,
+    exitQueueLogic,
+    advanceTokenLogic
+ } from "../services/queueService.js";
+
 export const QueueContext = createContext();
 
 export function QueueProvider( {children} ) {
@@ -8,154 +22,76 @@ export function QueueProvider( {children} ) {
 
     //for persisting doctor data
     useEffect(() => {
-        const storedDoctorData = JSON.parse(localStorage.getItem("storedDoctorData"));
-
-        if(storedDoctorData) {
-            setDoctorData(storedDoctorData);
-        }
-    }, [])
+        setDoctorData(loadDoctorData());
+        setActiveToken(loadActiveToken());
+    }, []);
 
     useEffect(() => {
-        localStorage.setItem("storedDoctorData", JSON.stringify(doctorData));
+        saveDoctorData(doctorData);
     }, [doctorData])
 
-
     //for patient token accessibility
-    useEffect(() => {
-        const stored = localStorage.getItem("activeToken");
-        if(stored) {
-            setActiveToken(JSON.parse(stored));
-        }
-    }, [])
+    // useEffect(() => {
+    //     const stored = localStorage.getItem("activeToken");
+    //     if(stored) {
+    //         setActiveToken(JSON.parse(stored));
+    //     }
+    // }, [])
 
     useEffect(() => {
         if(activeToken) {
-            localStorage.setItem("activeToken", JSON.stringify(activeToken))
+            saveActiveToken(activeToken);
         } else {
-            localStorage.removeItem("activeToken");
+           clearActiveToken();
         }
     }, [activeToken])
 
+
+
     const joinQueue = (doctorId, doctorInfo, patientData, source) => {
-        let result = null;
+        const result = joinQueueLogic(doctorInfo, patientData, source);
 
-        setDoctorData((prev) => {
-            const current = prev[doctorId] || doctorInfo;
-            if(!current) return prev;
+        if(result.error === "duplicate") return -1;
+        if(result.error === "full") return null;
 
-            const queue = current.queue || [];
+        const { newToken, updatedDoctor } = result;
 
-            //Queue Full
-            if (current.maxTokens - (current.currentlyServing + queue.length) <= 0) {
-                result = null;
-                return prev;
-            }
+        setDoctorData((prev) => ({
+            ...prev,
+            [doctorId]: updatedDoctor
+        }));
 
-            //Duplicate phone check
-            const patientExists = queue.some((patient) => patient.phone === patientData.phone);
-
-            if(patientExists) {
-                result = -1 // duplicate
-                return prev;
-            }
-
-            const newToken = current.lastIssuedToken + 1;
-
-            result = newToken;
-
-            return {
-                ...prev, 
-                [doctorId]: {
-                    ...current, 
-                    lastIssuedToken: newToken,
-                    queue: [
-                        ...queue, 
-                        {
-                            token: newToken, 
-                            name: patientData.name, 
-                            phone: patientData.phone,
-                            source,
-                        }
-                    ]
-                }
-            }
+        setActiveToken({
+            doctorId,
+            token: newToken
         })
-
-        if(typeof result === "number") {
-            setActiveToken({
-                doctorId, 
-                token: result,
-            })
-        }
-
-        return result;
+        return newToken;
     }
 
     const exitQueue = (doctorId, token, doctorInfo) => {
-        let result = false;
+        const result = exitQueueLogic(doctorInfo, token);
 
-        setDoctorData((prev) => {
-            const current = prev[doctorId] || doctorInfo;
+        if(result.error) return false;
 
-            if(!current) return prev;
+        setDoctorData((prev) => ({
+            ...prev,
+            [doctorId]: result.updatedDoctor
+        }));
 
-            const queue = current.queue || [];
+        setActiveToken(null);
 
-            //prevent cancellation if token already being served
-            if(token <= current.currentlyServing) {
-                result = false;
-                return prev;
-            }
-
-            //check if token actually exists
-            const tokenExists = queue.some((patient) => patient.token === token)
-
-            if(!tokenExists) {
-                result = false;
-                return prev;
-            }
-            
-            const newQueue = queue.filter((patient) => patient.token !== token);
-
-            result = true;
-
-            return {
-                ...prev, 
-                [doctorId]: {
-                    ...current, 
-                    queue: newQueue,
-                }
-            }
-        })
-
-        if(result) {
-            setActiveToken(null);
-        }
-
-        return result;
+        return true;
     }
 
     const advanceToken = (doctorId, doctorInfo) => {
-        setDoctorData((prev) => {
-            const current = prev[doctorId] || doctorInfo;
+        const result = advanceTokenLogic(doctorInfo);
 
-            if(!current)  return prev;
+        if(result.error) return;
 
-            const queue = current.queue || [];
-
-            if(queue.length === 0) return prev;
-
-            const newCurrentlyServing = queue[0].token;
-            const newQueue = queue.slice(1);
-            return {
-                ...prev, 
-                [doctorId]: {
-                    ...current, 
-                    queue: newQueue,
-                    currentlyServing: newCurrentlyServing
-                }
-            }
-        })
+        setDoctorData((prev) => ({
+            ...prev,
+            [doctorId]: result.updatedDoctor
+        }))
     }
  
     return (
