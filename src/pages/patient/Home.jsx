@@ -8,7 +8,7 @@ import BottomNav from '../../components/common/BottomNav';
 
 export default function Home() {
   const navigate = useNavigate();
-
+  
   return (
     <div className='max-w-md mx-auto px-4 py-3 space-y-2 h-dvh'>
 
@@ -49,7 +49,7 @@ export default function Home() {
       </div>
 
 
-      {/* Quick Access Section */}
+      {/* Nearby Project Section */}
       <div>
         <h3 className="text-lg font-semibold text-slate-700 mb-2 mt-4">
           Nearby Medical Centers

@@ -1,4 +1,7 @@
 export const joinQueueLogic = (doctorInfo, patientData, source) => {
+    if (doctorInfo.status === "closed") {
+        return { error: "closed" };
+    }
 
     const queue = doctorInfo.queue || [];
 
@@ -7,43 +10,42 @@ export const joinQueueLogic = (doctorInfo, patientData, source) => {
         (p) => p.phone && p.phone === patientData.phone
     )
 
-    if(duplicate) return { error: "duplicate" }
+    if (duplicate) return { error: "duplicate" }
 
     //queue full check
-    if(doctorInfo.maxTokens - (doctorInfo.currentlyServing + queue.length) <= 0) {
+    if (doctorInfo.maxTokens - (doctorInfo.currentlyServing + queue.length) <= 0) {
         return { error: "Full" };
     }
 
     const newToken = doctorInfo.lastIssuedToken + 1;
 
     const updatedDoctor = {
-        ...doctorInfo, 
+        ...doctorInfo,
         lastIssuedToken: newToken,
         queue: [
-            ...queue, 
+            ...queue,
             {
-                token: newToken, 
-                name: patientData.name, 
+                token: newToken,
+                name: patientData.name,
                 phone: patientData.phone,
                 source: source
             }
         ]
     }
 
-    return {newToken, updatedDoctor};
+    return { newToken, updatedDoctor };
 }
-
 
 export const exitQueueLogic = (doctorInfo, token) => {
     const queue = doctorInfo.queue || [];
 
-    if(token <= doctorInfo.currentlyServing) {
-        return { error:  "alreadyServing" }
+    if (token <= doctorInfo.currentlyServing) {
+        return { error: "alreadyServing" }
     }
 
     const exists = queue.some((p) => p.token === token);
 
-    if(!exists) {
+    if (!exists) {
         return { error: "notFound" };
     }
 
@@ -51,25 +53,36 @@ export const exitQueueLogic = (doctorInfo, token) => {
 
     return {
         updatedDoctor: {
-            ...doctorInfo, 
+            ...doctorInfo,
             queue: newQueue
         }
     }
 }
 
-
 export const advanceTokenLogic = (doctorInfo) => {
     const queue = doctorInfo.queue || [];
 
-    if(queue.length === 0) return { error: "empty" };
+    if (queue.length === 0) return { error: "empty" };
 
     const newCurrentlyServing = queue[0].token;
 
     return {
         updatedDoctor: {
-            ...doctorInfo, 
-            currentlyServing: newCurrentlyServing, 
+            ...doctorInfo,
+            currentlyServing: newCurrentlyServing,
             queue: queue.slice(1)
+        }
+    }
+}
+
+export const endDayLogic = (doctorInfo) => {
+    return {
+        updatedDoctor: {
+            ...doctorInfo,
+            currentlyServing: 0,
+            lastIssuedToken: 0,
+            status: "closed",
+            queue: []
         }
     }
 }

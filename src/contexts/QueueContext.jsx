@@ -11,7 +11,8 @@ import {
 import { 
     joinQueueLogic,
     exitQueueLogic,
-    advanceTokenLogic
+    advanceTokenLogic, 
+    endDayLogic
  } from "../services/queueService.js";
 
 export const QueueContext = createContext();
@@ -53,6 +54,7 @@ export function QueueProvider( {children} ) {
 
         if(result.error === "duplicate") return -1;
         if(result.error === "full") return null;
+        if (result.error === "closed") return null;
 
         const { newToken, updatedDoctor } = result;
 
@@ -94,8 +96,16 @@ export function QueueProvider( {children} ) {
         }))
     }
  
+    const endDay = (doctorId, doctorInfo) => {
+        const result = endDayLogic(doctorInfo);
+        setDoctorData((prev) => ({
+            ...prev,
+            [doctorId]: result.updatedDoctor
+        }))
+    }
+
     return (
-        <QueueContext.Provider value={{joinQueue, doctorData, exitQueue, activeToken, advanceToken}}>
+        <QueueContext.Provider value={{joinQueue, doctorData, exitQueue, activeToken, advanceToken, endDay}}>
             {children}
         </QueueContext.Provider>
     )

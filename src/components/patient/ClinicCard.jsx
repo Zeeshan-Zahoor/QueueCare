@@ -1,10 +1,16 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MapPin, Search } from 'lucide-react';
+import { useContext } from 'react';
+import { QueueContext } from '../../contexts/QueueContext';
 
 export default function ClinicCard({ clinic }) {
     const navigate = useNavigate();
-
+    const { doctorData } = useContext(QueueContext);
+    const isOpen = clinic.doctors.some((doctor) => {
+        const doctorInfo = doctorData[doctor.id] || doctor;
+        return doctorInfo.status === "open";
+    });
     return (
         <div
             onClick={() => navigate(`/clinic/${clinic.id}`)}
@@ -29,18 +35,18 @@ export default function ClinicCard({ clinic }) {
                 <span>{clinic.location}</span>
             </div>
 
-            <hr className='text-[#D0D3D9] mt-2'/>
+            <hr className='text-[#D0D3D9] mt-2' />
 
             <div className="flex justify-between items-center mt-1 text-sm">
                 <span>{clinic.doctors.length} Doctors</span>
 
                 <span
-                    className={`font-medium ${clinic.status === "Open"
+                    className={`font-medium ${isOpen
                         ? "text-green-600"
                         : "text-red-600"
                         }`}
                 >
-                    {clinic.status}
+                    {isOpen ? "Open" : "Closed"}
                 </span>
             </div>
 

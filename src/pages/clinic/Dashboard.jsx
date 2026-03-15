@@ -34,7 +34,7 @@ export default function Dashboard() {
     );
   }
 
-  const { doctorData, advanceToken, joinQueue } = useContext(QueueContext);
+  const { doctorData, advanceToken, joinQueue, endDay } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor.id);
@@ -69,6 +69,11 @@ export default function Dashboard() {
   const tokensLeft = doctorInfo?.maxTokens - (doctorInfo?.currentlyServing + doctorInfo?.queue.length);
   const isFull = tokensLeft <= 0;
 
+  const handleEndDay = () => {
+    endDay(selectedDoctorId, doctorInfo);
+  }
+
+
   return (
     <div className="flex flex-col max-w-screen-2xl m-auto h-screen">
       {/* Top Bar - unchanged */}
@@ -83,12 +88,20 @@ export default function Dashboard() {
           {(new Date()).toDateString()}
         </div>
 
-        <div className="flex items-center gap-2 text-gray-700">
-          <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-          {clinic.status === "Open" ? "Active" : "Closed"}
-        </div>
+        {doctorInfo && (
+          <div className="flex items-center gap-2 text-gray-700">
+            <span
+              className={`w-3 h-3 rounded-full ${doctorInfo.status === "open" ? "bg-green-500" : "bg-red-500"
+                }`}
+            />
+            {doctorInfo.status === "open" ? "Clinic Active" : "Clinic Closed"}
+          </div>
+        )}
 
-        <button className="bg-slate-800 text-white px-4 py-2 rounded">
+        <button
+          onClick={handleEndDay}
+          disabled={doctorInfo?.status === "closed"}
+          className="bg-slate-800 text-white px-4 py-2 rounded disabled:bg-gray-400">
           End Day
         </button>
       </div>

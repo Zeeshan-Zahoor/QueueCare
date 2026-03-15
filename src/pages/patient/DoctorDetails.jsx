@@ -139,10 +139,12 @@ function DoctorDetails() {
       {/* Push button to bottom */}
       <button
         onClick={() => setShowForm(true)}
-        disabled={isFull}
+        disabled={isFull || doctorInfo.status === "closed"}
         className="mt-auto w-full bg-[#1C2A3A] text-white py-3 rounded-4xl font-medium disabled:bg-[#455970]"
       >
-        {isFull ? "No more tokens" : "Get Token"}
+        {doctorInfo.status === "closed"
+          ? "Clinic Closed / Doctor not available" : (isFull ? "No more tokens" : "Get Token")
+        }
       </button>
 
 
