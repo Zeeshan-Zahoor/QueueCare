@@ -12,7 +12,7 @@ import {
     joinQueueLogic,
     exitQueueLogic,
     advanceTokenLogic, 
-    endDayLogic, 
+    toggleDayLogic, 
     toggleConsultationLogic
  } from "../services/queueService.js";
 
@@ -97,8 +97,8 @@ export function QueueProvider( {children} ) {
         }))
     }
  
-    const endDay = (doctorId, doctorInfo) => {
-        const result = endDayLogic(doctorInfo);
+    const toggleDay = (doctorId, doctorInfo) => {
+        const result = toggleDayLogic(doctorInfo);
         setDoctorData((prev) => ({
             ...prev,
             [doctorId]: result.updatedDoctor
@@ -115,7 +115,7 @@ export function QueueProvider( {children} ) {
     }
 
     return (
-        <QueueContext.Provider value={{joinQueue, doctorData, exitQueue, activeToken, advanceToken, endDay, toggleConsultation}}>
+        <QueueContext.Provider value={{joinQueue, doctorData, exitQueue, activeToken, advanceToken, toggleDay, toggleConsultation}}>
             {children}
         </QueueContext.Provider>
     )

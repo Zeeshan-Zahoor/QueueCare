@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Header from '../../components/common/Header';
 import doctorIcon from "../../assets/doctorIcon.png";
 import consultingIcon from "../../assets/consultingIcon.png";
-import { Clock, CircleXIcon, BanIcon } from 'lucide-react';
+import { Clock, CircleXIcon, BanIcon, AlertTriangle } from 'lucide-react';
 import { useParams, useLocation } from 'react-router-dom';
 import { clinics } from '../../data/mockData';
 import { useContext } from 'react';
@@ -101,8 +101,8 @@ export default function QueueStatus() {
       </div>
 
       {doctorInfo.consultationStatus === "paused" && (
-        <div className='bg-yellow-100 text-yellow-800 p-3 rounded'>
-          ⚠️ Consultation temporarily paused. Doctor will resume shortly.
+        <div className='bg-yellow-100 text-yellow-800 p-3 rounded flex items-center gap-3'>
+          <AlertTriangle className="text-yellow-700 w-8 h-8" /> Consultation temporarily paused. Doctor will resume shortly.
         </div>
       )}
 

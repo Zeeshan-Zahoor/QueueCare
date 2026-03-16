@@ -75,14 +75,24 @@ export const advanceTokenLogic = (doctorInfo) => {
     }
 }
 
-export const endDayLogic = (doctorInfo) => {
+export const toggleDayLogic = (doctorInfo) => {
+    if(doctorInfo.status === "open") {
+        return {
+            updatedDoctor: {
+                ...doctorInfo,
+                currentlyServing: 0,
+                lastIssuedToken: 0,
+                status: "closed",
+                queue: []
+            }
+        }
+    }
+
     return {
         updatedDoctor: {
             ...doctorInfo,
-            currentlyServing: 0,
-            lastIssuedToken: 0,
-            status: "closed",
-            queue: []
+            status: "open",
+            consultationStatus: "active"
         }
     }
 }

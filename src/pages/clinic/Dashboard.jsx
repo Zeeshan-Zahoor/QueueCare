@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Building2, Phone, Plus, BanIcon, ArrowRight } from "lucide-react";
+import { Building2, Phone, Plus, BanIcon, ArrowRight, AlertTriangle } from "lucide-react";
 import cloudIcon from "../../assets/cloud_icon.jpg";
 import DoctorCardClinic from "../../components/clinic/DoctorCardClinic";
 import { useParams } from "react-router-dom";
@@ -34,7 +34,7 @@ export default function Dashboard() {
     );
   }
 
-  const { doctorData, advanceToken, joinQueue, endDay, toggleConsultation } = useContext(QueueContext);
+  const { doctorData, advanceToken, joinQueue, toggleDay, toggleConsultation } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor.id);
@@ -69,8 +69,8 @@ export default function Dashboard() {
   const tokensLeft = doctorInfo?.maxTokens - (doctorInfo?.currentlyServing + doctorInfo?.queue.length);
   const isFull = tokensLeft <= 0;
 
-  const handleEndDay = () => {
-    endDay(selectedDoctorId, doctorInfo);
+  const handleToggleDay = () => {
+    toggleDay(selectedDoctorId, doctorInfo);
   }
 
 
@@ -94,15 +94,14 @@ export default function Dashboard() {
               className={`w-3 h-3 rounded-full ${doctorInfo.status === "open" ? "bg-green-500" : "bg-red-500"
                 }`}
             />
-            {doctorInfo.status === "open" ? "Clinic Active" : "Clinic Closed"}
+            {doctorInfo.status === "open" ? "Consultation Active" : "Consultation Closed"}
           </div>
         )}
 
         <button
-          onClick={handleEndDay}
-          disabled={doctorInfo?.status === "closed"}
-          className="bg-slate-800 text-white px-4 py-2 rounded disabled:bg-gray-400">
-          End Day
+          onClick={handleToggleDay}
+          className={`${doctorInfo?.status === "open" ? "bg-slate-800" : "bg-green-700"} text-white px-4 py-2 rounded disabled:bg-gray-400`}>
+          {doctorInfo?.status === "open" ? "End Consultation" : "Start Consultation"}
         </button>
       </div>
 
@@ -146,24 +145,49 @@ export default function Dashboard() {
         {doctorInfo ? (
           <div className="flex flex-col flex-1 min-h-0"> {/* Added min-h-0 */}
 
+            {doctorInfo?.consultationStatus === "paused" && (
+              <div className="w-full bg-yellow-100 border-b border-yellow-300 px-6 py-3 flex items-center gap-3">
+
+                {/* Warning Icon */}
+                <AlertTriangle className="text-yellow-700 w-6 h-6" />
+
+                {/* Text */}
+                <div className="flex flex-col">
+                  <span className="font-semibold text-yellow-800">
+                    Consultation Paused
+                  </span>
+                  <span className="text-sm text-yellow-700">
+                    Doctor temporarily unavailable. Queue is currently on hold.
+                  </span>
+                </div>
+
+              </div>
+            )}
             {/* Content */}
             <div className="p-5 flex flex-col h-full gap-6 min-h-0"> {/* Added min-h-0 */}
 
               {/* Cards - fixed height, won't grow */}
               <div className="grid grid-cols-3 gap-6 shrink-0"> {/* Added shrink-0 */}
+
                 <div className="bg-white p-6 rounded shadow-sm">
-                  <p className="text-gray-500">Current Token</p>
-                  <div className="text-4xl font-bold mt-2">#{doctorInfo.currentlyServing}</div>
-                  <p className="text-gray-600 mt-1">Now Serving</p>
+                  <p className="text-slate-700 font-medium">Now Serving</p>
+
+                  <div className="text-4xl font-bold mt-2">
+                    Token: #{doctorInfo.currentlyServing || "-"}
+                  </div>
+
+                  <p className="text-gray-600 mt-2">
+                    Patient under consultation
+                  </p>
                 </div>
 
                 <div className="bg-white p-6 rounded shadow-sm">
-                  <p className="text-gray-500">Next in Queue</p>
-                  <div className="text-4xl font-bold text-green-600 mt-2">#{doctorInfo?.queue?.[0]?.token || "-"}</div>
+                  <p className="text-slate-700 font-medium">Next in Queue</p>
+                  <div className="text-4xl font-bold text-green-600 mt-2">Token: #{doctorInfo?.queue?.[0]?.token || "-"}</div>
                 </div>
 
                 <div className="bg-white p-6 rounded shadow-sm">
-                  <p className="text-gray-500">Waiting Patients</p>
+                  <p className="text-slate-700 font-medium">Waiting Patients</p>
                   <div className="text-3xl font-bold text-orange-500 mt-2">{doctorInfo?.queue?.length || 0} Patients</div>
                 </div>
               </div>
@@ -220,10 +244,10 @@ export default function Dashboard() {
                   onClick={() => setShowWalkInModal(true)}
                   disabled={isFull || doctorInfo.consultationStatus === "paused"}
                   className="bg-slate-800 text-white px-5 py-3 rounded text-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed">
-                  <div className="flex items-center gap-1"><Plus className="font-medium"/> Add Walk-in</div>
+                  <div className="flex items-center gap-1"><Plus className="font-medium" /> Add Walk-in</div>
                 </button>
 
-                <button 
+                <button
                   onClick={() => toggleConsultation(selectedDoctorId, doctorInfo)}
                   className={`text-white px-5 py-3 rounded cursor-pointer text-lg font-medium ${doctorInfo.consultationStatus === "active" ? "bg-orange-400" : "bg-green-500"}`}>
                   {doctorInfo.consultationStatus === "paused" ? "Resume Consultation" : "Hold Consultation"}
@@ -233,7 +257,7 @@ export default function Dashboard() {
                   onClick={handleCallNextPatient}
                   disabled={doctorInfo.queue.length === 0 || doctorInfo.consultationStatus === "paused"}
                   className="bg-green-600 text-white px-5 py-3 rounded cursor-pointer text-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2">
-                  Call Next Patient <ArrowRight className="font-medium"/>
+                  Call Next Patient <ArrowRight className="font-medium" />
                 </button>
               </div>
             </div>
