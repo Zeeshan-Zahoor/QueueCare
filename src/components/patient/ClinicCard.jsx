@@ -11,11 +11,14 @@ export default function ClinicCard({ clinic }) {
         const doctorInfo = doctorData[doctor.id] || doctor;
         return doctorInfo.status === "open";
     });
+    const openDoctors = clinic.doctors.filter((doctor) => {
+        const doctorInfo = doctorData[doctor.id] || doctor;
+        return doctorInfo.status === "open";
+    }).length;
     return (
         <div
             onClick={() => navigate(`/clinic/${clinic.id}`)}
             className="bg-white rounded-xl shadow-[0_10px_25px_rgba(0,0,0,0.2)] p-4 cursor-pointer hover:shadow-[0_20px_40px_rgba(0,0,0,0.25)] transition duration-300"
-
         >
             <div className="w-full h-44 overflow-hidden rounded-xl mb-2">
                 <img
@@ -24,7 +27,6 @@ export default function ClinicCard({ clinic }) {
                     className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                 />
             </div>
-
 
             <h3 className="font-semibold text-slate-800">
                 {clinic.name}
@@ -46,7 +48,7 @@ export default function ClinicCard({ clinic }) {
                         : "text-red-600"
                         }`}
                 >
-                    {isOpen ? "Open" : "Closed"}
+                    {isOpen ? `${openDoctors} Doctors • Open` : "Closed"}
                 </span>
             </div>
 

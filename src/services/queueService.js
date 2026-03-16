@@ -86,3 +86,12 @@ export const endDayLogic = (doctorInfo) => {
         }
     }
 }
+
+export const toggleConsultationLogic = (doctorInfo) => {
+    return {
+        updatedDoctor: {
+            ...doctorInfo, 
+            consultationStatus: doctorInfo.consultationStatus === "active" ? "paused" : "active"
+        }
+    }
+}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Building2, Phone, Plus, BanIcon } from "lucide-react";
+import { Building2, Phone, Plus, BanIcon, ArrowRight } from "lucide-react";
 import cloudIcon from "../../assets/cloud_icon.jpg";
 import DoctorCardClinic from "../../components/clinic/DoctorCardClinic";
 import { useParams } from "react-router-dom";
@@ -34,7 +34,7 @@ export default function Dashboard() {
     );
   }
 
-  const { doctorData, advanceToken, joinQueue, endDay } = useContext(QueueContext);
+  const { doctorData, advanceToken, joinQueue, endDay, toggleConsultation } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor.id);
@@ -218,20 +218,22 @@ export default function Dashboard() {
               <div className="flex gap-4 shrink-0"> {/* Added shrink-0 */}
                 <button
                   onClick={() => setShowWalkInModal(true)}
-                  disabled={isFull}
-                  className="bg-slate-800 text-white px-5 py-3 rounded disabled:bg-gray-400 disabled:cursor-not-allowed">
-                  + Add Walk-in
+                  disabled={isFull || doctorInfo.consultationStatus === "paused"}
+                  className="bg-slate-800 text-white px-5 py-3 rounded text-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed">
+                  <div className="flex items-center gap-1"><Plus className="font-medium"/> Add Walk-in</div>
                 </button>
 
-                <button className="bg-orange-500 text-white px-5 py-3 rounded">
-                  Delay Queue
+                <button 
+                  onClick={() => toggleConsultation(selectedDoctorId, doctorInfo)}
+                  className={`text-white px-5 py-3 rounded cursor-pointer text-lg font-medium ${doctorInfo.consultationStatus === "active" ? "bg-orange-400" : "bg-green-500"}`}>
+                  {doctorInfo.consultationStatus === "paused" ? "Resume Consultation" : "Hold Consultation"}
                 </button>
 
                 <button
                   onClick={handleCallNextPatient}
-                  disabled={doctorInfo.queue.length === 0}
-                  className="bg-green-600 text-white px-5 py-3 rounded cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed">
-                  Call Next Patient →
+                  disabled={doctorInfo.queue.length === 0 || doctorInfo.consultationStatus === "paused"}
+                  className="bg-green-600 text-white px-5 py-3 rounded cursor-pointer text-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2">
+                  Call Next Patient <ArrowRight className="font-medium"/>
                 </button>
               </div>
             </div>

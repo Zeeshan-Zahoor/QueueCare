@@ -100,6 +100,12 @@ export default function QueueStatus() {
         </div>
       </div>
 
+      {doctorInfo.consultationStatus === "paused" && (
+        <div className='bg-yellow-100 text-yellow-800 p-3 rounded'>
+          ⚠️ Consultation temporarily paused. Doctor will resume shortly.
+        </div>
+      )}
+
       {/* Queue progress bar section */}
       <div className='flex justify-between items-end-safe gap-2 py-2'>
         {/* consulting icon */}

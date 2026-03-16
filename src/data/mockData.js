@@ -11,6 +11,7 @@ export const clinics = [
         maxTokens: 15,
         currentlyServing: 10,
         consultationTime: 10,
+        consultationStatus: "active",
         lastIssuedToken: 12,
         image: "https://tse1.mm.bing.net/th/id/OIP.zkty80FhzzrzCJ0uBg1zIwAAAA?rs=1&pid=ImgDetMain&o=7&rm=3",
         status: "open",
@@ -26,6 +27,7 @@ export const clinics = [
         maxTokens: 25,
         currentlyServing: 18,
         consultationTime: 15,
+        consultationStatus: "active",
         lastIssuedToken: 21,
         image: "https://tse1.mm.bing.net/th/id/OIP.yE8zyTz-OJwswooF9QFC1AHaLH?rs=1&pid=ImgDetMain&o=7&rm=3",
         status: "open",
@@ -53,6 +55,7 @@ export const clinics = [
         maxTokens: 15,
         currentlyServing: 7,
         consultationTime: 25,
+        consultationStatus: "active",
         lastIssuedToken: 11,
         image:
           "https://tse1.explicit.bing.net/th/id/OIP.iFrQzYQ-Pc8LtwbwzjiVswAAAA?pid=ImgDet&w=204&h=306&c=7&o=7&rm=3",
@@ -71,6 +74,7 @@ export const clinics = [
         maxTokens: 10,
         currentlyServing: 4,
         consultationTime: 5,
+        consultationStatus: "active",
         lastIssuedToken: 5,
         image:
           "https://tse2.mm.bing.net/th/id/OIP.yY20jvQ_48lWbIwlirpVkAHaE7?w=626&h=417&rs=1&pid=ImgDetMain&o=7&rm=3",
