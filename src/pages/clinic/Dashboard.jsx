@@ -34,7 +34,7 @@ export default function Dashboard() {
     );
   }
 
-  const { doctorData, advanceToken, joinQueue, toggleDay, toggleConsultation } = useContext(QueueContext);
+  const { doctorData, advanceToken, joinQueue, toggleDay, toggleConsultation, exitQueue } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor.id);
@@ -47,6 +47,11 @@ export default function Dashboard() {
   const handleCallNextPatient = () => {
     advanceToken(selectedDoctorId, doctorInfo);
   };
+
+  const handleRemovePatient = (token) => {
+    console.log("Remove Clicked")
+    exitQueue(selectedDoctorId, token, doctorInfo)
+  }
 
   const handleWalkInPatient = () => {
     if (!walkInPatientData.name) return;
@@ -226,8 +231,10 @@ export default function Dashboard() {
 
                           <td className="p-4">
 
-                            <button className="bg-slate-800 text-white min-w-30 px-4 py-2 rounded">
-                              Call
+                            <button
+                              onClick={() => handleRemovePatient(p.token)}
+                              className="bg-slate-800 text-white min-w-30 px-4 py-2 rounded">
+                              Remove
                             </button>
 
                           </td>
