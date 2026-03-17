@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Building2, Phone, Plus, BanIcon, ArrowRight, AlertTriangle } from "lucide-react";
 import cloudIcon from "../../assets/cloud_icon.jpg";
 import DoctorCardClinic from "../../components/clinic/DoctorCardClinic";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { clinics } from "../../data/mockData";
 import { useContext } from "react";
 import { QueueContext } from "../../contexts/QueueContext";
 
 
 export default function Dashboard() {
+  const navigate = useNavigate();
 
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
 
@@ -120,7 +121,9 @@ export default function Dashboard() {
               Dashboard
             </button>
 
-            <button className="w-full flex items-center gap-3 text-gray-600 px-4 py-2 rounded hover:bg-gray-100">
+            <button 
+            onClick={() => navigate(`/clinic/${clinicId}/settings`)}
+            className="w-full flex items-center gap-3 text-gray-600 px-4 py-2 rounded hover:bg-gray-100">
               Settings
             </button>
           </div>
