@@ -105,3 +105,13 @@ export const toggleConsultationLogic = (doctorInfo) => {
         }
     }
 }
+
+export const updateDoctorSettingsLogic = (doctorInfo, updatedSettings) => {
+    return {
+        updatedDoctor: {
+            ...doctorInfo,
+            consultationTime: updatedSettings.consultationTime,
+            maxTokens: updatedSettings.maxTokens,
+        }
+    }
+}

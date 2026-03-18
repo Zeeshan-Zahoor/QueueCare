@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Building2, Phone, Plus, BanIcon, ArrowRight, AlertTriangle } from "lucide-react";
+import { Building2, Phone, Plus, BanIcon, ArrowRight, AlertTriangle, Settings } from "lucide-react";
 import cloudIcon from "../../assets/cloud_icon.jpg";
 import DoctorCardClinic from "../../components/clinic/DoctorCardClinic";
 import { useParams, useNavigate } from "react-router-dom";
 import { clinics } from "../../data/mockData";
 import { useContext } from "react";
 import { QueueContext } from "../../contexts/QueueContext";
-
+import DoctorSettingsModal from "../../components/clinic/DoctorSettingsModal";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -20,6 +20,8 @@ export default function Dashboard() {
     name: "",
     phone: "",
   })
+
+  const [doctorSettingsModal, setDoctorSettingsModal] = useState(false);
 
   const { clinicId } = useParams();
 
@@ -35,7 +37,7 @@ export default function Dashboard() {
     );
   }
 
-  const { doctorData, advanceToken, joinQueue, toggleDay, toggleConsultation, exitQueue } = useContext(QueueContext);
+  const { doctorData, advanceToken, joinQueue, toggleDay, toggleConsultation, exitQueue, updateDoctorSettings } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor.id);
@@ -79,6 +81,9 @@ export default function Dashboard() {
     toggleDay(selectedDoctorId, doctorInfo);
   }
 
+  const handleSaveDoctorSettings = (updatedSettings) => {
+    updateDoctorSettings(selectedDoctorId,updatedSettings);
+  }
 
   return (
     <div className="flex flex-col max-w-screen-2xl m-auto h-screen">
@@ -177,10 +182,10 @@ export default function Dashboard() {
               {/* Cards - fixed height, won't grow */}
               <div className="grid grid-cols-3 gap-6 shrink-0"> {/* Added shrink-0 */}
 
-                <div className="bg-white p-6 rounded shadow-sm">
+                <div className="bg-white p-6 rounded shadow-lg">
                   <p className="text-slate-700 font-medium">Now Serving</p>
 
-                  <div className="text-4xl font-bold mt-2">
+                  <div className="text-4xl text-slate-800 font-bold mt-2">
                     Token: #{doctorInfo.currentlyServing || "-"}
                   </div>
 
@@ -189,12 +194,12 @@ export default function Dashboard() {
                   </p>
                 </div>
 
-                <div className="bg-white p-6 rounded shadow-sm">
+                <div className="bg-white p-6 rounded shadow-lg">
                   <p className="text-slate-700 font-medium">Next in Queue</p>
                   <div className="text-4xl font-bold text-green-600 mt-2">Token: #{doctorInfo?.queue?.[0]?.token || "-"}</div>
                 </div>
 
-                <div className="bg-white p-6 rounded shadow-sm">
+                <div className="bg-white p-6 rounded shadow-lg">
                   <p className="text-slate-700 font-medium">Waiting Patients</p>
                   <div className="text-3xl font-bold text-orange-500 mt-2">{doctorInfo?.queue?.length || 0} Patients</div>
                 </div>
@@ -202,13 +207,21 @@ export default function Dashboard() {
 
               {/* Table Container - FIXED: This will scroll */}
               <div className="bg-gray-200 rounded shadow-sm flex flex-col flex-1 min-h-0"> {/* Added min-h-0 */}
-                <div className="p-6 font-semibold text-lg border-b shrink-0"> {/* Added shrink-0 */}
-                  Today’s Queue
+                <div className="p-3 pl-6 font-bold text-xl text-slate-800 border-b shrink-0 flex justify-between items-center"> {/* Added shrink-0 */}
+                  <div>
+                    Today's Queue
+                  </div>
+                  <button
+                  onClick={() => setDoctorSettingsModal(true)}
+                   className="bg-white border border-slate-300 text-lg px-5 py-2 rounded-md flex items-center gap-2 cursor-pointer hover:bg-slate-100 hover:border-slate-400">
+                    <Settings className="w-5 h-5"/>
+                    Settings
+                  </button>
                 </div>
 
                 {/* Scrollable table area */}
                 <div className="flex-1 overflow-auto min-h-0">
-                  <table className="w-full text-left">
+                  <table className="w-full">
                     <thead className="bg-gray-100 text-gray-600 sticky top-0 z-10">
                       <tr> {/* Remove any whitespace between thead and tr */}
                         <th className="p-4">Token</th>
@@ -220,7 +233,7 @@ export default function Dashboard() {
                       </tr>
                     </thead>
 
-                    <tbody>
+                    <tbody className="text-center">
                       {doctorInfo?.queue?.map((p) => (
                         <tr
                           key={p.token}
@@ -247,6 +260,15 @@ export default function Dashboard() {
                   </table>
                 </div>
               </div>
+
+              {/* Doctor Settings Modal */}
+              {doctorSettingsModal && (
+                <DoctorSettingsModal 
+                  onClose={() => setDoctorSettingsModal(false)}
+                  doctor={doctorInfo}
+                  onSave={handleSaveDoctorSettings}
+                />
+              )}
 
               {/* Bottom Buttons - fixed position, won't move */}
               <div className="flex gap-4 shrink-0"> {/* Added shrink-0 */}
