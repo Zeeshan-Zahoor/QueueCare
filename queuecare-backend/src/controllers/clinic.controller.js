@@ -1,4 +1,5 @@
 import { Clinic } from "../models/clinic.model.js";
+import { Doctor } from "../models/doctor.model.js";
 
 const loginClinic = async (req, res) => {
     try {
@@ -45,6 +46,25 @@ const loginClinic = async (req, res) => {
     }
 }
 
+const getClinicDoctors = async (req, res) => {
+    try {
+        const { clinicId } = req.params;
+        const doctors = await Doctor.find({ clinicId });
+
+        res.status(200).json({
+            message: "Doctors fetched successfully!",
+            success: true,
+            doctors,
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: "Error fetching doctors!",
+            error: error.message,
+        })
+    }
+} 
+
 export {
     loginClinic,
+    getClinicDoctors,
 }
