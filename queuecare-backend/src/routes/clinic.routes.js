@@ -4,6 +4,8 @@ import { loginClinic,
          joinQueue, 
          exitQueue,
          advanceToken, 
+         toggleDay,
+         toggleConsultation,
         } from "../controllers/clinic.controller.js";
 
 const router = Router();
@@ -13,5 +15,7 @@ router.route("/:clinicId/doctors").get(getClinicDoctors);
 router.route("/doctor/:doctorId/join").post(joinQueue);
 router.route("/doctor/:doctorId/exit").post(exitQueue);
 router.route("/doctor/:doctorId/advance").post(advanceToken);
+router.route("/doctor/:doctorId/toggle-day").post(toggleDay);
+router.route("/doctor/:doctorId/toggle-consultation").post(toggleConsultation);
 
 export default router;

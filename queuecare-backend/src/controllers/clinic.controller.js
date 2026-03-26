@@ -246,6 +246,63 @@ const advanceToken = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             message: "Failed to advance token",
+            error: error.message,
+        });
+    }
+}
+
+const toggleDay = async (req, res) => {
+    try {
+        const { doctorId } = req.params;
+
+        const doctor = await Doctor.findById(doctorId);
+        if(!doctor) {
+            return res.status(404).json({
+                message: "Doctor not found",
+            });
+        }
+
+        doctor.status === "open" ? doctor.status = "closed" : doctor.status = "open";
+
+        await doctor.save();
+
+        return res.status(200).json({
+            success: true,
+            status: doctor.status,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to toggle day",
+            error: error.message,
+        })
+    }
+}
+
+const toggleConsultation = async (req, res) => {
+    try {
+        const { doctorId } = req.params;
+    
+        const doctor = await Doctor.findById(doctorId);
+        if(!doctor) {
+            return res.status(404).json({
+                message: "Doctor not found",
+            });
+        }
+
+        doctor.consultationStatus === "active" ? doctor.consultationStatus = "paused" : doctor.consultationStatus = "active";
+
+        await doctor.save();
+
+        return res.status(200).json({
+            success: true,
+            consultationStatus: doctor.consultationStatus,
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed toggle consultation status",
+            error: error.message,
         });
     }
 }
@@ -256,4 +313,6 @@ export {
     joinQueue,
     exitQueue,
     advanceToken,
+    toggleDay,
+    toggleConsultation,
 }
