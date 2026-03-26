@@ -140,8 +140,69 @@ const joinQueue = async (req, res) => {
         });
     }
 }
+
+const exitQueue = async (req, res) => {
+    try {
+        const { doctorId } = req.params;
+        const { token } = req.body;
+
+        // validate
+        if(!token) {
+            return res.status(400).json({
+                message: "Token is required",
+            });
+        }
+
+        //find doctor
+        const doctor = await Doctor.findById(doctorId);
+        if(!doctor) {
+            return res.status(400).json({
+                message: "Doctor not found",
+            });
+        }
+
+        //prevent cancellation if already served or being served
+        if(token <= doctor.currentlyServing) {
+            return res.status(400).json({
+                message: "Cannot cancel, already served or in consultation",
+            });
+        }
+
+        //check token exists
+        const exists = doctor.queue.some(
+            p => p.token === token
+        )
+
+        if(!exists) {
+            return res.status(404).json({
+                message: "Token not found in the queue",
+            });
+        }
+
+        //remove patient
+        doctor.queue = doctor.queue.filter(
+            p => p.token !== token
+        );
+
+        await doctor.save();
+
+        //response
+        return res.status(200).json({
+            message: "Exited succesfully!",
+            success: true,
+        });
+        
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to exit queue",
+            error: error.message,
+        });
+    }
+}
+
 export {
     loginClinic,
     getClinicDoctors,
     joinQueue,
+    exitQueue,
 }
