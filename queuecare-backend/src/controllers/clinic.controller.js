@@ -200,9 +200,60 @@ const exitQueue = async (req, res) => {
     }
 }
 
+const advanceToken = async (req, res) => {
+    try {
+        const { doctorId } = req.params;
+
+        //find doctor
+        const doctor = await Doctor.findById(doctorId);
+        if(!doctor) {
+            return res.status(400).json({
+                message: "Doctor not found",
+            });
+        }
+
+        // check consultation status
+        if(doctor.status !== "active") {
+            return res.status(400).json({
+                message: "Consultation is not active",
+            });
+        }
+
+        //check if queue is empty
+        if(doctor.queue.length === 0) {
+            return res.status(400).json({
+                message: "Queue is emplty. No more patients waiting",
+            });
+        }
+
+        //get next patient
+        const nextPatient = doctor.queue[0];
+
+        // change states
+        doctor.currentlyServing = nextPatient.token;
+        doctor.queue = doctor.queue.slice(1);
+
+        await doctor.save();
+
+        //response
+        return res.status(200).json({
+            success: true,
+            message: "Token advanced successfully!",
+            currentToken: doctor.currentlyServing,
+        })
+
+        
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to advance token",
+        });
+    }
+}
+
 export {
     loginClinic,
     getClinicDoctors,
     joinQueue,
     exitQueue,
+    advanceToken,
 }
