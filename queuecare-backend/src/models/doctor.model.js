@@ -42,8 +42,13 @@ const doctorSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["active", "paused", "closed"],
+        enum: ["open", "closed"],
         default: "closed",
+    },
+    consultationStatus: {
+        type: String,
+        enum: ["active", "paused"],
+        default: "paused",
     },
     queue: [patientSchema],
 }, {timestamps: true});

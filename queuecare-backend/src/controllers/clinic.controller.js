@@ -85,7 +85,7 @@ const joinQueue = async (req, res) => {
         }
 
         //check consultation status
-        if(doctor.status !== "active") {
+        if(doctor.status !== "open" || doctor.consultationStatus !== "active") {
             return res.status(400).json({
                 message: "Consultation is not active",
             })
@@ -213,7 +213,7 @@ const advanceToken = async (req, res) => {
         }
 
         // check consultation status
-        if(doctor.status !== "active") {
+        if(doctor.status !== "open" || doctor.consultationStatus !== "active") {
             return res.status(400).json({
                 message: "Consultation is not active",
             });
