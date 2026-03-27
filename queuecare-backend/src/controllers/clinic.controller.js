@@ -262,7 +262,18 @@ const toggleDay = async (req, res) => {
             });
         }
 
-        doctor.status === "open" ? doctor.status = "closed" : doctor.status = "open";
+        if(doctor.status === "closed") {
+            //start day
+            doctor.status = "open";
+            doctor.consultationStatus = "active";
+        } else {
+            //end day
+            doctor.status = "closed";
+            doctor.consultationStatus = "paused";
+            doctor.queue = [];
+            doctor.currentlyServing = 0;
+            doctor.lastIssuedToken = 0;
+        }
 
         await doctor.save();
 
@@ -290,7 +301,14 @@ const toggleConsultation = async (req, res) => {
             });
         }
 
-        doctor.consultationStatus === "active" ? doctor.consultationStatus = "paused" : doctor.consultationStatus = "active";
+        //only allow if day is open
+        if(doctor.status !== "open") {
+            return res.status(400).json({
+                message: "Doctor is not available today",
+            })
+        }
+
+        doctor.consultationStatus = doctor.consultationStatus === "active" ? "paused" : "active" ;
 
         await doctor.save();
 
