@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { MapPin, Clock, BanIcon} from 'lucide-react';
 import Header from '../../components/common/Header';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import { QueueContext } from '../../contexts/QueueContext';
 import SuccessTick from "../../assets/shield_tick.svg?react";
 import { joinQueueApi } from '../../api/clinicApi.js';
 import { getDoctorByIdApi } from '../../api/clinicApi.js';
@@ -43,10 +41,6 @@ function DoctorDetails() {
   console.log("DoctorId: ", doctorId);
  
   if(!doctor) return <p>Loading...</p>
-
-  const { doctorData } = useContext(QueueContext);
-
-  // const doctor = doctorData[doctor._id] || doctor;
 
   const tokensLeft = doctor.maxTokens - (doctor.currentlyServing + doctor.queue.length);
 
