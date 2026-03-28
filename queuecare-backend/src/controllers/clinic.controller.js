@@ -34,6 +34,7 @@ const loginClinic = async (req, res) => {
         return res.status(200).json({
             message: "Login Successful",
             clinicId: clinic._id,
+            success: true,
         });
 
     } catch (error) {
@@ -113,6 +114,7 @@ const joinQueue = async (req, res) => {
 
         //generate token
         const newToken = doctor.lastIssuedToken + 1;
+        doctor.lastIssuedToken = newToken;
         
         // add patient
         doctor.queue.push({
@@ -325,6 +327,64 @@ const toggleConsultation = async (req, res) => {
     }
 }
 
+const getDoctorById = async (req, res) => {
+    try {
+        const { doctorId } = req.params;
+
+        const doctor = await Doctor.findById(doctorId);
+
+        if(!doctor) {
+            return res.status(404).json({
+                message: "Doctor not found",
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Doctor fetched successfully",
+            doctor,
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to fetch doctor",
+            error: error.message,
+        })
+    }
+}
+
+const getAllDoctors = async (req, res) => {
+    try {
+        const doctors = await Doctor.find();
+
+        return res.status(200).json({
+            success: true,
+            doctors,
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to fetch doctors",
+            error: error.message,
+        })
+    }
+}
+
+const getAllClinics = async (req, res) => {
+    try {
+        const clinics = await Clinic.find();
+
+        return res.status(200).json({
+            success: true,
+            clinics,
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to fetch clinics",
+            error: error.message,
+        })
+    }
+}
+
+
 export {
     loginClinic,
     getClinicDoctors,
@@ -333,4 +393,7 @@ export {
     advanceToken,
     toggleDay,
     toggleConsultation,
+    getDoctorById,
+    getAllDoctors,
+    getAllClinics,
 }
