@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import { MapPin, Clock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
 
@@ -8,11 +7,16 @@ export default function DoctorCard({ doctor, clinicName }) {
 
     const peopleAhead = doctor.queue.length
     const waitTime = peopleAhead * doctor.consultationTime;
+    console.log("Doctor: ", doctor);
+    console.log("URL: ", window.location.pathname);
     
     const navigate = useNavigate();
   return (
     <div 
-    onClick={() => navigate(`/doctor/${doctor.id}`)}
+    onClick={() => {
+        console.log("Navigating to:", doctor._id);
+        navigate(`/doctor/${doctor._id}`);
+    }}
 
     className='bg-white m-auto rounded-2xl shadow-[0_5px_15px_rgba(0,0,0,0.2)] hover:shadow-[0_5px_15px_rgba(0,0,0,0.25)] hover:-translate-y-1 transition-all duration-300 p-3 flex gap-3 items-center mb-2'>
         

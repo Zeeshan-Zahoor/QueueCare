@@ -1,18 +1,16 @@
-import React from 'react'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MapPin, Clock, BanIcon} from 'lucide-react';
 import Header from '../../components/common/Header';
-import { clinics } from "../../data/mockData";
 import { useParams, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { QueueContext } from '../../contexts/QueueContext';
 import SuccessTick from "../../assets/shield_tick.svg?react";
-import BottomNav from '../../components/common/BottomNav';
+import { joinQueueApi } from '../../api/clinicApi.js';
+import { getDoctorByIdApi } from '../../api/clinicApi.js';
 
 function DoctorDetails() {
 
   const { doctorId } = useParams();
-  const id = Number(doctorId)
   const navigate = useNavigate();
 
   const [showForm, setShowForm] = useState(false);
@@ -24,42 +22,71 @@ function DoctorDetails() {
   const [myToken, setMyToken] = useState(null);
   const [showDuplicatePatient, setShowDuplicatePatient] = useState(false);
 
-  // find the doctor across all the clinics
-  const clinic = clinics.find((c) => (
-    c.doctors.some((d) => (
-      d.id === id
-    ))
-  ))
+  const [doctor, setDoctor] = useState(null);
 
-  if (!clinic) return <p>Doctor not found!</p>;
+  useEffect(() => {
+    const fetchDoctor = async () => {
+      try {
+        const res = await getDoctorByIdApi(doctorId);
 
-  const doctor = clinic.doctors.find((d) => (d.id === id));
+        if(res.success) {
+          setDoctor(res.doctor);
+        }
+      } catch (error) {
+        console.log("Failed to fetch doctor");
+      }
+    };
 
-  const { joinQueue, doctorData } = useContext(QueueContext);
+    fetchDoctor();
+  }, [doctorId])
 
-  const doctorInfo = doctorData[doctor.id] || doctor;
+  console.log("DoctorId: ", doctorId);
+ 
+  if(!doctor) return <p>Loading...</p>
 
-  const tokensLeft = doctorInfo.maxTokens - (doctorInfo.currentlyServing + doctorInfo.queue.length);
+  const { doctorData } = useContext(QueueContext);
+
+  // const doctor = doctorData[doctor._id] || doctor;
+
+  const tokensLeft = doctor.maxTokens - (doctor.currentlyServing + doctor.queue.length);
 
   const isFull = tokensLeft <= 0;
 
-  const handleConfirmJoin = () => {
+  const handleConfirmJoin = async () => {
     if (!formData.name || !formData.phone) return;
 
-    const token = joinQueue(doctor.id, doctorInfo, formData, "Online");
+    try {
+      const res = await joinQueueApi(doctor._id, formData);
 
-    if(token === -1) {
-      setShowDuplicatePatient(true);
-      setShowForm(false);
-      return;
+      if(!res.success) {
+        if(res.message === "Patient already in queue") {
+          setShowDuplicatePatient(true);
+        }
+        return;
+      }
+
+      const token = res.token;
+
+      //store locally (temporarily)
+      localStorage.setItem(
+        "activeToken",
+        JSON.stringify({
+          doctorId: doctor._id,
+          token,
+        })
+      );
+
+      setMyToken(token);
+      setShowSuccess(true);
+
+    } catch (error) {
+      console.log("Join Queue failed");
     }
-    setMyToken(token);
-    setShowSuccess(true);
   }
 
-  const peopleAhead = doctorInfo.queue.length;
+  const peopleAhead = doctor.queue.length;
 
-  const estimatedWait = peopleAhead * doctorInfo.consultationTime;
+  const estimatedWait = peopleAhead * doctor.consultationTime;
 
   return (
     <div className="max-w-md min-h-dvh mx-auto px-4 py-5 flex flex-col">
@@ -89,7 +116,7 @@ function DoctorDetails() {
             <div className='flex items-center gap-1 mt-1'>
               <MapPin className='w-4 h-4' />
               <span className="text-sm text-gray-500">
-                {clinic.name}
+                Clinic Name
               </span>
             </div>
           </div>
@@ -131,7 +158,7 @@ function DoctorDetails() {
             Currently seeing token
           </span>
           <span className="text-lg text-slate-800 font-bold ml-2">
-            #{doctorInfo.currentlyServing}
+            #{doctor.currentlyServing}
           </span>
         </div>
       </div>
@@ -139,10 +166,10 @@ function DoctorDetails() {
       {/* Push button to bottom */}
       <button
         onClick={() => setShowForm(true)}
-        disabled={isFull || doctorInfo.status === "closed"}
+        disabled={isFull || doctor.status === "closed"}
         className="mt-auto w-full bg-[#1C2A3A] text-white py-3 rounded-4xl font-medium disabled:bg-[#455970]"
       >
-        {doctorInfo.status === "closed"
+        {doctor.status === "closed"
           ? "Clinic Closed / Doctor not available" : (isFull ? "No more tokens" : "Get Token")
         }
       </button>
@@ -218,7 +245,7 @@ function DoctorDetails() {
 
             <button
               onClick={() =>
-                navigate(`/queue-status/${doctor.id}?token=${myToken}`)
+                navigate(`/queue-status/${doctor._id}?token=${myToken}`)
               }
               className="w-full mt-4 bg-slate-800 text-white py-2.5 rounded-4xl cursor-pointer"
             >

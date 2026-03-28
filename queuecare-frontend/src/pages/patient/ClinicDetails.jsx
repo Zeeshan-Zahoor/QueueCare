@@ -1,36 +1,46 @@
-import React from 'react'
+import React , { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import DoctorCard from '../../components/patient/DoctorCard'
+import DoctorCard from '../../components/patient/DoctorCard';
 import { clinics } from '../../data/mockData';
 import Header from '../../components/common/Header';
-import { useContext } from 'react';
-import { QueueContext } from '../../contexts/QueueContext';
 import BottomNav from '../../components/common/BottomNav';
+import { getDoctorsApi } from '../../api/clinicApi';
 
 export default function ClinicDetails() {
-  const { doctorData } = useContext(QueueContext);
-  const { doctorId } = useParams();
-  const clinic = clinics.find((c) => c.id == Number(doctorId));
-  if(!clinic) return <p>Clinic not found</p>
+  const { clinicId } = useParams();
 
-  const allDoctors = clinic.doctors.map((doctor) => {
-    const doctorInfo = doctorData[doctor.id] || doctor;
-    return {
-      ...doctorInfo
-    }
-  })
+  console.log("ClinicId: ", clinicId);
+  
+  const [doctors, setDoctors] = useState([]);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const res = await getDoctorsApi(clinicId);
+
+        if(res.success) {
+          setDoctors(res.doctors);
+        }
+      } catch (error) {
+        console.log("Failed to fetch doctors");
+      }
+    };
+
+    fetchDoctors();
+  }, [clinicId]);
+  
 
   return (
     <div className="max-w-md mx-auto px-4 py-6 max-h-dvh">
       <Header
-        title={clinic.name}
+        title={"Clinic"} // TEMP --> will fix later
       />
       <div className="space-y-4  pt-1">
-        {allDoctors.map((doctor) => (
+        {doctors.map((doctor) => (
           <DoctorCard 
-            key={doctor.id} 
+            key={doctor._id} 
             doctor={doctor}
-            clinicName={clinic.name}  
+            clinicName={"Clinic"} // temp  
           />
         ))}
       </div>

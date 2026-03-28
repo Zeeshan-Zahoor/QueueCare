@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { clinics } from '../../data/mockData.js';
+import { loginClinicApi } from '../../api/clinicApi.js';
 
 
 function ClinicLogin() {
@@ -12,24 +12,22 @@ function ClinicLogin() {
   })
   const [error, setError] = useState("");
 
-  const handleSignIn = () => {
-    console.log("clicked")
-    const clinic = clinics.find((clinic) => (
-      clinic.phone === loginData.phone
-    ))
+  const handleSignIn = async () => {
+    try {
+      const res = await loginClinicApi(loginData);
 
-    if (!clinic) {
-      setError("Clinic not found!");
-      return;
-    }
+      if(!res.success) {
+        setError(res.message || "Login failed");
+        return;
+      }
 
-    if (loginData.password !== clinic.password) {
-      setError("Wrong Password!");
-      return;
-    } else {
       setError("");
-      const clinicId = clinic.id;
+
+      const clinicId = res.clinicId;
       navigate(`/clinic/${clinicId}/dashboard`);
+
+    } catch (error) {
+      setError("Something went wrong");
     }
   }
 

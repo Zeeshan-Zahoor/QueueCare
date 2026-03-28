@@ -1,25 +1,29 @@
+import { useState, useEffect } from 'react';
 import DoctorCard from '../../components/patient/DoctorCard'
 import { Search } from 'lucide-react'
-import { clinics } from '../../data/mockData';
 import Header from '../../components/common/Header';
-import { useContext } from 'react';
-import { QueueContext } from '../../contexts/QueueContext';
 import BottomNav from '../../components/common/BottomNav';
+import { getAllDoctorsApi } from '../../api/clinicApi.js';
 
 
 export default function Doctors() {
 
-  const { doctorData } = useContext(QueueContext);
+  const [doctors, setDoctors] = useState([]);
 
-  const allDoctors = clinics.flatMap((clinic) =>
-    clinic.doctors.map((doctor) => {
-      const doctorInfo = doctorData[doctor.id] || doctor;
-      return {
-        ...doctorInfo, 
-        clinicName: clinic.name,
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const res = await getAllDoctorsApi();
+        if(res.success) {
+          setDoctors(res.doctors);
+        }
+      } catch (error) {
+        console.log("Failed to fetch doctors");
       }
-    })
-  )
+    };
+
+    fetchDoctors();
+  }, []);
 
   return (
     <div className='max-w-md mx-auto px-4 py-5 space-y-2 h-dvh'>
@@ -41,9 +45,9 @@ export default function Doctors() {
       {/* Doctor List */}
       <div className='space-y-4'>
   
-        {allDoctors.map((doctor) => (
+        {doctors.map((doctor) => (
             <DoctorCard 
-              key={doctor.id} 
+              key={doctor._id} 
               doctor={doctor} 
               clinicName={doctor.clinicName}/>
           ))}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Building2, Phone, Plus, BanIcon, ArrowRight, AlertTriangle, Settings } from "lucide-react";
 import cloudIcon from "../../assets/cloud_icon.jpg";
 import DoctorCardClinic from "../../components/clinic/DoctorCardClinic";
@@ -7,6 +7,7 @@ import { clinics } from "../../data/mockData";
 import { useContext } from "react";
 import { QueueContext } from "../../contexts/QueueContext";
 import DoctorSettingsModal from "../../components/clinic/DoctorSettingsModal";
+import { getDoctorsApi } from "../../api/clinicApi.js";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -23,27 +24,32 @@ export default function Dashboard() {
 
   const [doctorSettingsModal, setDoctorSettingsModal] = useState(false);
 
+  const [doctors, setDoctors] = useState([]);
+
   const { clinicId } = useParams();
 
-  const clinic = clinics.find((c) => (
-    c.id === Number(clinicId)
-  ))
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const res = await getDoctorsApi(clinicId);
+        if(res.success) {
+          setDoctors(res.doctors);
+        }
+      } catch (error) {
+        console.log("Error to fetch the doctors");
+      }
+    }
 
-  if (!clinic) {
-    return (
-      <div className="p-4 text-center">
-        <p className="text-red-500">Clinic not found</p>
-      </div>
-    );
-  }
+    fetchDoctors();
+  }, [clinicId]);
 
   const { doctorData, advanceToken, joinQueue, toggleDay, toggleConsultation, exitQueue, updateDoctorSettings } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
-    setSelectedDoctorId(doctor.id);
+    setSelectedDoctorId(doctor._id);
   }
 
-  const selectedDoctor = clinic.doctors.find(d => d.id === selectedDoctorId);
+  const selectedDoctor = doctors.find(d => d._id === selectedDoctorId);
 
   const doctorInfo = selectedDoctorId ? doctorData[selectedDoctorId] || selectedDoctor : null;
 
@@ -91,7 +97,7 @@ export default function Dashboard() {
       <div className="bg-white border-b border-gray-400 px-8 py-4 flex items-center justify-end gap-8">
         <div className="flex items-center space-x-3 flex-1 bg-white">
           <Building2 />
-          <span className="text-slate-800 font-semibold text-lg">{clinic.name}</span>
+          <span className="text-slate-800 font-semibold text-lg">Clinic Dashboard</span>
         </div>
 
         <div className="flex items-center gap-2 text-gray-700">
@@ -139,17 +145,14 @@ export default function Dashboard() {
           <div className="p-3 space-y-2">
             <h2 className="text-lg text-slate-800 font-bold">Doctors</h2>
 
-            {clinic.doctors.map((doctor) => {
-              const doctorInfo = doctorData[doctor.id] || doctor;
-              return (
-                <DoctorCardClinic
-                  key={doctorInfo.id}
-                  doctor={doctorInfo}
-                  clickHandler={() => handleDoctorClick(doctorInfo)}
-                  active={selectedDoctorId === doctor.id}
-                />
-              )
-            })}
+            {doctors.map((doctor) => (
+              <DoctorCardClinic 
+                key={doctor._id}
+                doctor={doctor}
+                clickHandler={() => handleDoctorClick(doctor)}
+                active={selectedDoctorId === doctor._id}
+              />
+            ))}
 
           </div>
         </div>
