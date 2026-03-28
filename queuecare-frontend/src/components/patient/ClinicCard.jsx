@@ -1,23 +1,13 @@
-import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MapPin, Search } from 'lucide-react';
-import { useContext } from 'react';
-import { QueueContext } from '../../contexts/QueueContext';
+import { MapPin } from 'lucide-react';
+
 
 export default function ClinicCard({ clinic }) {
     const navigate = useNavigate();
-    const { doctorData } = useContext(QueueContext);
-    const isOpen = clinic.doctors.some((doctor) => {
-        const doctorInfo = doctorData[doctor.id] || doctor;
-        return doctorInfo.status === "open";
-    });
-    const openDoctors = clinic.doctors.filter((doctor) => {
-        const doctorInfo = doctorData[doctor.id] || doctor;
-        return doctorInfo.status === "open";
-    }).length;
+    
     return (
         <div
-            onClick={() => navigate(`/clinic/${clinic.id}`)}
+            onClick={() => navigate(`/clinic/${clinic._id}`)}
             className="bg-white rounded-xl shadow-[0_10px_25px_rgba(0,0,0,0.2)] p-4 cursor-pointer hover:shadow-[0_20px_40px_rgba(0,0,0,0.25)] transition duration-300"
         >
             <div className="w-full h-44 overflow-hidden rounded-xl mb-2">
@@ -39,17 +29,22 @@ export default function ClinicCard({ clinic }) {
 
             <hr className='text-[#D0D3D9] mt-2' />
 
+            {/* TEMP INFO */}
             <div className="flex justify-between items-center mt-1 text-sm">
-                <span>{clinic.doctors.length} Doctors</span>
+                <span>2 Doctors</span>
 
-                <span
+                <span className='text-green-600 font-medium'>
+                    Available
+                </span>
+
+                {/* <span
                     className={`font-medium ${isOpen
                         ? "text-green-600"
                         : "text-red-600"
                         }`}
                 >
                     {isOpen ? `${openDoctors} Doctors • Open` : "Closed"}
-                </span>
+                </span> */}
             </div>
 
         </div>

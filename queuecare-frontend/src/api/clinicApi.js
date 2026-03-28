@@ -38,3 +38,8 @@ export const getAllDoctorsApi = async () => {
     const res = await fetch(`${BASE_URL}/doctors`);
     return res.json();
 }
+
+export const getAllClinicsApi = async () => {
+    const res = await fetch(`${BASE_URL}/clinics`);
+    return res.json();
+}

@@ -1,13 +1,30 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { getAllClinicsApi } from '../../api/clinicApi.js';
 import { useNavigate } from 'react-router-dom'
 import { Search, MapPin } from 'lucide-react'
 import ClinicCard from '../../components/patient/ClinicCard';
-import { clinics } from '../../data/mockData';
 import heroImage from "../../assets/heroImage.png"
 import BottomNav from '../../components/common/BottomNav';
 
 export default function Home() {
   const navigate = useNavigate();
+
+  const [clinics, setClinics] = useState([]);
+
+  useEffect(() => {
+    const fetchClinics = async () => {
+      try {
+        const res = await getAllClinicsApi();
+        if(res.success) {
+          setClinics(res.clinics);
+        }
+      } catch (error) {
+        console.log("Failed to fetch clinics");
+      }
+    };
+
+    fetchClinics();
+  }, []);
   
   return (
     <div className='max-w-md mx-auto px-4 py-3 space-y-2 h-dvh'>
@@ -57,7 +74,7 @@ export default function Home() {
 
         <div className="space-y-3">
           {clinics.map((clinic) => (
-            <ClinicCard key={clinic.id} clinic={clinic} />
+            <ClinicCard key={clinic._id} clinic={clinic} />
           ))}
         </div>
       </div>
