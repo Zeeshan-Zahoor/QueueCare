@@ -4,60 +4,82 @@ import doctorIcon from "../../assets/doctorIcon.png";
 import consultingIcon from "../../assets/consultingIcon.png";
 import { Clock, CircleXIcon, BanIcon, AlertTriangle } from 'lucide-react';
 import { useParams, useLocation } from 'react-router-dom';
-import { clinics } from '../../data/mockData';
-import { useContext } from 'react';
-import { QueueContext } from '../../contexts/QueueContext';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from '../../components/common/BottomNav';
+import { getDoctorByIdApi, exitQueueApi } from '../../api/clinicApi.js';
 
 export default function QueueStatus() {
   const navigate = useNavigate();
+
+  //backend state
+  const [doctor, setDoctor] = useState(null);
+
   const [showCancel, setShowCancel] = useState(false);
   const [notAllowedModal, setNotAllowedModal] = useState(false);
 
   const { doctorId } = useParams();
-  const id = Number(doctorId);
   const location = useLocation();
 
   const searchParams = new URLSearchParams(location.search);
   const token = Number(searchParams.get("token"));
 
+  useEffect(() => {
+    const fetchDoctor = async () => {
+      try {
+        const res = await getDoctorByIdApi(doctorId);
 
-  const clinic = clinics.find((c) => (
-    c.doctors.some((d) => d.id === id)
-  ));
+        if(res.success) {
+          setDoctor(res.doctor);
+        }
+      } catch (error) {
+        console.log("Failed to fetch doctor");
+      }
+    };
 
-  if (!clinic) return <p>Doctor not found</p>
+    fetchDoctor();
 
-  const doctor = clinic.doctors.find((d) => d.id === id);
+    const interval = setInterval(fetchDoctor, 5000); //polling
 
-  const { doctorData, exitQueue } = useContext(QueueContext);
+    return () => clearInterval(interval);
 
-  const doctorInfo = doctorData[id] || doctor;
-
-  const currentToken = doctorInfo.currentlyServing;
-
-  const peopleAhead = token - doctorInfo.currentlyServing;
-
-  const estimatedWait = peopleAhead * doctorInfo.consultationTime;
-
-  const canCancel = token > doctorInfo.currentlyServing;
-
-  const handleCancelToken = () => {
-    const allowed = exitQueue(id, token, doctorInfo);
-
-    if(!allowed) {
-      setNotAllowedModal(true);
-      setShowCancel(false);
-      return;
-    }
-
-    setShowCancel(false);
-
-    console.log("Token cancelled!");
-    navigate(`/doctor/${id}`);
+  }, [doctorId])
   
-    return;
+  if(!doctor) return <p>Loading...</p>;
+
+  const currentToken = doctor.currentlyServing;
+
+  const peopleAhead = Math.max(0, token - doctor.currentlyServing);
+
+  const estimatedWait = peopleAhead * doctor.consultationTime;
+
+  const canCancel = token > doctor.currentlyServing;
+
+  if(token < doctor.currentlyServing) { // already served
+    // delete from localStorage
+    localStorage.removeItem("activeToken")
+  }
+
+
+  const handleCancelToken = async () => {
+    try {
+      const res = await exitQueueApi(doctorId, token);
+
+      if(!res.success) {
+        setNotAllowedModal(true);
+        setShowCancel(false);
+        return;
+      }
+
+      setShowCancel(false);
+
+      //remove from localStorage
+      localStorage.removeItem("activeToken");
+
+      navigate(`/doctor/${doctorId}`);
+
+    } catch (error) {
+      console.log("Cancel failed");
+    }
   }
 
   return (
@@ -100,7 +122,7 @@ export default function QueueStatus() {
         </div>
       </div>
 
-      {doctorInfo.consultationStatus === "paused" && (
+      {doctor.consultationStatus === "paused" && (
         <div className='bg-yellow-100 text-yellow-800 p-3 rounded flex items-center gap-3'>
           <AlertTriangle className="text-yellow-700 w-8 h-8" /> Consultation temporarily paused. Doctor will resume shortly.
         </div>
@@ -122,13 +144,13 @@ export default function QueueStatus() {
         {/* Top Pills */}
         <div className="flex w-3/5 justify-between">
           <div className="px-3 py-2 rounded-xl bg-white shadow text-[#299D7C] font-semibold text-lg">
-            {doctorInfo.queue?.[0]?.token || "NA"}
+            {doctor.queue?.[0]?.token || "NA"}
           </div>
           <div className="px-3 py-2 rounded-xl bg-white shadow text-[#82D0BA] font-semibold text-lg">
-            {doctorInfo.queue?.[1]?.token || "NA"}
+            {doctor.queue?.[1]?.token || "NA"}
           </div>
           <div className="px-3 py-2 rounded-xl bg-white shadow text-[#C77934] font-semibold text-lg">
-            {doctorInfo.queue?.[2]?.token || "NA"}
+            {doctor.queue?.[2]?.token || "NA"}
           </div>
         </div>
 

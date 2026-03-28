@@ -43,3 +43,15 @@ export const getAllClinicsApi = async () => {
     const res = await fetch(`${BASE_URL}/clinics`);
     return res.json();
 }
+
+export const exitQueueApi = async (doctorId, token) => {
+    const res = await fetch(`${BASE_URL}/doctor/${doctorId}/exit`, {
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json",
+        },
+        body: JSON.stringify({ token }),
+    });
+
+    return res.json();
+}
