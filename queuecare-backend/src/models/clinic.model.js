@@ -17,7 +17,7 @@ const clinicSchema = new mongoose.Schema({
     address: {
         type: String,
         required: true,
-    }
+    },
 }, {timestamps: true});
 
 export const Clinic = mongoose.model("Clinic", clinicSchema);

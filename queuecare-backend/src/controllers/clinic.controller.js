@@ -65,6 +65,29 @@ const getClinicDoctors = async (req, res) => {
     }
 } 
 
+const getClinic = async (req, res) => {
+    try {
+        const { clinicId } = req.params;
+
+        const clinic = await Clinic.findById(clinicId);
+        if(!clinic) {
+            return res.status(404).json({
+                message: "Clinic not found",
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            clinic,
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error fetching clinic",
+            error: error.message,
+        })
+    }
+}
+
 const joinQueue = async (req, res) => {
     try {
         const { doctorId } = req.params;
@@ -462,4 +485,5 @@ export {
     getAllClinics,
     updateDoctorSettings,
     updateClinicSettings,
+    getClinic,
 }
