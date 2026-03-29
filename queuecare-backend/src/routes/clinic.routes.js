@@ -9,6 +9,8 @@ import { loginClinic,
          getDoctorById,
          getAllDoctors,
          getAllClinics,
+         updateDoctorSettings,
+         updateClinicSettings,
         } from "../controllers/clinic.controller.js";
 
 const router = Router();
@@ -24,5 +26,8 @@ router.route("/doctor/:doctorId").get(getDoctorById);
 
 router.route("/doctors").get(getAllDoctors);
 router.route("/clinics").get(getAllClinics);
+
+router.route("/doctor/:doctorId/settings").put(updateDoctorSettings)
+router.route("/clinic/:clinicId").put(updateClinicSettings);
 
 export default router;

@@ -384,6 +384,70 @@ const getAllClinics = async (req, res) => {
     }
 }
 
+const updateDoctorSettings = async (req, res) => {
+    try {
+        const { doctorId } = req.params;
+        const { consultationTime, maxTokens } = req.body;
+
+        const doctor = await Doctor.findById(doctorId);
+        if(!doctor) {
+            return res.status(404).json({
+                message: "Doctor not found",
+            })
+        }
+
+        if(doctor.consultationTime !== undefined) {
+            doctor.consultationTime = consultationTime;
+        }
+
+        if(doctor.maxTokens !== undefined) {
+            doctor.maxTokens = maxTokens;
+        }
+
+        await doctor.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Doctor settings updated successfully",
+            doctor,
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to update settings",
+            error: error.message,
+        });
+    }
+}
+
+const updateClinicSettings = async(req, res) => {
+    try {
+        const { clinicId } = req.params;
+        const data = req.body;
+
+        const clinic = await Clinic.findById(clinicId);
+        if(!clinic) {
+            return res.status(404).json({
+                message: "Clinic not found",
+            })
+        }
+
+        Object.assign(clinic, data);
+
+        await clinic.save();
+
+        return res.status(200).json({
+            success: true,
+            clinic,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to update clinic settings",
+            error: error.message,
+        })
+    }
+}
 
 export {
     loginClinic,
@@ -396,4 +460,6 @@ export {
     getDoctorById,
     getAllDoctors,
     getAllClinics,
+    updateDoctorSettings,
+    updateClinicSettings,
 }
