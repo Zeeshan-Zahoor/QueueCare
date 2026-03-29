@@ -7,7 +7,7 @@ import { clinics } from "../../data/mockData";
 import { useContext } from "react";
 import { QueueContext } from "../../contexts/QueueContext";
 import DoctorSettingsModal from "../../components/clinic/DoctorSettingsModal";
-import { getDoctorsApi, getDoctorByIdApi } from "../../api/clinicApi.js";
+import { getDoctorsApi, getDoctorByIdApi, advanceTokenApi } from "../../api/clinicApi.js";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -67,14 +67,32 @@ export default function Dashboard() {
   }
 
 
-  const { advanceToken, joinQueue, toggleDay, toggleConsultation, exitQueue, updateDoctorSettings } = useContext(QueueContext);
+  const { joinQueue, toggleDay, toggleConsultation, exitQueue, updateDoctorSettings } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor._id);
   }
 
-  const handleCallNextPatient = () => {
-    advanceToken(selectedDoctorId, doctorInfo);
+  const handleCallNextPatient = async () => {
+    if(!selectedDoctorId) return;
+
+    try {
+      const res = await advanceTokenApi(selectedDoctorId);
+
+      if(!res.success) {
+        console.log("Failed to advance token");
+        return;
+      }
+
+      // update the state of doctor
+      const updated = await getDoctorByIdApi(selectedDoctorId);
+      if(updated.success) {
+        setDoctorInfo(updated.doctor);
+      }
+
+    } catch (error) {
+      console.log("Error advancing token");
+    }
   };
 
   const handleRemovePatient = (token) => {

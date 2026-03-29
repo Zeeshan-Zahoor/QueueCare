@@ -55,3 +55,10 @@ export const exitQueueApi = async (doctorId, token) => {
 
     return res.json();
 }
+
+export const advanceTokenApi = async (doctorId) => {
+    const res = await fetch(`${BASE_URL}/doctor/${doctorId}/advance`, {
+        method: "POST",
+    });
+    return res.json();
+}
