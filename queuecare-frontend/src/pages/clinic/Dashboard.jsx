@@ -6,7 +6,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { QueueContext } from "../../contexts/QueueContext";
 import DoctorSettingsModal from "../../components/clinic/DoctorSettingsModal";
-import { getDoctorsApi, getDoctorByIdApi, advanceTokenApi, joinQueueApi } from "../../api/clinicApi.js";
+import { getDoctorsApi, getDoctorByIdApi, advanceTokenApi, joinQueueApi, exitQueueApi } from "../../api/clinicApi.js";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -30,63 +30,71 @@ export default function Dashboard() {
 
   const { clinicId } = useParams();
 
-  
+
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
         const res = await getDoctorsApi(clinicId);
-        if(res.success) {
+        if (res.success) {
           setDoctors(res.doctors);
         }
       } catch (error) {
         console.log("Error to fetch the doctors");
       }
     }
-    
+
     fetchDoctors();
   }, [clinicId]);
-  
+
   useEffect(() => {
     const fetchDoctor = async () => {
       try {
         const res = await getDoctorByIdApi(selectedDoctorId);
-        
-        if(res.success) {
+
+        if (res.success) {
           setDoctorInfo(res.doctor);
         }
       } catch (error) {
         console.log("Failed to fetch doctor");
       }
     };
-    
+
     fetchDoctor();
   }, [selectedDoctorId])
-  
+
   if (!doctorInfo && selectedDoctorId) {
     return <p>Loading doctor data...</p>;  // MODIFY UI 
   }
 
-  const { toggleDay, toggleConsultation, exitQueue, updateDoctorSettings } = useContext(QueueContext);
+  const { toggleDay, toggleConsultation, updateDoctorSettings } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor._id);
   }
 
   const handleCallNextPatient = async () => {
-    if(!selectedDoctorId) return;
+    if (!selectedDoctorId) return;
 
     try {
       const res = await advanceTokenApi(selectedDoctorId);
 
-      if(!res.success) {
+      if (!res.success) {
         console.log("Failed to advance token");
         return;
       }
 
       // update the state of doctor
       const updated = await getDoctorByIdApi(selectedDoctorId);
-      if(updated.success) {
-        setDoctorInfo(updated.doctor);
+      if (updated.success) {
+        const updatedDoctor = updated.doctor;
+
+        setDoctorInfo(updatedDoctor);
+
+        setDoctors((prev) =>
+          prev.map((doc) =>
+            doc._id === updatedDoctor._id ? updatedDoctor : doc
+          )
+        );
       }
 
     } catch (error) {
@@ -94,9 +102,32 @@ export default function Dashboard() {
     }
   };
 
-  const handleRemovePatient = (token) => {
-    console.log("Remove Clicked")
-    exitQueue(selectedDoctorId, token, doctorInfo)
+  const handleRemovePatient = async (token) => {
+    try {
+      const res = await exitQueueApi(selectedDoctorId, token);
+
+      if (!res.success) {
+        console.log("Failed to remove patient: ");
+        return;
+      }
+
+      //update doctor state
+      const updated = await getDoctorByIdApi(selectedDoctorId);
+      if (updated.success) {
+        const updatedDoctor = updated.doctor;
+
+        setDoctorInfo(updatedDoctor);
+
+        setDoctors((prev) =>
+          prev.map((doc) =>
+            doc._id === updatedDoctor._id ? updatedDoctor : doc
+          )
+        );
+      }
+
+    } catch (error) {
+      console.log("Error removing the patient");
+    }
   }
 
   const handleWalkInPatient = async () => {
@@ -105,13 +136,13 @@ export default function Dashboard() {
     try {
       const res = await joinQueueApi(selectedDoctorId, walkInPatientData);
 
-      if(res.message === "Patient already in queue") {
+      if (res.message === "Patient already in queue") {
         setShowWalkInModal(false);
         setShowDuplicatePatient(true);
         return;
       }
 
-      if(res.success) {
+      if (res.success) {
         setShowWalkInModal(false);
         setWalkInPatientData({
           name: "",
@@ -120,14 +151,14 @@ export default function Dashboard() {
 
         //update doctor state
         const updated = await getDoctorByIdApi(selectedDoctorId);
-        if(updated.success) {
+        if (updated.success) {
           const updatedDoctor = updated.doctor;
 
           setDoctorInfo(updatedDoctor);
 
           //update doctor list also in side bar
-          setDoctors((prev) => 
-            prev.map((doctor) => 
+          setDoctors((prev) =>
+            prev.map((doctor) =>
               doctor._id === updatedDoctor._id ? updatedDoctor : doctor
             )
           )
@@ -149,7 +180,7 @@ export default function Dashboard() {
   }
 
   const handleSaveDoctorSettings = (updatedSettings) => {
-    updateDoctorSettings(selectedDoctorId,updatedSettings);
+    updateDoctorSettings(selectedDoctorId, updatedSettings);
   }
 
   return (
@@ -193,9 +224,9 @@ export default function Dashboard() {
               Dashboard
             </button>
 
-            <button 
-            onClick={() => navigate(`/clinic/${clinicId}/settings`)}
-            className="w-full flex items-center gap-3 text-gray-600 px-4 py-2 rounded hover:bg-gray-100">
+            <button
+              onClick={() => navigate(`/clinic/${clinicId}/settings`)}
+              className="w-full flex items-center gap-3 text-gray-600 px-4 py-2 rounded hover:bg-gray-100">
               Settings
             </button>
           </div>
@@ -207,7 +238,7 @@ export default function Dashboard() {
             <h2 className="text-lg text-slate-800 font-bold">Doctors</h2>
 
             {doctors.map((doctor) => (
-              <DoctorCardClinic 
+              <DoctorCardClinic
                 key={doctor._id}
                 doctor={doctor}
                 clickHandler={() => handleDoctorClick(doctor)}
@@ -276,9 +307,9 @@ export default function Dashboard() {
                     Today's Queue
                   </div>
                   <button
-                  onClick={() => setDoctorSettingsModal(true)}
-                   className="bg-white border border-slate-300 text-lg px-5 py-2 rounded-md flex items-center gap-2 cursor-pointer hover:bg-slate-100 hover:border-slate-400">
-                    <Settings className="w-5 h-5"/>
+                    onClick={() => setDoctorSettingsModal(true)}
+                    className="bg-white border border-slate-300 text-lg px-5 py-2 rounded-md flex items-center gap-2 cursor-pointer hover:bg-slate-100 hover:border-slate-400">
+                    <Settings className="w-5 h-5" />
                     Settings
                   </button>
                 </div>
@@ -313,7 +344,7 @@ export default function Dashboard() {
 
                             <button
                               onClick={() => handleRemovePatient(p.token)}
-                              className="bg-slate-800 text-white min-w-30 px-4 py-2 rounded">
+                              className="bg-slate-800 text-white min-w-30 px-4 py-2 rounded cursor-pointer hover:bg-slate-700">
                               Remove
                             </button>
 
@@ -327,7 +358,7 @@ export default function Dashboard() {
 
               {/* Doctor Settings Modal */}
               {doctorSettingsModal && (
-                <DoctorSettingsModal 
+                <DoctorSettingsModal
                   onClose={() => setDoctorSettingsModal(false)}
                   doctor={doctorInfo}
                   onSave={handleSaveDoctorSettings}
