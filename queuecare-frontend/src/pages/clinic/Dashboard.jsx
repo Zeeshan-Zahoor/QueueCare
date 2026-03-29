@@ -376,7 +376,7 @@ export default function Dashboard() {
 
               {/* Table Container - FIXED: This will scroll */}
               <div className="bg-gray-200 rounded shadow-sm flex flex-col flex-1 min-h-0"> {/* Added min-h-0 */}
-                <div className="p-3 pl-6 font-bold text-xl text-slate-800 border-b shrink-0 flex justify-between items-center"> {/* Added shrink-0 */}
+                <div className="p-3 pl-6 font-bold text-xl text-slate-800 border-b border-gray-300 shrink-0 flex justify-between items-center"> {/* Added shrink-0 */}
                   <div>
                     Today's Queue
                   </div>
@@ -406,7 +406,7 @@ export default function Dashboard() {
                       {doctorInfo?.queue?.map((p) => (
                         <tr
                           key={p.token}
-                          className="border-t bg-white"
+                          className="border-t border-gray-300 bg-white"
                         >
                           <td className="p-4 font-medium">{p.token}</td>
                           <td className="p-4">{p.name}</td>
