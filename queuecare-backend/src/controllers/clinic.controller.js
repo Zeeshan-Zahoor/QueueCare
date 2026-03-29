@@ -294,7 +294,6 @@ const toggleDay = async (req, res) => {
         } else {
             //end day
             doctor.status = "closed";
-            doctor.consultationStatus = "paused";
             doctor.queue = [];
             doctor.currentlyServing = 0;
             doctor.lastIssuedToken = 0;
