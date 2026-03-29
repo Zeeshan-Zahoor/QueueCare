@@ -1,16 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Building2 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { clinics } from '../../data/mockData';
+import { updateClinicSettingsApi, getAllClinicsApi, getClinicApi } from '../../api/clinicApi.js';
 
 export default function Settings() {
   const navigate = useNavigate();
   const { clinicId } = useParams();
-
+  
   const [clinicSettings, setClinicSettings] = useState({
-    name: "Al-Shifa Health Clinic",
-    phone: "6006368678",
-    address: "Lal Chowk, Srinagar",
+    name: "",
+    phone: "",
+    address: "",
     workingDays: {
       mon: true,
       tue: true,
@@ -20,10 +20,30 @@ export default function Settings() {
       sat: true,
       sun: true
     },
-    openingTime: "10:00",
+    openingTime: "09:00",
     closingTime: "17:00",
     allowWalkIns: true
   });
+
+  useEffect(() => {
+    const fetchClinic = async () => {
+      try {
+        const res = await getClinicApi(clinicId);
+
+        if(res.success) {
+          setClinicSettings(prev => ({
+            ...prev,
+            ...res.clinic,
+            workingDays: res.clinic.workingDays || prev.workingDays
+          }));
+        }
+      } catch (error) {
+        console.log("Failed to fetch clinic");
+      }
+    };
+
+    fetchClinic();
+  }, [clinicId]);
 
   const handleChange = (field, value) => {
     setClinicSettings(prev => ({
@@ -32,8 +52,27 @@ export default function Settings() {
     }))
   }
 
-  const handleSave = () => {
-    console.log("Saved Settings: ", clinicSettings);
+  const handleSave = async () => {
+    try {
+      if (!clinicSettings.name || !clinicSettings.phone) {
+        alert("Please fill required fields");
+        return;
+      }
+
+      const res = await updateClinicSettingsApi(clinicId, clinicSettings);
+
+      if(!res.success) {
+        console.log("Failed to update clinic settings");
+        return;
+      }
+
+      // setClinicSettings(res.clinic);
+      console.log("Clinic updated");
+      alert("Clinic settings updated successfully");
+      
+    } catch (error) {
+      console.log("Error updating clinic settings");
+    }
   }
 
   const handleGoDashboard = () => {
@@ -139,7 +178,7 @@ export default function Settings() {
 
                 <div className="flex justify-between gap-4 flex-wrap">
 
-                  {Object.keys(clinicSettings.workingDays).map(day => (
+                  {Object.keys(clinicSettings.workingDays || {}).map(day => (
                     <label
                       key={day}
                       className="flex items-center justify-between gap-2 font-medium text-gray-600"

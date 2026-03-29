@@ -3,8 +3,6 @@ import { Building2, Phone, Plus, BanIcon, ArrowRight, AlertTriangle, Settings } 
 import cloudIcon from "../../assets/cloud_icon.jpg";
 import DoctorCardClinic from "../../components/clinic/DoctorCardClinic";
 import { useParams, useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { QueueContext } from "../../contexts/QueueContext";
 import DoctorSettingsModal from "../../components/clinic/DoctorSettingsModal";
 import { getDoctorsApi,
          getDoctorByIdApi, 
@@ -13,6 +11,7 @@ import { getDoctorsApi,
          exitQueueApi, 
          toggleConsultationApi, 
          toggleDayApi, 
+         updateDoctorSettingsApi,
         } 
 from "../../api/clinicApi.js";
 
@@ -73,8 +72,6 @@ export default function Dashboard() {
   if (!doctorInfo && selectedDoctorId) {
     return <p>Loading doctor data...</p>;  // MODIFY UI 
   }
-
-  const { toggleConsultation, updateDoctorSettings } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor._id);
@@ -237,8 +234,27 @@ export default function Dashboard() {
     }
   }
 
-  const handleSaveDoctorSettings = (updatedSettings) => {
-    updateDoctorSettings(selectedDoctorId, updatedSettings);
+  const handleSaveDoctorSettings = async (data) => {
+    try {
+      const res = await updateDoctorSettingsApi(selectedDoctorId, data);
+
+      if(!res.success) {
+        console.log("Failed to update doctor settings");
+        return;
+      }
+
+      const updatedDoctor = res.doctor;
+
+      setDoctorInfo(updatedDoctor);
+
+      setDoctors(prev => 
+        prev.map(doctor => 
+          doctor._id === updatedDoctor._id ? updatedDoctor : doctor
+        )
+      )
+    } catch (error) {
+      console.log("Error updating doctor settings");
+    }
   }
 
   return (

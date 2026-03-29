@@ -12,6 +12,11 @@ export const loginClinicApi = async(data) => {
     return res.json();
 };
 
+export const getClinicApi = async (clinicId) => {
+    const res = await fetch(`${BASE_URL}/${clinicId}`);
+    return res.json();
+}
+
 export const getDoctorByIdApi = async (doctorId) => {
     const res = await fetch(`${BASE_URL}/doctor/${doctorId}`);
     return res.json()
@@ -32,7 +37,6 @@ export const joinQueueApi = async (doctorId, data) => {
     });
     return res.json();
 };
-
 
 export const getAllDoctorsApi = async () => {
     const res = await fetch(`${BASE_URL}/doctors`);
@@ -79,3 +83,26 @@ export const toggleDayApi = async (doctorId) => {
     return res.json();
 }
 
+export const updateDoctorSettingsApi = async (doctorId, data) => {
+    const res = await fetch(`${BASE_URL}/doctor/${doctorId}/settings`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+
+    return res.json();
+}
+
+export const updateClinicSettingsApi = async (clinicId, data) => {
+    const res = await fetch(`${BASE_URL}/${clinicId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+
+    return res.json();
+}
