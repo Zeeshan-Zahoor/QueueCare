@@ -50,6 +50,9 @@ const doctorSchema = new mongoose.Schema({
         enum: ["active", "paused"],
         default: "paused",
     },
+    image: {
+        type: String,
+    },
     queue: [patientSchema],
 }, {timestamps: true});
 
