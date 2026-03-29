@@ -15,9 +15,11 @@ export default function Home() {
     const fetchClinics = async () => {
       try {
         const res = await getAllClinicsApi();
+        
         if(res.success) {
           setClinics(res.clinics);
         }
+        console.log("Error is: ", res.error);
       } catch (error) {
         console.log("Failed to fetch clinics");
       }

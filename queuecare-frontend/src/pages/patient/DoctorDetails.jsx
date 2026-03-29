@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Clock, BanIcon} from 'lucide-react';
+import { MapPin, Clock, BanIcon } from 'lucide-react';
 import Header from '../../components/common/Header';
 import { useParams, useNavigate } from 'react-router-dom';
 import SuccessTick from "../../assets/shield_tick.svg?react";
 import { joinQueueApi } from '../../api/clinicApi.js';
-import { getDoctorByIdApi } from '../../api/clinicApi.js';
+import { getDoctorByIdApi, getClinicApi } from '../../api/clinicApi.js';
 
 function DoctorDetails() {
 
@@ -21,26 +21,43 @@ function DoctorDetails() {
   const [showDuplicatePatient, setShowDuplicatePatient] = useState(false);
 
   const [doctor, setDoctor] = useState(null);
+  const [clinic, setClinic] = useState({});
+
+  const clinicId = doctor?.clinicId;
 
   useEffect(() => {
     const fetchDoctor = async () => {
       try {
         const res = await getDoctorByIdApi(doctorId);
 
-        if(res.success) {
+        if (res.success) {
           setDoctor(res.doctor);
         }
       } catch (error) {
         console.log("Failed to fetch doctor");
       }
     };
+    const fetchClinic = async () => {
+      try {
+        const res = await getClinicApi(clinicId);
+        if (res.success) {
+          setClinic(res.clinic);
+        }
+      } catch (error) {
+        console.log("Error fetching clinic");
+      }
+    }
 
+    fetchClinic();
     fetchDoctor();
-  }, [doctorId])
+  }, [doctorId, clinicId])
 
   console.log("DoctorId: ", doctorId);
- 
-  if(!doctor) return <p>Loading...</p>
+  console.log("This doctor: ", doctor)
+  console.log("Its clinicId: ", doctor?.clinicId);
+
+
+  if (!doctor) return <p>Loading...</p>
 
   const tokensLeft = doctor.maxTokens - (doctor.currentlyServing + doctor.queue.length);
 
@@ -52,8 +69,8 @@ function DoctorDetails() {
     try {
       const res = await joinQueueApi(doctor._id, formData);
 
-      if(!res.success) {
-        if(res.message === "Patient already in queue") {
+      if (!res.success) {
+        if (res.message === "Patient already in queue") {
           setShowDuplicatePatient(true);
         }
         return;
@@ -110,7 +127,7 @@ function DoctorDetails() {
             <div className='flex items-center gap-1 mt-1'>
               <MapPin className='w-4 h-4' />
               <span className="text-sm text-gray-500">
-                Clinic Name
+                {clinic?.name}
               </span>
             </div>
           </div>
@@ -253,9 +270,9 @@ function DoctorDetails() {
       {showDuplicatePatient && (
         <div className="fixed inset-0 bg-black/30 bg-opacity-40 flex items-center justify-center">
           <div className="bg-white p-7 px-10 rounded-4xl w-80 text-center space-y-4 flex flex-col items-center">
-            <BanIcon className='w-15 h-15 text-red-600'/>
+            <BanIcon className='w-15 h-15 text-red-600' />
             <h2 className='text-lg font-semibold'>You cannot book more then one token</h2>
-            <button 
+            <button
               onClick={() => setShowDuplicatePatient(false)}
               className="w-full mt-4 bg-slate-800 text-white py-2.5 rounded-4xl cursor-pointer">
               Close

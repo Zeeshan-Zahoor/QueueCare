@@ -78,13 +78,6 @@ export default function Settings() {
     }
   }
 
-  const handleGoDashboard = () => {
-    const confirmLeave = window.confirm("Discard unsaved changes?");
-    if(confirmLeave) {
-      navigate(`/clinic/${clinicId}/dashboard`);
-    }
-  }
-
   return (
     <div className="flex flex-col max-w-380 m-auto h-screen">
 
@@ -103,7 +96,7 @@ export default function Settings() {
         <div className="w-60 bg-white border-r border-gray-300">
           <div className="p-4 space-y-2">
             <button
-              onClick={handleGoDashboard}
+              onClick={() => navigate(`/clinic/${clinicId}/dashboard`)}
               className="w-full flex text-gray-600 px-4 py-2 rounded hover:bg-gray-100">
               Dashboard
             </button>

@@ -54,7 +54,9 @@ export default function QueueStatus() {
 
   const canCancel = token > doctor.currentlyServing;
 
-  if(token < doctor.currentlyServing) { // already served
+  const isCompleted = token < doctor.currentlyServing || (token === doctor.currentlyServing && doctor.status === "closed")
+
+  if(isCompleted) { // already served
     // delete from localStorage
     localStorage.removeItem("activeToken")
   }

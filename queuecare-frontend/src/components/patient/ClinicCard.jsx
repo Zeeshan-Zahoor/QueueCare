@@ -24,7 +24,7 @@ export default function ClinicCard({ clinic }) {
 
             <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
                 <MapPin className="w-4 h-4" />
-                <span>{clinic.location}</span>
+                <span>{clinic.address}</span>
             </div>
 
             <hr className='text-[#D0D3D9] mt-2' />

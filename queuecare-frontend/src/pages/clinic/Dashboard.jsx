@@ -185,7 +185,7 @@ export default function Dashboard() {
       const res = await toggleConsultationApi(selectedDoctorId);
 
       if(!res.success) {
-        console.log("Failed to toggle day");
+        console.log("Failed to toggle consultation");
         return;
       }
 
