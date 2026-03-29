@@ -3,11 +3,10 @@ import { Building2, Phone, Plus, BanIcon, ArrowRight, AlertTriangle, Settings } 
 import cloudIcon from "../../assets/cloud_icon.jpg";
 import DoctorCardClinic from "../../components/clinic/DoctorCardClinic";
 import { useParams, useNavigate } from "react-router-dom";
-import { clinics } from "../../data/mockData";
 import { useContext } from "react";
 import { QueueContext } from "../../contexts/QueueContext";
 import DoctorSettingsModal from "../../components/clinic/DoctorSettingsModal";
-import { getDoctorsApi, getDoctorByIdApi, advanceTokenApi } from "../../api/clinicApi.js";
+import { getDoctorsApi, getDoctorByIdApi, advanceTokenApi, joinQueueApi } from "../../api/clinicApi.js";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -22,6 +21,7 @@ export default function Dashboard() {
   const [walkInPatientData, setWalkInPatientData] = useState({
     name: "",
     phone: "",
+    source: "walk-in"
   })
 
   const [doctorSettingsModal, setDoctorSettingsModal] = useState(false);
@@ -66,8 +66,7 @@ export default function Dashboard() {
     return <p>Loading doctor data...</p>;  // MODIFY UI 
   }
 
-
-  const { joinQueue, toggleDay, toggleConsultation, exitQueue, updateDoctorSettings } = useContext(QueueContext);
+  const { toggleDay, toggleConsultation, exitQueue, updateDoctorSettings } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor._id);
@@ -100,22 +99,46 @@ export default function Dashboard() {
     exitQueue(selectedDoctorId, token, doctorInfo)
   }
 
-  const handleWalkInPatient = () => {
-    if (!walkInPatientData.name) return;
+  const handleWalkInPatient = async () => {
+    if (!walkInPatientData.name || !walkInPatientData.phone) return;
 
-    const token = joinQueue(selectedDoctorId, doctorInfo, walkInPatientData, "Walk-in");
+    try {
+      const res = await joinQueueApi(selectedDoctorId, walkInPatientData);
 
-    if (token === -1) {
-      setShowDuplicatePatient(true);
-      return;
+      if(res.message === "Patient already in queue") {
+        setShowWalkInModal(false);
+        setShowDuplicatePatient(true);
+        return;
+      }
+
+      if(res.success) {
+        setShowWalkInModal(false);
+        setWalkInPatientData({
+          name: "",
+          phone: "",
+        });
+
+        //update doctor state
+        const updated = await getDoctorByIdApi(selectedDoctorId);
+        if(updated.success) {
+          const updatedDoctor = updated.doctor;
+
+          setDoctorInfo(updatedDoctor);
+
+          //update doctor list also in side bar
+          setDoctors((prev) => 
+            prev.map((doctor) => 
+              doctor._id === updatedDoctor._id ? updatedDoctor : doctor
+            )
+          )
+
+        }
+
+      }
+    } catch (error) {
+      console.log("Error adding walk-in");
     }
 
-    setShowWalkInModal(false);
-
-    setWalkInPatientData({
-      name: "",
-      phone: ""
-    });
   };
 
   const tokensLeft = doctorInfo?.maxTokens - (doctorInfo?.currentlyServing + doctorInfo?.queue.length);
