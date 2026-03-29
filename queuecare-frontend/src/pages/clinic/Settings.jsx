@@ -4,25 +4,28 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { updateClinicSettingsApi, getAllClinicsApi, getClinicApi } from '../../api/clinicApi.js';
 
 export default function Settings() {
+  const [loading, setLoading] = useState(null);
+
   const navigate = useNavigate();
   const { clinicId } = useParams();
+
   
   const [clinicSettings, setClinicSettings] = useState({
     name: "",
     phone: "",
     address: "",
     workingDays: {
-      mon: true,
-      tue: true,
-      wed: true,
-      thu: true,
-      fri: true,
-      sat: true,
-      sun: true
+      mon: false,
+      tue: false,
+      wed: false,
+      thu: false,
+      fri: false,
+      sat: false,
+      sun: false
     },
-    openingTime: "09:00",
-    closingTime: "17:00",
-    allowWalkIns: true
+    openingTime: "",
+    closingTime: "",
+    allowWalkIns: false
   });
 
   useEffect(() => {
@@ -58,7 +61,7 @@ export default function Settings() {
         alert("Please fill required fields");
         return;
       }
-
+      setLoading(true);
       const res = await updateClinicSettingsApi(clinicId, clinicSettings);
 
       if(!res.success) {
@@ -66,7 +69,7 @@ export default function Settings() {
         return;
       }
 
-      // setClinicSettings(res.clinic);
+      setLoading(false);
       console.log("Clinic updated");
       alert("Clinic settings updated successfully");
       
@@ -258,9 +261,10 @@ export default function Settings() {
 
               <button
                 onClick={handleSave}
+                disabled={loading}
                 className="bg-green-600 text-white px-5 py-2 rounded-lg text-lg font-medium"
               >
-                Save Changes
+                {loading ? "Saving..." : "Save Changes"}
               </button>
 
             </div>
