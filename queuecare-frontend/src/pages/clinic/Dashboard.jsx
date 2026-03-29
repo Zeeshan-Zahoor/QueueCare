@@ -7,12 +7,14 @@ import { clinics } from "../../data/mockData";
 import { useContext } from "react";
 import { QueueContext } from "../../contexts/QueueContext";
 import DoctorSettingsModal from "../../components/clinic/DoctorSettingsModal";
-import { getDoctorsApi } from "../../api/clinicApi.js";
+import { getDoctorsApi, getDoctorByIdApi } from "../../api/clinicApi.js";
 
 export default function Dashboard() {
   const navigate = useNavigate();
 
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
+
+  const [doctorInfo, setDoctorInfo] = useState(null);
 
   const [showWalkInModal, setShowWalkInModal] = useState(false);
   const [showDuplicatePatient, setShowDuplicatePatient] = useState(false);
@@ -28,6 +30,7 @@ export default function Dashboard() {
 
   const { clinicId } = useParams();
 
+  
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -39,19 +42,36 @@ export default function Dashboard() {
         console.log("Error to fetch the doctors");
       }
     }
-
+    
     fetchDoctors();
   }, [clinicId]);
+  
+  useEffect(() => {
+    const fetchDoctor = async () => {
+      try {
+        const res = await getDoctorByIdApi(selectedDoctorId);
+        
+        if(res.success) {
+          setDoctorInfo(res.doctor);
+        }
+      } catch (error) {
+        console.log("Failed to fetch doctor");
+      }
+    };
+    
+    fetchDoctor();
+  }, [selectedDoctorId])
+  
+  if (!doctorInfo && selectedDoctorId) {
+    return <p>Loading doctor data...</p>;  // MODIFY UI 
+  }
 
-  const { doctorData, advanceToken, joinQueue, toggleDay, toggleConsultation, exitQueue, updateDoctorSettings } = useContext(QueueContext);
+
+  const { advanceToken, joinQueue, toggleDay, toggleConsultation, exitQueue, updateDoctorSettings } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor._id);
   }
-
-  const selectedDoctor = doctors.find(d => d._id === selectedDoctorId);
-
-  const doctorInfo = selectedDoctorId ? doctorData[selectedDoctorId] || selectedDoctor : null;
 
   const handleCallNextPatient = () => {
     advanceToken(selectedDoctorId, doctorInfo);
