@@ -62,3 +62,20 @@ export const advanceTokenApi = async (doctorId) => {
     });
     return res.json();
 }
+
+export const toggleConsultationApi = async (doctorId) => {
+    const res = await fetch(`${BASE_URL}/doctor/${doctorId}/toggle-consultation`, {
+        method: "POST",
+    })
+
+    return res.json();
+}
+
+export const toggleDayApi = async (doctorId) => {
+    const res = await  fetch(`${BASE_URL}/doctor/${doctorId}/toggle-day`, {
+        method: "POST",
+    })
+
+    return res.json();
+}
+

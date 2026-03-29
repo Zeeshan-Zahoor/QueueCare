@@ -6,7 +6,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { QueueContext } from "../../contexts/QueueContext";
 import DoctorSettingsModal from "../../components/clinic/DoctorSettingsModal";
-import { getDoctorsApi, getDoctorByIdApi, advanceTokenApi, joinQueueApi, exitQueueApi } from "../../api/clinicApi.js";
+import { getDoctorsApi,
+         getDoctorByIdApi, 
+         advanceTokenApi, 
+         joinQueueApi, 
+         exitQueueApi, 
+         toggleConsultationApi, 
+         toggleDayApi, 
+        } 
+from "../../api/clinicApi.js";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -66,7 +74,7 @@ export default function Dashboard() {
     return <p>Loading doctor data...</p>;  // MODIFY UI 
   }
 
-  const { toggleDay, toggleConsultation, updateDoctorSettings } = useContext(QueueContext);
+  const { toggleConsultation, updateDoctorSettings } = useContext(QueueContext);
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor._id);
@@ -175,8 +183,58 @@ export default function Dashboard() {
   const tokensLeft = doctorInfo?.maxTokens - (doctorInfo?.currentlyServing + doctorInfo?.queue.length);
   const isFull = tokensLeft <= 0;
 
-  const handleToggleDay = () => {
-    toggleDay(selectedDoctorId, doctorInfo);
+  const handleToggleConsultation = async () => {
+    try {
+      const res = await toggleConsultationApi(selectedDoctorId);
+
+      if(!res.success) {
+        console.log("Failed to toggle day");
+        return;
+      }
+
+      const updated = await getDoctorByIdApi(selectedDoctorId);
+      if(updated.success) {
+        const updatedDoctor = updated.doctor;
+        
+        setDoctorInfo(updatedDoctor);
+
+        setDoctors((prev) => 
+          prev.map(doctor => 
+            doctor._id === updatedDoctor._id ? updatedDoctor : doctor
+          )
+        ) 
+      }
+
+    } catch (error) {
+      console.log("Error toggling Consultation");
+    }
+  }
+
+  const handleToggleDay = async () => {
+    try {
+      const res = await toggleDayApi(selectedDoctorId);
+
+      if(!res.success) {
+        console.log("Failed to toggle day");
+        return;
+      }
+
+      const updated = await getDoctorByIdApi(selectedDoctorId);
+      if(updated.success) {
+        const updatedDoctor = updated.doctor;
+        
+        setDoctorInfo(updatedDoctor);
+
+        setDoctors((prev) => 
+          prev.map(doctor => 
+            doctor._id === updatedDoctor._id ? updatedDoctor : doctor
+          )
+        ) 
+      }
+
+    } catch (error) {
+      console.log("Error toggling day");
+    }
   }
 
   const handleSaveDoctorSettings = (updatedSettings) => {
@@ -375,7 +433,7 @@ export default function Dashboard() {
                 </button>
 
                 <button
-                  onClick={() => toggleConsultation(selectedDoctorId, doctorInfo)}
+                  onClick={handleToggleConsultation}
                   className={`text-white px-5 py-3 rounded cursor-pointer text-lg font-medium ${doctorInfo.consultationStatus === "active" ? "bg-orange-400" : "bg-green-500"}`}>
                   {doctorInfo.consultationStatus === "paused" ? "Resume Consultation" : "Hold Consultation"}
                 </button>
