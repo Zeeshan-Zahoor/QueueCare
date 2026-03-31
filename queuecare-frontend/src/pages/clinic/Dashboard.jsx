@@ -103,7 +103,7 @@ export default function Dashboard() {
       }
 
     } catch (error) {
-      console.log("Error advancing token");
+      console.log("Error advancing token: ", error.message);
     }
   };
 

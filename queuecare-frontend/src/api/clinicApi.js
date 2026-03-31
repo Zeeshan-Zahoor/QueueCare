@@ -28,10 +28,14 @@ export const getDoctorsApi =  async (clinicId) => {
 }
 
 export const joinQueueApi = async (doctorId, data) => {
+    const jwt_token = localStorage.getItem("jwt_token");
+
     const res = await fetch(`${BASE_URL}/doctor/${doctorId}/join`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${jwt_token}`
+    
         },
         body: JSON.stringify(data),
     });
@@ -49,10 +53,14 @@ export const getAllClinicsApi = async () => {
 }
 
 export const exitQueueApi = async (doctorId, token) => {
+    const jwt_token = localStorage.getItem("jwt_token");
+
     const res = await fetch(`${BASE_URL}/doctor/${doctorId}/exit`, {
         method: "POST",
         headers: {
             "Content-Type" : "application/json",
+            "Authorization": `Bearer ${jwt_token}`
+            
         },
         body: JSON.stringify({ token }),
     });
@@ -61,33 +69,51 @@ export const exitQueueApi = async (doctorId, token) => {
 }
 
 export const advanceTokenApi = async (doctorId) => {
+    const jwt_token = localStorage.getItem("jwt_token");
+
     const res = await fetch(`${BASE_URL}/doctor/${doctorId}/advance`, {
         method: "POST",
+        headers: {
+            "Authorization": `Bearer ${jwt_token}`
+        },
     });
     return res.json();
 }
 
 export const toggleConsultationApi = async (doctorId) => {
+    const jwt_token = localStorage.getItem("jwt_token");
+
     const res = await fetch(`${BASE_URL}/doctor/${doctorId}/toggle-consultation`, {
         method: "POST",
+        headers: {
+            "Authorization": `Bearer ${jwt_token}` 
+        }
     })
 
     return res.json();
 }
 
 export const toggleDayApi = async (doctorId) => {
+    const jwt_token = localStorage.getItem("jwt_token");
+
     const res = await  fetch(`${BASE_URL}/doctor/${doctorId}/toggle-day`, {
         method: "POST",
+        headers: {
+            "Authorization": `Bearer ${jwt_token}`
+        }
     })
 
     return res.json();
 }
 
 export const updateDoctorSettingsApi = async (doctorId, data) => {
+    const jwt_token = localStorage.getItem("jwt_token");
+    
     const res = await fetch(`${BASE_URL}/doctor/${doctorId}/settings`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${jwt_token}`
         },
         body: JSON.stringify(data),
     });
@@ -96,10 +122,13 @@ export const updateDoctorSettingsApi = async (doctorId, data) => {
 }
 
 export const updateClinicSettingsApi = async (clinicId, data) => {
+    const jwt_token = localStorage.getItem("jwt_token");
+
     const res = await fetch(`${BASE_URL}/${clinicId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${jwt_token}`
         },
         body: JSON.stringify(data),
     });
