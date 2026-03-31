@@ -1,6 +1,7 @@
 import { Clinic } from "../models/clinic.model.js";
 import { Doctor } from "../models/doctor.model.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const loginClinic = async (req, res) => {
     try {
@@ -24,7 +25,7 @@ const loginClinic = async (req, res) => {
             });
         }
 
-        //validiate clinic with password \
+        //validiate clinic with password (hashed now)
         const isMatch = await bcrypt.compare(password, clinic.password);
 
         if(!isMatch) {
@@ -33,11 +34,18 @@ const loginClinic = async (req, res) => {
             });
         }
 
+        const jwt_token = jwt.sign(
+            { clinicId: clinic._id },  // payload 
+            "secret123",   // secret key (will improve later)
+            { expiresIn: "1d" }
+        )
+
         //response (success)
         return res.status(200).json({
             message: "Login Successful",
             clinicId: clinic._id,
             success: true,
+            jwt_token,
         });
 
     } catch (error) {
