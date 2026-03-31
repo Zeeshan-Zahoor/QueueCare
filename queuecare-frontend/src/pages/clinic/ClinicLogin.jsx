@@ -24,6 +24,7 @@ function ClinicLogin() {
       setError("");
 
       const clinicId = res.clinicId;
+      localStorage.setItem("jwt_token", res.jwt_token);
       navigate(`/clinic/${clinicId}/dashboard`);
 
     } catch (error) {
