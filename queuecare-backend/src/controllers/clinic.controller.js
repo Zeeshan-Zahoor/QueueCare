@@ -1,5 +1,6 @@
 import { Clinic } from "../models/clinic.model.js";
 import { Doctor } from "../models/doctor.model.js";
+import bcrypt from "bcryptjs";
 
 const loginClinic = async (req, res) => {
     try {
@@ -23,9 +24,11 @@ const loginClinic = async (req, res) => {
             });
         }
 
-        //validiate clinic with password (plain for now)
-        if(clinic.password !== password) {
-            return res.status(401).json({
+        //validiate clinic with password \
+        const isMatch = await bcrypt.compare(password, clinic.password);
+
+        if(!isMatch) {
+            return res.status(400).json({
                 message: "Invalid Credentials!",
             });
         }
