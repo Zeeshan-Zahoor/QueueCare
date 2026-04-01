@@ -14,6 +14,8 @@ import Dashboard from "../pages/clinic/Dashboard";
 import Settings from "../pages/clinic/Settings";
 import ClinicDetails from "../pages/patient/ClinicDetails";
 
+import ProtectedRoute from "../components/auth/ProtectedRoute.jsx";
+
 export const router = createBrowserRouter([
     {
         path: "/", 
@@ -54,8 +56,16 @@ export const router = createBrowserRouter([
             {
                 path: ":clinicId", 
                 children: [
-                    { path: "dashboard", element: <Dashboard /> }, 
-                    { path: "settings", element: <Settings /> }
+                    { path: "dashboard", element: (
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    ) }, 
+                    { path: "settings", element: (
+                        <ProtectedRoute>
+                            <Settings />
+                        </ProtectedRoute>
+                    ) }
                 ]
             }
         ],

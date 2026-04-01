@@ -257,6 +257,11 @@ export default function Dashboard() {
     }
   }
 
+
+  const handleLogout= () => {
+
+  }
+
   return (
     <div className="flex flex-col max-w-screen-2xl m-auto h-screen">
       {/* Top Bar - unchanged */}
@@ -283,9 +288,13 @@ export default function Dashboard() {
 
         <button
           onClick={handleToggleDay}
-          className={`${doctorInfo?.status === "open" ? "bg-slate-800" : "bg-green-700"} text-white px-4 py-2 rounded disabled:bg-gray-400`}>
+          className={`${doctorInfo?.status === "open" ? "bg-slate-800" : "bg-green-700"} text-white px-4 py-2 rounded disabled:bg-gray-400 ${selectedDoctorId ? "" : "hidden"}`}
+          
+          >
           {doctorInfo?.status === "open" ? "End Consultation" : "Start Consultation"}
         </button>
+
+        
       </div>
 
       {/* body */}
