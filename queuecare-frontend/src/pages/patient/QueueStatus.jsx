@@ -40,6 +40,10 @@ export default function QueueStatus() {
 
     const interval = setInterval(fetchDoctor, 5000); //polling
 
+    if(token <= doctor?.currentlyServing) {
+      clearInterval(interval);
+    }
+
     return () => clearInterval(interval);
 
   }, [doctorId])

@@ -37,39 +37,33 @@ export default function Dashboard() {
 
   const { clinicId } = useParams();
 
-
   useEffect(() => {
     const fetchDoctors = async () => {
-      try {
-        const res = await getDoctorsApi(clinicId);
-        if (res.success) {
-          setDoctors(res.doctors);
+        try {
+          const res = await getDoctorsApi(clinicId);
+          if (res.success) {
+            setDoctors(res.doctors);
+          }
+        } catch (error) {
+          console.log("Error to fetch the doctors");
         }
-      } catch (error) {
-        console.log("Error to fetch the doctors");
-      }
     }
-
+  
     fetchDoctors();
+
+    const interval = setInterval(() => {
+      if (document.visibilityState === "visible") { // small optimization -> when page is active 
+      console.log("Polling...");
+      fetchDoctors();
+    }
+    }, 3000);
+
+    return () => clearInterval(interval);
   }, [clinicId]);
 
-  useEffect(() => {
-    const fetchDoctor = async () => {
-      try {
-        const res = await getDoctorByIdApi(selectedDoctorId);
+  const selectedDoctor = doctors.find((doc) => doc._id === selectedDoctorId);
 
-        if (res.success) {
-          setDoctorInfo(res.doctor);
-        }
-      } catch (error) {
-        console.log("Failed to fetch doctor");
-      }
-    };
-
-    fetchDoctor();
-  }, [selectedDoctorId])
-
-  if (!doctorInfo && selectedDoctorId) {
+  if (!selectedDoctor && selectedDoctorId) {
     return <p>Loading doctor data...</p>;  // MODIFY UI 
   }
 
@@ -177,7 +171,7 @@ export default function Dashboard() {
 
   };
 
-  const tokensLeft = doctorInfo?.maxTokens - (doctorInfo?.currentlyServing + doctorInfo?.queue.length);
+  const tokensLeft = selectedDoctor?.maxTokens - (selectedDoctor?.currentlyServing + selectedDoctor?.queue.length);
   const isFull = tokensLeft <= 0;
 
   const handleToggleConsultation = async () => {
@@ -277,22 +271,22 @@ export default function Dashboard() {
           {(new Date()).toDateString()}
         </div>
 
-        {doctorInfo && (
+        {selectedDoctor && (
           <div className="flex items-center gap-2 text-gray-700">
             <span
-              className={`w-3 h-3 rounded-full ${doctorInfo.status === "open" ? "bg-green-500" : "bg-red-500"
+              className={`w-3 h-3 rounded-full ${selectedDoctor.status === "open" ? "bg-green-500" : "bg-red-500"
                 }`}
             />
-            {doctorInfo.status === "open" ? "Consultation Active" : "Consultation Closed"}
+            {selectedDoctor.status === "open" ? "Consultation Active" : "Consultation Closed"}
           </div>
         )}
 
         <button
           onClick={handleToggleDay}
-          className={`${doctorInfo?.status === "open" ? "bg-slate-800" : "bg-green-700"} text-white px-4 py-2 rounded disabled:bg-gray-400 ${selectedDoctorId ? "" : "hidden"}`}
+          className={`${selectedDoctor?.status === "open" ? "bg-slate-800" : "bg-green-700"} text-white px-4 py-2 rounded disabled:bg-gray-400 ${selectedDoctorId ? "" : "hidden"}`}
           
           >
-          {doctorInfo?.status === "open" ? "End Consultation" : "Start Consultation"}
+          {selectedDoctor?.status === "open" ? "End Consultation" : "Start Consultation"}
         </button>
 
         <button
@@ -339,10 +333,10 @@ export default function Dashboard() {
         </div>
 
         {/* Main - FIXED SECTION */}
-        {doctorInfo ? (
+        {selectedDoctor ? (
           <div className="flex flex-col flex-1 min-h-0"> {/* Added min-h-0 */}
 
-            {doctorInfo?.consultationStatus === "paused" && (
+            {selectedDoctor?.consultationStatus === "paused" && (
               <div className="w-full bg-yellow-100 border-b border-yellow-300 px-6 py-3 flex items-center gap-3">
 
                 {/* Warning Icon */}
@@ -370,7 +364,7 @@ export default function Dashboard() {
                   <p className="text-slate-700 font-medium">Now Serving</p>
 
                   <div className="text-4xl text-slate-800 font-bold mt-2">
-                    Token: #{doctorInfo.currentlyServing || "-"}
+                    Token: #{selectedDoctor.currentlyServing || "-"}
                   </div>
 
                   <p className="text-gray-600 mt-2">
@@ -380,12 +374,12 @@ export default function Dashboard() {
 
                 <div className="bg-white p-6 rounded shadow-lg">
                   <p className="text-slate-700 font-medium">Next in Queue</p>
-                  <div className="text-4xl font-bold text-green-600 mt-2">Token: #{doctorInfo?.queue?.[0]?.token || "-"}</div>
+                  <div className="text-4xl font-bold text-green-600 mt-2">Token: #{selectedDoctor?.queue?.[0]?.token || "-"}</div>
                 </div>
 
                 <div className="bg-white p-6 rounded shadow-lg">
                   <p className="text-slate-700 font-medium">Waiting Patients</p>
-                  <div className="text-3xl font-bold text-orange-500 mt-2">{doctorInfo?.queue?.length || 0} Patients</div>
+                  <div className="text-3xl font-bold text-orange-500 mt-2">{selectedDoctor?.queue?.length || 0} Patients</div>
                 </div>
               </div>
 
@@ -418,7 +412,7 @@ export default function Dashboard() {
                     </thead>
 
                     <tbody className="text-center">
-                      {doctorInfo?.queue?.map((p) => (
+                      {selectedDoctor?.queue?.map((p) => (
                         <tr
                           key={p.token}
                           className="border-t border-gray-300 bg-white"
@@ -449,7 +443,7 @@ export default function Dashboard() {
               {doctorSettingsModal && (
                 <DoctorSettingsModal
                   onClose={() => setDoctorSettingsModal(false)}
-                  doctor={doctorInfo}
+                  doctor={selectedDoctor}
                   onSave={handleSaveDoctorSettings}
                 />
               )}
@@ -458,20 +452,20 @@ export default function Dashboard() {
               <div className="flex gap-4 shrink-0"> {/* Added shrink-0 */}
                 <button
                   onClick={() => setShowWalkInModal(true)}
-                  disabled={isFull || doctorInfo.consultationStatus === "paused"}
+                  disabled={isFull || selectedDoctor.consultationStatus === "paused"}
                   className="bg-slate-800 text-white px-5 py-3 rounded text-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed">
                   <div className="flex items-center gap-1"><Plus className="font-medium" /> Add Walk-in</div>
                 </button>
 
                 <button
                   onClick={handleToggleConsultation}
-                  className={`text-white px-5 py-3 rounded cursor-pointer text-lg font-medium ${doctorInfo.consultationStatus === "active" ? "bg-orange-400" : "bg-green-500"}`}>
-                  {doctorInfo.consultationStatus === "paused" ? "Resume Consultation" : "Hold Consultation"}
+                  className={`text-white px-5 py-3 rounded cursor-pointer text-lg font-medium ${selectedDoctor.consultationStatus === "active" ? "bg-orange-400" : "bg-green-500"}`}>
+                  {selectedDoctor.consultationStatus === "paused" ? "Resume Consultation" : "Hold Consultation"}
                 </button>
 
                 <button
                   onClick={handleCallNextPatient}
-                  disabled={doctorInfo.queue.length === 0 || doctorInfo.consultationStatus === "paused"}
+                  disabled={selectedDoctor.queue.length === 0 || selectedDoctor.consultationStatus === "paused"}
                   className="bg-green-600 text-white px-5 py-3 rounded cursor-pointer text-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2">
                   Call Next Patient <ArrowRight className="font-medium" />
                 </button>
