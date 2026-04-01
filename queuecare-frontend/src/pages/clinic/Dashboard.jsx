@@ -259,7 +259,8 @@ export default function Dashboard() {
 
 
   const handleLogout= () => {
-
+    localStorage.removeItem("jwt_token");
+    navigate("/clinic");
   }
 
   return (
@@ -294,7 +295,12 @@ export default function Dashboard() {
           {doctorInfo?.status === "open" ? "End Consultation" : "Start Consultation"}
         </button>
 
-        
+        <button
+          onClick={handleLogout}
+          className="bg-orange-600 text-white px-6 py-2 rounded"
+        >
+          Logout
+        </button>
       </div>
 
       {/* body */}

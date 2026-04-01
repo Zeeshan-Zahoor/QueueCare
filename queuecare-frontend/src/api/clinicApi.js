@@ -39,6 +39,11 @@ export const joinQueueApi = async (doctorId, data) => {
         },
         body: JSON.stringify(data),
     });
+
+    if(res.status === 401) {
+        localStorage.removeItem("jwt_token");
+        window.location.href("/clinic");
+    }
     return res.json();
 };
 
@@ -65,6 +70,11 @@ export const exitQueueApi = async (doctorId, token) => {
         body: JSON.stringify({ token }),
     });
 
+    if(res.status === 401) {
+        localStorage.removeItem("jwt_token");
+        window.location.href("/clinic");
+    }
+
     return res.json();
 }
 
@@ -77,6 +87,11 @@ export const advanceTokenApi = async (doctorId) => {
             "Authorization": `Bearer ${jwt_token}`
         },
     });
+
+    if(res.status === 401) {
+        localStorage.removeItem("jwt_token");
+        window.location.href("/clinic");
+    }
     return res.json();
 }
 
@@ -89,6 +104,11 @@ export const toggleConsultationApi = async (doctorId) => {
             "Authorization": `Bearer ${jwt_token}` 
         }
     })
+
+    if(res.status === 401) {
+        localStorage.removeItem("jwt_token");
+        window.location.href("/clinic");
+    }
 
     return res.json();
 }
@@ -103,6 +123,10 @@ export const toggleDayApi = async (doctorId) => {
         }
     })
 
+    if(res.status === 401) {
+        localStorage.removeItem("jwt_token");
+        window.location.href("/clinic");
+    }
     return res.json();
 }
 
@@ -118,6 +142,11 @@ export const updateDoctorSettingsApi = async (doctorId, data) => {
         body: JSON.stringify(data),
     });
 
+    if(res.status === 401) {
+        localStorage.removeItem("jwt_token");
+        window.location.href("/clinic");
+    }
+
     return res.json();
 }
 
@@ -132,6 +161,11 @@ export const updateClinicSettingsApi = async (clinicId, data) => {
         },
         body: JSON.stringify(data),
     });
+
+    if(res.status === 401) {
+        localStorage.removeItem("jwt_token");
+        window.location.href("/clinic");
+    }
 
     return res.json();
 }
