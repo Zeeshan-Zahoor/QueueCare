@@ -4,6 +4,7 @@ import DoctorCard from '../../components/patient/DoctorCard';
 import Header from '../../components/common/Header';
 import BottomNav from '../../components/common/BottomNav';
 import { getDoctorsApi, getClinicApi } from '../../api/clinicApi';
+import DoctorCardSkeleton from '../../components/loaders/DoctorCardSkeleton';
 
 export default function ClinicDetails() {
   const { clinicId } = useParams();
@@ -12,6 +13,8 @@ export default function ClinicDetails() {
   
   const [doctors, setDoctors] = useState([]);
   const [clinic, setClinic] = useState({});
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -23,6 +26,8 @@ export default function ClinicDetails() {
         }
       } catch (error) {
         console.log("Failed to fetch doctors");
+      } finally {
+        setLoading(false);
       }
     };
     const fetchClinic = async () => {
@@ -47,11 +52,15 @@ export default function ClinicDetails() {
         title={clinic?.name}
       />
       <div className="space-y-4  pt-1">
+        {loading && (
+          <DoctorCardSkeleton />
+        )}
+
         {doctors.map((doctor) => (
           <DoctorCard 
             key={doctor._id} 
             doctor={doctor}
-            clinicName={clinic?.name}   
+            clinic={clinic}   
           />
         ))}
       </div>

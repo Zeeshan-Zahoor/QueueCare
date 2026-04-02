@@ -33,7 +33,7 @@ export default function Home() {
   }, []);
   
   return (
-    <div className='max-w-md mx-auto px-4 py-3 space-y-2 h-dvh'>
+    <div className='max-w-md mx-auto px-4 py-3 space-y-2 min-h-dvh pb-[calc(70px+env(safe-area-inset-bottom))]'>
 
       {/* Location */}
       <span className='text-sm text-slate-500'>Location</span>

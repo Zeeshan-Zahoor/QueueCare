@@ -1,16 +1,19 @@
 import { MapPin, Clock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
+import {  useState } from 'react';
 
-export default function DoctorCard({ doctor, clinicName }) {
+export default function DoctorCard({ doctor, clinic }) {
+   
     const tokensLeft = doctor.maxTokens - (doctor.currentlyServing + doctor.queue.length);
     const isFull = tokensLeft <= 0;
 
-    const peopleAhead = doctor.queue.length
+    const peopleAhead = doctor.queue?.length || 0;
     const waitTime = peopleAhead * doctor.consultationTime;
     console.log("Doctor: ", doctor);
     console.log("URL: ", window.location.pathname);
     
     const navigate = useNavigate();
+
   return (
     <div 
     onClick={() => {
@@ -64,7 +67,7 @@ export default function DoctorCard({ doctor, clinicName }) {
             {/* Doctor's Clinic */}
             <div className='h-4 flex items-start gap-2 mt-1 text-[13px] text-slate-700 overflow-hidden'>
                 <MapPin className='w-4 h-4' />
-                <span>{clinicName}</span>
+                <span>{clinic?.name}</span>
             </div>
 
             {/* Wait time */}
