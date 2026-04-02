@@ -5,10 +5,12 @@ import { Search, MapPin } from 'lucide-react'
 import ClinicCard from '../../components/patient/ClinicCard';
 import heroImage from "../../assets/heroImage.png"
 import BottomNav from '../../components/common/BottomNav';
+import CliniccardSkeleton from '../../components/loaders/CliniccardSkeleton.jsx';
 
 export default function Home() {
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(true);
   const [clinics, setClinics] = useState([]);
 
   useEffect(() => {
@@ -22,6 +24,8 @@ export default function Home() {
         console.log("Error is: ", res.error);
       } catch (error) {
         console.log("Failed to fetch clinics");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -43,7 +47,7 @@ export default function Home() {
         <Search className='w-5 h-5 ml-3 text-gray-500 shrink-0' />
         <input
           type="text"
-          placeholder='Search doctor...'
+          placeholder='Search clinic...'
           className='text-[#374151] rounded-lg p-2 outline-none flex-1'
         />
       </div>
@@ -73,6 +77,10 @@ export default function Home() {
         <h3 className="text-lg font-semibold text-slate-700 mb-2 mt-4">
           Nearby Medical Centers
         </h3>
+
+        {loading && (
+          <CliniccardSkeleton />
+        )}
 
         <div className="space-y-3">
           {clinics.map((clinic) => (

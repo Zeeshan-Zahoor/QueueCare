@@ -12,7 +12,7 @@ export default function DoctorCardClinic({
     <div 
     role="button"
     onClick={clickHandler}
-    className={`${active ? "bg-slate-700" : "bg-white"} m-auto rounded-lg transition-all border border-gray-200 duration-300 p-2 flex gap-3 items-start mb-2`}>
+    className={`${active ? "bg-slate-700" : "bg-white"} m-auto rounded-lg transition-all border border-gray-200 duration-300 p-2 flex gap-3 items-start mb-2 cursor-pointer`}>
       <div className="w-20 h-20 rounded-sm shadow-xl border border-gray-50 overflow-hidden shrink-0">
         <img
           src={doctor.image}

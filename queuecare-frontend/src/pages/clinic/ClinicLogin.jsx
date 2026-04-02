@@ -12,9 +12,10 @@ function ClinicLogin() {
   })
   const [error, setError] = useState("");
   const [showForgot, setShowForgot] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const handleSignIn = async () => {
     try {
+      setLoading(true);
       const res = await loginClinicApi(loginData);
 
       if(!res.success) {
@@ -30,12 +31,13 @@ function ClinicLogin() {
 
     } catch (error) {
       setError("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
     <div
-      style={{ fontFamily: "'Segoe UI', sans-serif" }}
       className="min-h-screen bg-gray-200 flex items-center justify-center px-4"
     >
       {/* Card */}
@@ -95,8 +97,9 @@ function ClinicLogin() {
             style={{ backgroundColor: "#1e3a5f" }}
             onMouseEnter={e => e.currentTarget.style.backgroundColor = "#162d4a"}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = "#1e3a5f"}
+            disabled={loading}
           >
-            Sign In
+            {loading ? "Signing In..." : "Sign In"}
           </button>
         </div>
  
@@ -162,7 +165,7 @@ function ClinicLogin() {
       {error !== "" && (
         <div className="fixed top-5 right-5 z-50">
           <div className="flex items-center gap-3 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-lg px-4 py-3 min-w-72">
-            <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
+            <AlertCircle className="h-5 w-5 text-red-500 shrink-0" />
             <p className="text-sm font-medium text-red-800 flex-1">{error}</p>
             <button
               onClick={() => setError("")}

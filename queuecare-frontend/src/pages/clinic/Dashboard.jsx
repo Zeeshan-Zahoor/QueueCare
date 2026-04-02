@@ -14,6 +14,7 @@ import { getDoctorsApi,
          updateDoctorSettingsApi,
         } 
 from "../../api/clinicApi.js";
+import Spinner from "../../components/loaders/Spinner.jsx";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ export default function Dashboard() {
   const selectedDoctor = doctors.find((doc) => doc._id === selectedDoctorId);
 
   if (!selectedDoctor && selectedDoctorId) {
-    return <p>Loading doctor data...</p>;  // MODIFY UI 
+    return <Spinner/> 
   }
 
   const handleDoctorClick = (doctor) => {
@@ -283,7 +284,7 @@ export default function Dashboard() {
 
         <button
           onClick={handleToggleDay}
-          className={`${selectedDoctor?.status === "open" ? "bg-slate-800" : "bg-green-700"} text-white px-4 py-2 rounded disabled:bg-gray-400 ${selectedDoctorId ? "" : "hidden"}`}
+          className={`${selectedDoctor?.status === "open" ? "bg-slate-800" : "bg-green-700"} text-white px-4 py-2 rounded disabled:bg-gray-400 ${selectedDoctorId ? "" : "hidden"} active:scale-95 transition-transform duration-150`}
           
           >
           {selectedDoctor?.status === "open" ? "End Consultation" : "Start Consultation"}
@@ -291,7 +292,7 @@ export default function Dashboard() {
 
         <button
           onClick={handleLogout}
-          className="bg-orange-600 text-white px-6 py-2 rounded"
+          className="bg-orange-600 text-white px-6 py-2 rounded active:scale-95 transition-transform duration-150"
         >
           Logout
         </button>
@@ -409,6 +410,14 @@ export default function Dashboard() {
                         <th className="p-4">Status</th>
                         <th className="p-4">Actions</th>
                       </tr>
+
+                      {selectedDoctor?.queue.length === 0 && (
+                        <tr>
+                          <td colSpan="6" className="bg-slate-200 py-6 text-gray-500 text-center">
+                            No patients in queue
+                          </td>
+                        </tr>
+                      )}
                     </thead>
 
                     <tbody className="text-center">
@@ -453,20 +462,20 @@ export default function Dashboard() {
                 <button
                   onClick={() => setShowWalkInModal(true)}
                   disabled={isFull || selectedDoctor.consultationStatus === "paused"}
-                  className="bg-slate-800 text-white px-5 py-3 rounded text-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed">
+                  className="bg-slate-800 text-white px-5 py-3 rounded text-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed active:scale-95 transition-transform duration-150">
                   <div className="flex items-center gap-1"><Plus className="font-medium" /> Add Walk-in</div>
                 </button>
 
                 <button
                   onClick={handleToggleConsultation}
-                  className={`text-white px-5 py-3 rounded cursor-pointer text-lg font-medium ${selectedDoctor.consultationStatus === "active" ? "bg-orange-400" : "bg-green-500"}`}>
+                  className={`text-white px-5 py-3 rounded cursor-pointer text-lg font-medium ${selectedDoctor.consultationStatus === "active" ? "bg-orange-400" : "bg-green-500"} active:scale-95 transition-transform duration-150`}>
                   {selectedDoctor.consultationStatus === "paused" ? "Resume Consultation" : "Hold Consultation"}
                 </button>
 
                 <button
                   onClick={handleCallNextPatient}
                   disabled={selectedDoctor.queue.length === 0 || selectedDoctor.consultationStatus === "paused"}
-                  className="bg-green-600 text-white px-5 py-3 rounded cursor-pointer text-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2">
+                  className="bg-green-600 text-white px-5 py-3 rounded cursor-pointer text-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2 active:scale-95 transition-transform duration-150">
                   Call Next Patient <ArrowRight className="font-medium" />
                 </button>
               </div>
@@ -586,4 +595,5 @@ export default function Dashboard() {
       )}
     </div>
   );
+  
 }
