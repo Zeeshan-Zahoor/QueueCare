@@ -3,7 +3,10 @@ import mongoose from "mongoose";
 const patientSchema = new mongoose.Schema({
     token: Number,
     name: String,
-    phone: String,
+    phone: {
+        type: String,
+        unique: true,
+    },
     source: {
         type: String,
         enum: ["online", "walk-in"],
