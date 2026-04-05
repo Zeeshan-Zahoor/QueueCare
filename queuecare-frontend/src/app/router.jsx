@@ -6,6 +6,7 @@ import ClinicLayout from "../layouts/ClinicLayout";
 import AuthRedirect from "./AuthRedirect.jsx";
 
 import UserRegistration from "../pages/patient/UserRegistration.jsx";
+import UserLogin from "../pages/patient/UserLogin.jsx";
 import Home from "../pages/patient/Home";
 import Doctors from "../pages/patient/Doctors";
 import DoctorDetails from "../pages/patient/DoctorDetails";
@@ -29,6 +30,18 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 element: <AuthRedirect />
+            },
+            {
+                path: 'register',
+                element: <UserRegistration />
+            },
+            {
+                path: 'login',
+                element: <UserLogin />
+            },
+            {
+                path: 'home',
+                element: <Home />
             },
             {
                 path: 'doctors',

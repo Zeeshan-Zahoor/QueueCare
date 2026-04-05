@@ -7,5 +7,5 @@ export default function AuthRedirect() {
         return <Navigate to='/home'/>
     }
 
-    return <Navigate to= 'user/login'/>
+    return <Navigate to= '/login'/>
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, User, Hospital, Lock } from "lucide-react";
+import { Hospital, Mail, Lock } from "lucide-react";
 
 const GoogleIcon = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -10,9 +10,8 @@ const GoogleIcon = () => (
   </svg>
 );
 
-export default function UserRegistration() {
+export default function UserLogin() {
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
   })
@@ -23,7 +22,7 @@ export default function UserRegistration() {
 
         {/* Logo */}
         <div className="flex flex-col items-center gap-2 mb-6">
-          <Hospital size={50}/>
+          <Hospital size={50} className="text-slate-800"/>
           <span className="text-base font-semibold tracking-tight">
             <span className="text-gray-500">Queue</span>
             <span className="text-slate-800 font-bold">Care</span>
@@ -32,29 +31,12 @@ export default function UserRegistration() {
 
         {/* Heading */}
         <div className="text-center mb-7">
-          <h1 className="text-xl font-bold text-slate-800 mb-1">Create Account</h1>
-          <p className="text-sm text-gray-400">We are here to help you!</p>
+          <h1 className="text-xl font-bold text-slate-800 mb-1">Hi, Welcome Back!</h1>
+          <p className="text-sm text-gray-400">Hope you're doing fine.</p>
         </div>
 
         {/* Form */}
         <div className="w-full flex flex-col gap-3">
-
-          {/* Name */}
-          <div className="relative flex items-center">
-            <span className="absolute left-3.5 pointer-events-none flex items-center">
-              <User size={18} className="text-gray-400"/>
-            </span>
-            <input
-              type="text"
-              placeholder="Your Name"
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({
-                ...prev,
-                name: e.target.value
-              }))}
-              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm text-slate-800 bg-gray-50 outline-none focus:border-[#1a2744] transition-colors placeholder:text-gray-400"
-            />
-          </div>
 
           {/* Email */}
           <div className="relative flex items-center">
@@ -63,7 +45,7 @@ export default function UserRegistration() {
             </span>
             <input
               type="email"
-              placeholder="Your email"
+              placeholder="Email"
               value={formData.email}
               onChange={(e) => setFormData(prev => ({
                 ...prev,
@@ -90,9 +72,9 @@ export default function UserRegistration() {
             />
           </div>
 
-          {/* Create Account Button */}
-          <button className="w-full py-3.5 mt-1 bg-slate-800 text-white rounded-xl text-sm font-semibold hover:bg-slate-700 active:scale-[0.98] transition-all cursor-pointer">
-            Create Account
+          {/* Sign In Button */}
+          <button className="w-full py-3.5 mt-1 bg-slate-800 text-white rounded-4xl text-sm font-semibold hover:bg-slate-700 active:scale-[0.98] transition-all cursor-pointer">
+            Sign In
           </button>
 
           {/* Divider */}
@@ -105,14 +87,19 @@ export default function UserRegistration() {
           {/* Google Button */}
           <button className="w-full py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 bg-white flex items-center justify-center gap-2.5 hover:bg-gray-50 active:scale-[0.98] transition-all cursor-pointer">
             <GoogleIcon />
-            Sign Up with Google
+            Sign In with Google
           </button>
 
-          {/* Sign In Link */}
+          {/* Forgot Password */}
+          <button className="text-sm font-medium text-blue-600 hover:text-orange-600 text-center transition-colors cursor-pointer">
+            Forgot password?
+          </button>
+
+          {/* Sign Up Link */}
           <p className="text-xs text-gray-500 text-center">
-            Do you have an account?{" "}
-            <button className="text-slate-800 font-semibold hover:underline cursor-pointer">
-              Sign In
+            Don't have an account yet?{" "}
+            <button className="text-blue-600 font-semibold hover:underline cursor-pointer">
+              Sign up
             </button>
           </p>
 
