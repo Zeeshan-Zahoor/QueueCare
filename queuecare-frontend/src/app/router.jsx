@@ -3,6 +3,9 @@ import { createBrowserRouter } from "react-router-dom";
 import PatientLayout from "../layouts/PatientLayout";
 import ClinicLayout from "../layouts/ClinicLayout";
 
+import AuthRedirect from "./AuthRedirect.jsx";
+
+import UserRegistration from "../pages/patient/UserRegistration.jsx";
 import Home from "../pages/patient/Home";
 import Doctors from "../pages/patient/Doctors";
 import DoctorDetails from "../pages/patient/DoctorDetails";
@@ -16,6 +19,8 @@ import ClinicDetails from "../pages/patient/ClinicDetails";
 
 import ProtectedRoute from "../components/auth/ProtectedRoute.jsx";
 
+
+
 export const router = createBrowserRouter([
     {
         path: "/", 
@@ -23,7 +28,7 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <Home />
+                element: <AuthRedirect />
             },
             {
                 path: 'doctors',
