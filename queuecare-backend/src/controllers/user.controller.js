@@ -1,5 +1,6 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const registerUser = async (req, res) => {
     try {
@@ -47,7 +48,59 @@ const registerUser = async (req, res) => {
     }
 }
 
+const loginUser = async (req, res) => {
+    try {
+        // get the user info
+        const { phone, password } = req.body;
+
+        //validate
+        if(!phone || !password) {
+            return res.status(400).json({
+                message: "Phone and passord are required",
+            });
+        }
+
+        //find user
+        const user = await User.findOne({ phone });
+        if(!user) {
+            return res.status(404).json({
+                message: "User not found",
+            });
+        }
+
+        //check password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if(!isMatch) {
+            return res.status(400).json({
+                message: "Invalid Password",
+            });
+        }
+
+        // generate token (jwt)
+        const user_jwt_token = jwt.sign(
+            { userId: user._id },
+            "usersecret123",    // separate from clinic
+            { expiresIn: "1d" }
+        );
+
+        //return response
+        return res.status(200).json({
+            success: true, 
+            message: "Login Successfull",
+            user_jwt_token,
+            userId: user._id
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to login user",
+            error: error.message,
+        })
+    }
+}
+
 
 export {
     registerUser,
+    loginUser,
 }
