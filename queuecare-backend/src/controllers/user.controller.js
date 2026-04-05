@@ -5,17 +5,17 @@ import jwt from "jsonwebtoken";
 const registerUser = async (req, res) => {
     try {
         //get data
-        const { name, phone, password, gender } = req.body;
+        const { name, email, password, gender } = req.body;
 
         //validate
-        if(!name || !phone || !password) {
+        if(!name || !email || !password) {
             return res.status(400).json({
                 message: "All required fields must be filled",
             });
         }
 
         //check existing user
-        const existingUser = await User.findOne({ phone });
+        const existingUser = await User.findOne({ email });
         if(existingUser) {
             return res.status(400).json({
                 message: "User already exists",
@@ -51,17 +51,17 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
         // get the user info
-        const { phone, password } = req.body;
+        const { email, password } = req.body;
 
         //validate
-        if(!phone || !password) {
+        if(!email || !password) {
             return res.status(400).json({
                 message: "Phone and passord are required",
             });
         }
 
         //find user
-        const user = await User.findOne({ phone });
+        const user = await User.findOne({ email });
         if(!user) {
             return res.status(404).json({
                 message: "User not found",
