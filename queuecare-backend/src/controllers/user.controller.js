@@ -28,7 +28,7 @@ const registerUser = async (req, res) => {
         // create user
         const user = User.create({
             name, 
-            phone,
+            email,
             password: hashedPassword,
             gender
         })
