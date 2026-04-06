@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Hospital, Mail, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { loginUserApi } from "../../api/userApi.js";
 
 const GoogleIcon = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -12,11 +13,41 @@ const GoogleIcon = () => (
 );
 
 export default function UserLogin() {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [error, setError] =  useState("");
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
+
+
+  const handleLoginUser = async () => {
+    if(!formData.email || !formData.password) {
+      setError("All fields are required");
+      return;
+    }
+    try {
+      setError("");
+      setLoading(true);
+      const res = await loginUserApi(formData);
+
+      if(!res.success) {
+        setError(res.message || "Login failed");
+        return;
+      }
+
+      localStorage.setItem("user_jwt_token", res.user_jwt_token);
+      navigate('/home');
+      
+    } catch (error) {
+      console.log("Error loggin in user");
+      setError("Something went wrong");
+      return;
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -75,9 +106,16 @@ export default function UserLogin() {
           </div>
 
           {/* Sign In Button */}
-          <button className="w-full py-3.5 mt-1 bg-slate-800 text-white rounded-4xl text-sm font-semibold hover:bg-slate-700 active:scale-[0.98] transition-all cursor-pointer">
-            Sign In
+          <button 
+            onClick={handleLoginUser}
+            disabled={loading}
+            className="w-full py-3.5 mt-1 bg-slate-800 text-white rounded-4xl text-sm font-semibold hover:bg-slate-700 active:scale-[0.98] transition-all cursor-pointer">
+            {loading ? "Signing In..." : "Sign In"}
           </button>
+
+          {error && (
+            <p className="text-red-500 text-sm text-center">{error}</p>
+          )}
 
           {/* Divider */}
           <div className="flex items-center gap-3 my-1">
