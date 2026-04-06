@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Hospital, Mail, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const GoogleIcon = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -11,6 +12,7 @@ const GoogleIcon = () => (
 );
 
 export default function UserLogin() {
+   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -98,7 +100,9 @@ export default function UserLogin() {
           {/* Sign Up Link */}
           <p className="text-xs text-gray-500 text-center">
             Don't have an account yet?{" "}
-            <button className="text-blue-600 font-semibold hover:underline cursor-pointer">
+            <button 
+            onClick={() => navigate("/register")}
+            className="text-blue-600 font-semibold hover:underline cursor-pointer">
               Sign up
             </button>
           </p>

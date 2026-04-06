@@ -1,21 +1,50 @@
 import { useState } from "react";
 import { Mail, User, Hospital, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { registerUserApi } from "../../api/userApi.js";
 
 const GoogleIcon = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17.64 9.2045c0-.6381-.0573-1.2518-.1636-1.8409H9v3.4814h4.8436c-.2086 1.125-.8427 2.0782-1.7959 2.7164v2.2581h2.9087c1.7018-1.5668 2.6836-3.874 2.6836-6.615z" fill="#4285F4"/>
-    <path d="M9 18c2.43 0 4.4673-.806 5.9564-2.1805l-2.9087-2.2581c-.8059.54-1.8368.859-3.0477.859-2.3441 0-4.3282-1.5832-5.036-3.7105H.9574v2.3318C2.4382 15.9832 5.4818 18 9 18z" fill="#34A853"/>
-    <path d="M3.964 10.71c-.18-.54-.2822-1.1168-.2822-1.71s.1023-1.17.2822-1.71V4.9582H.9574C.3477 6.1732 0 7.5482 0 9s.3477 2.8268.9574 4.0418L3.964 10.71z" fill="#FBBC05"/>
-    <path d="M9 3.5795c1.3214 0 2.5077.4541 3.4405 1.346l2.5813-2.5814C13.4632.8918 11.4259 0 9 0 5.4818 0 2.4382 2.0168.9574 4.9582L3.964 7.29C4.6718 5.1627 6.6559 3.5795 9 3.5795z" fill="#EA4335"/>
+    <path d="M17.64 9.2045c0-.6381-.0573-1.2518-.1636-1.8409H9v3.4814h4.8436c-.2086 1.125-.8427 2.0782-1.7959 2.7164v2.2581h2.9087c1.7018-1.5668 2.6836-3.874 2.6836-6.615z" fill="#4285F4" />
+    <path d="M9 18c2.43 0 4.4673-.806 5.9564-2.1805l-2.9087-2.2581c-.8059.54-1.8368.859-3.0477.859-2.3441 0-4.3282-1.5832-5.036-3.7105H.9574v2.3318C2.4382 15.9832 5.4818 18 9 18z" fill="#34A853" />
+    <path d="M3.964 10.71c-.18-.54-.2822-1.1168-.2822-1.71s.1023-1.17.2822-1.71V4.9582H.9574C.3477 6.1732 0 7.5482 0 9s.3477 2.8268.9574 4.0418L3.964 10.71z" fill="#FBBC05" />
+    <path d="M9 3.5795c1.3214 0 2.5077.4541 3.4405 1.346l2.5813-2.5814C13.4632.8918 11.4259 0 9 0 5.4818 0 2.4382 2.0168.9574 4.9582L3.964 7.29C4.6718 5.1627 6.6559 3.5795 9 3.5795z" fill="#EA4335" />
   </svg>
 );
 
 export default function UserRegistration() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   })
+
+  const handleRegisterUser = async () => {
+    if(!formData.name || !formData.email || !formData.password) {
+      setError("All fields are required");
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await registerUserApi(formData);
+
+      if (!res.success) {
+        console.log("Failed to register user", res.error);
+        setError(res.message || "Registration failed");
+        return;
+      }
+
+      navigate("/login");
+
+    } catch (error) {
+      console.log("Error registering user");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -23,7 +52,7 @@ export default function UserRegistration() {
 
         {/* Logo */}
         <div className="flex flex-col items-center gap-2 mb-6">
-          <Hospital size={50}/>
+          <Hospital size={50} className="text-slate-800" />
           <span className="text-base font-semibold tracking-tight">
             <span className="text-gray-500">Queue</span>
             <span className="text-slate-800 font-bold">Care</span>
@@ -42,7 +71,7 @@ export default function UserRegistration() {
           {/* Name */}
           <div className="relative flex items-center">
             <span className="absolute left-3.5 pointer-events-none flex items-center">
-              <User size={18} className="text-gray-400"/>
+              <User size={18} className="text-gray-400" />
             </span>
             <input
               type="text"
@@ -59,7 +88,7 @@ export default function UserRegistration() {
           {/* Email */}
           <div className="relative flex items-center">
             <span className="absolute left-3.5 pointer-events-none flex items-center">
-              <Mail size={18} className="text-gray-400"/>
+              <Mail size={18} className="text-gray-400" />
             </span>
             <input
               type="email"
@@ -76,7 +105,7 @@ export default function UserRegistration() {
           {/* Password */}
           <div className="relative flex items-center">
             <span className="absolute left-3.5 pointer-events-none flex items-center">
-              <Lock size={18} className="text-gray-400"/>
+              <Lock size={18} className="text-gray-400" />
             </span>
             <input
               type="password"
@@ -91,9 +120,16 @@ export default function UserRegistration() {
           </div>
 
           {/* Create Account Button */}
-          <button className="w-full py-3.5 mt-1 bg-slate-800 text-white rounded-xl text-sm font-semibold hover:bg-slate-700 active:scale-[0.98] transition-all cursor-pointer">
-            Create Account
+          <button
+            onClick={handleRegisterUser}
+            disabled={loading}
+            className="w-full py-3.5 mt-1 bg-slate-800 text-white rounded-4xl text-sm font-semibold hover:bg-slate-700 active:scale-[0.98] transition-all cursor-pointer">
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
+
+          {error && (
+            <p className="text-red-500 text-sm text-center">{error}</p>
+          )}
 
           {/* Divider */}
           <div className="flex items-center gap-3 my-1">
@@ -111,7 +147,9 @@ export default function UserRegistration() {
           {/* Sign In Link */}
           <p className="text-xs text-gray-500 text-center">
             Do you have an account?{" "}
-            <button className="text-slate-800 font-semibold hover:underline cursor-pointer">
+            <button
+              onClick={() => navigate("/login")}
+              className="text-blue-600 font-semibold hover:underline cursor-pointer">
               Sign In
             </button>
           </p>
