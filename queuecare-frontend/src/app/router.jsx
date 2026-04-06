@@ -19,6 +19,7 @@ import Settings from "../pages/clinic/Settings";
 import ClinicDetails from "../pages/patient/ClinicDetails";
 
 import ProtectedRoute from "../components/auth/ProtectedRoute.jsx";
+import UserProtectedRoute from "../components/auth/UserProtectedRoute.jsx";
 
 
 
@@ -41,7 +42,11 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'home',
-                element: <Home />
+                element: (
+                    <UserProtectedRoute>
+                        <Home />
+                    </UserProtectedRoute>
+                )
             },
             {
                 path: 'doctors',
