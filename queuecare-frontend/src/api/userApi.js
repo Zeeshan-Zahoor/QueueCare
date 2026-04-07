@@ -23,3 +23,27 @@ export const loginUserApi = async (data) => {
 
     return res.json();
 }
+
+export const getMyProfileApi = async () => {
+    const user_jwt_token = localStorage.getItem("user_jwt_token");
+
+    // Remove any quotes that might be stored in localStorage
+    const cleanToken = user_jwt_token ? user_jwt_token.replace(/['"]+/g, '') : null;
+
+    console.log("Token exists:", !!cleanToken); // Debug: check if token exists
+
+    const res = await fetch(`${BASE_URL}/profile`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${cleanToken}`,
+        },
+    });
+
+    if(!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to fetch profile");
+    }
+
+    return await res.json();
+}
