@@ -12,6 +12,7 @@ import Doctors from "../pages/patient/Doctors";
 import DoctorDetails from "../pages/patient/DoctorDetails";
 import QueueStatus from "../pages/patient/QueueStatus";
 import PatientSettings from "../pages/patient/PatientSettings";
+import Profile from "../pages/patient/Profile.jsx";
 
 import ClinicLogin from "../pages/clinic/ClinicLogin";
 import Dashboard from "../pages/clinic/Dashboard";
@@ -63,6 +64,10 @@ export const router = createBrowserRouter([
             {
                 path: 'doctor/:doctorId',
                 element: <DoctorDetails />
+            },
+            {
+                path: 'profile',
+                element: <Profile />
             },
             {
                 path: 'queue-status/:doctorId',

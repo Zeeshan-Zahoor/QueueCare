@@ -10,6 +10,7 @@ import {
   LogOutIcon,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import BottomNav from '../../components/common/BottomNav';
 
 function PatientSettings() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ function PatientSettings() {
   }
 
   return (
-    <div className="max-w-md min-h-dvh mx-auto px-4 py-5 bg-gray-50 flex flex-col">
+    <div className="max-w-md min-h-dvh mx-auto px-4 py-5 bg-gray-50 flex flex-col pb-[calc(70px+env(safe-area-inset-bottom))]">
 
       <Header title="Settings" />
 
@@ -81,7 +82,7 @@ function PatientSettings() {
       </div>
 
       {confirmLogout && (
-        <div className="absolute inset-0 bg-black/40 flex items-center justify-center px-10 z-10">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center px-10 z-10 ">
           <div className="bg-white rounded-4xl w-full max-w-xs p-8 flex flex-col items-center shadow-xl">
 
             {/* Icon */}
@@ -158,7 +159,10 @@ function SettingItem({ icon, title, subtitle }) {
       </div>
 
       <ChevronRight className="text-gray-400" size={20} />
+
+      <BottomNav />
     </div>
+
   );
 }
 

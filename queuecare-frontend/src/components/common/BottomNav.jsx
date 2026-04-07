@@ -1,12 +1,14 @@
-import { Home, MapPin, Settings2, User } from "lucide-react";
+import { Home, MapPin, Settings, User, IdCardLanyard } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useState, useContext } from "react";
 import { QueueContext } from "../../contexts/QueueContext";
 
+
 const navItems = [
-  { to: "/", icon: Home },
+  { to: "/home", icon: Home },
   { to: "/doctors", icon: MapPin },
-  { to: "/settings", icon: Settings2 },
+  { to: "/settings", icon: Settings },
+  { to: "/profile", icon: User}
 ];
 
 export default function BottomNav() {
@@ -54,7 +56,7 @@ export default function BottomNav() {
             onClick={handleMyTokenClick}
             className={`flex items-center justify-center w-10 h-10 rounded-full transition-all ${isUserActive ? "bg-gray-200" : ""}`}
             >
-            <User
+            <IdCardLanyard
               className={`w-5.5 h-5.5 transition-colors ${isUserActive ? "text-gray-700" : "text-gray-400"}`}
             />
           </button>
@@ -65,7 +67,7 @@ export default function BottomNav() {
       {noTokenModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
           <div className="bg-white p-6 rounded-2xl w-72 text-center space-y-4">
-            <h3 className="text-lg font-semibold">
+            <h3 className="text-lg font-semibold text-slate-800">
               No active token found
             </h3>
             <button
