@@ -99,7 +99,31 @@ const loginUser = async (req, res) => {
     }
 }
 
+const getMyProfile = async (req, res) => {
+    try {
+        const user = User.findById(req.userId).select("-password");
+
+        if(!user) {
+            return res.status(404).json({
+                message: "User not found",
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            user,
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Error fetching profile details",
+            error: error.message,
+        })
+    }
+}
+
 export {
     registerUser,
     loginUser,
+    getMyProfile,
 }
