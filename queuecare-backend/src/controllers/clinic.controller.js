@@ -36,8 +36,8 @@ const loginClinic = async (req, res) => {
 
         const jwt_token = jwt.sign(
             { clinicId: clinic._id },  // payload 
-            "secret123",   // secret key (will improve later)
-            { expiresIn: "1d" }
+            process.env.CLINIC_ACCESS_TOKEN_SECRET,   // secret key (will improve later)
+            { expiresIn: process.env.CLINIC_ACCESS_TOKEN_EXPIRY }
         )
 
         //response (success)

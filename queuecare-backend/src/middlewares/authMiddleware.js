@@ -21,7 +21,7 @@ export const authMiddleware = (req, res, next) => {
     }
     
     // Verify token
-    const decoded = jwt.verify(token, "secret123");
+    const decoded = jwt.verify(token, process.env.CLINIC_ACCESS_TOKEN_SECRET);
     
     // Attach clinic ID to request
     req.clinicId = decoded.clinicId;

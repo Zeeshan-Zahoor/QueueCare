@@ -79,8 +79,8 @@ const loginUser = async (req, res) => {
         // generate token (jwt)
         const user_jwt_token = jwt.sign(
             { userId: user._id },
-            "usersecret123",    // separate from clinic
-            { expiresIn: "1d" }
+            process.env.USER_ACCESS_TOKEN_SECRET,    // separate from clinic
+            { expiresIn: USER_ACCESS_TOKEN_EXPIRY }
         );
 
         //return response
@@ -98,7 +98,6 @@ const loginUser = async (req, res) => {
         })
     }
 }
-
 
 export {
     registerUser,
