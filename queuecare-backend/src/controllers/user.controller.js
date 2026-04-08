@@ -79,8 +79,8 @@ const loginUser = async (req, res) => {
         // generate token (jwt)
         const user_jwt_token = jwt.sign(
             { userId: user._id },
-            process.env.USER_ACCESS_TOKEN_SECRET,    // separate from clinic
-            { expiresIn: USER_ACCESS_TOKEN_EXPIRY }
+            process.env.USER_ACCESS_TOKEN_SECRET, // separate from clinic
+            { expiresIn: process.env.USER_ACCESS_TOKEN_EXPIRY }
         );
 
         //return response
@@ -101,13 +101,15 @@ const loginUser = async (req, res) => {
 
 const getMyProfile = async (req, res) => {
     try {
-        const user = User.findById(req.userId).select("-password");
+        const user = await User.findById(req.userId).select("-password");
 
         if(!user) {
             return res.status(404).json({
                 message: "User not found",
             })
         }
+
+        console.log(user);
 
         return res.status(200).json({
             success: true,
@@ -122,8 +124,32 @@ const getMyProfile = async (req, res) => {
     }
 }
 
+const updateProfile = async (req, res) => {
+    try {
+        const { name, gender } = req.body;
+        const user = await User.findByIdAndUpdate(
+            req.userId,
+            { name, gender },
+            { new: true }
+        ).select("-password");
+
+        return res.status(200).json({
+            success: true,
+            message: "Details updated successfully",
+            user,
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            messsage: "Error updating details",
+            error: error.message,
+        })
+    }
+}
+
 export {
     registerUser,
     loginUser,
     getMyProfile,
+    updateProfile,
 }
