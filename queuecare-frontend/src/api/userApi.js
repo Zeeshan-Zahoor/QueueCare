@@ -47,3 +47,19 @@ export const getMyProfileApi = async () => {
 
     return await res.json();
 }
+
+export const updateProfileApi = async (data) => {
+    const user_jwt_token = localStorage.getItem("user_jwt_token");
+
+    const res = await fetch(`${BASE_URL}/update`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user_jwt_token}`,
+        },
+        body: JSON.stringify(data)
+    });
+
+
+    return res.json();
+}

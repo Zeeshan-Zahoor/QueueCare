@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../components/common/Header";
 import BottomNav from "../../components/common/BottomNav";
-import { getMyProfileApi } from "../../api/userApi.js";
+import { getMyProfileApi, updateProfileApi } from "../../api/userApi.js";
 
 export default function Profile() {
+
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    gender: "",
+  })
 
   const [user, setUser] = useState({
     name: "",
@@ -30,6 +38,34 @@ export default function Profile() {
     fetchProfile();
   }, [])
 
+  useEffect(() => {
+    if (showEditModal && user) {
+      setFormData({
+        name: user.name || "",
+        gender: user.gender || ""
+      });
+    }
+  }, [showEditModal, user])
+
+
+  const handleUpdateProfile = async () => {
+    try {
+      setLoading(true);
+      const res = await updateProfileApi(formData);
+
+      if (!res.success) {
+        return;
+      }
+
+      setUser(res.user);
+
+      setShowEditModal(false);
+    } catch (error) {
+      console.log("Failed to update profile")
+    } finally {
+      setLoading(false);
+    }
+  }
   return (
     <div className="max-w-md mx-auto px-4 py-6 space-y-6 h-dvh">
 
@@ -109,11 +145,68 @@ export default function Profile() {
       <div className="space-y-3">
 
         {/* Edit Profile */}
-        <button className="w-full bg-slate-800 text-white py-3 rounded-2xl font-medium">
+        <button
+          onClick={() => setShowEditModal(true)}
+          className="w-full bg-slate-800 text-white py-3 rounded-2xl font-medium">
           Edit Profile
         </button>
 
       </div>
+
+      {showEditModal && (
+        <div className="fixed h-screen inset-0 bg-black/40 flex items-center justify-center z-50">
+
+          <div className="bg-white w-80 rounded-4xl p-8 space-y-4 shadow-2xl">
+
+            {/* Title */}
+            <h2 className="text-xl font-semibold text-center text-slate-800">
+              Edit Profile
+            </h2>
+
+            {/* Name Input */}
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              className="w-full border rounded-lg p-2 outline-none"
+            />
+
+            {/* Gender Select */}
+            <select
+              value={formData.gender}
+              onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+              className="w-full border rounded-lg p-2 outline-none">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+
+            {/* Buttons */}
+            <div className="flex flex-col-reverse gap-2 pt-2">
+
+              {/* Cancel */}
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="w-full bg-gray-200 text-slate-800 py-2 rounded-4xl"
+              >
+                Cancel
+              </button>
+
+              {/* Save */}
+              <button
+                onClick={handleUpdateProfile}
+                className="w-full bg-slate-800 text-white py-2 rounded-4xl"
+              >
+                {loading ? "Saving..." : "Save"}
+              </button>
+
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* Bottom Navigation */}
       <BottomNav />
