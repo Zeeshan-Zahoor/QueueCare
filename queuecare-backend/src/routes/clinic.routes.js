@@ -23,8 +23,8 @@ router.route("/clinics").get(getAllClinics);
 router.route("/doctors").get(getAllDoctors);
 
 router.route("/doctor/:doctorId").get(getDoctorById);
-router.route("/doctor/:doctorId/join").post( authMiddleware, joinQueue);
-router.route("/doctor/:doctorId/exit").post(authMiddleware, exitQueue);
+router.route("/doctor/:doctorId/join").post(joinQueue);
+router.route("/doctor/:doctorId/exit").post(exitQueue);
 router.route("/doctor/:doctorId/advance").post(authMiddleware, advanceToken);
 router.route("/doctor/:doctorId/toggle-day").post(authMiddleware, toggleDay);
 router.route("/doctor/:doctorId/toggle-consultation").post(authMiddleware, toggleConsultation);

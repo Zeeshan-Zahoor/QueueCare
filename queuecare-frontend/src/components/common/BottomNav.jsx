@@ -1,7 +1,6 @@
 import { Home, MapPin, Settings, User, IdCardLanyard } from "lucide-react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { useState, useContext } from "react";
-import { QueueContext } from "../../contexts/QueueContext";
+import { useState } from "react";
 
 
 const navItems = [
@@ -12,7 +11,7 @@ const navItems = [
 ];
 
 export default function BottomNav() {
-  const { activeToken } = useContext(QueueContext);
+  const activeToken = JSON.parse(localStorage.getItem("activeToken"));
   const location = useLocation();
   const navigate = useNavigate();
   const [noTokenModal, setNoTokenModal] = useState(false);
@@ -24,6 +23,7 @@ export default function BottomNav() {
       return;
     }
 
+    console.log("My Token: ", activeToken)
     navigate(
       `/queue-status/${activeToken.doctorId}?token=${activeToken.token}`
     );

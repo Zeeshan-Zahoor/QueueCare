@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     },
     profilePic: {
         type: String,
-        default: "https://www.pngmart.com/files/23/Profile-PNG-Photo.png"
+        default: ""
     },
     gender: {
         type: String,

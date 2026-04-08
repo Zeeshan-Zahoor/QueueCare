@@ -28,22 +28,14 @@ export const getDoctorsApi =  async (clinicId) => {
 }
 
 export const joinQueueApi = async (doctorId, data) => {
-    const jwt_token = localStorage.getItem("jwt_token");
-
     const res = await fetch(`${BASE_URL}/doctor/${doctorId}/join`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${jwt_token}`
-    
         },
         body: JSON.stringify(data),
     });
 
-    if(res.status === 401) {
-        localStorage.removeItem("jwt_token");
-        window.location.href("/clinic");
-    }
     return res.json();
 };
 
@@ -58,22 +50,13 @@ export const getAllClinicsApi = async () => {
 }
 
 export const exitQueueApi = async (doctorId, token) => {
-    const jwt_token = localStorage.getItem("jwt_token");
-
     const res = await fetch(`${BASE_URL}/doctor/${doctorId}/exit`, {
         method: "POST",
         headers: {
             "Content-Type" : "application/json",
-            "Authorization": `Bearer ${jwt_token}`
-            
         },
         body: JSON.stringify({ token }),
     });
-
-    if(res.status === 401) {
-        localStorage.removeItem("jwt_token");
-        window.location.href("/clinic");
-    }
 
     return res.json();
 }
