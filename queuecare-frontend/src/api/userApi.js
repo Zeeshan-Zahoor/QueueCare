@@ -63,3 +63,20 @@ export const updateProfileApi = async (data) => {
 
     return res.json();
 }
+
+export const uploadProfileApi = async (file) => {
+    const user_jwt_token = localStorage.getItem("user_jwt_token");
+
+    const formData =  new FormData();
+    formData.append("image", file);
+
+    const res = await fetch(`${BASE_URL}/upload-profile`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${user_jwt_token}`,
+        },
+        body: formData,
+    });
+
+    return res.json();
+}

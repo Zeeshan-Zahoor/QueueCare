@@ -23,7 +23,6 @@ import ProtectedRoute from "../components/auth/ProtectedRoute.jsx";
 import UserProtectedRoute from "../components/auth/UserProtectedRoute.jsx";
 
 
-
 export const router = createBrowserRouter([
     {
         path: "/", 

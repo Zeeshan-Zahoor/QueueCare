@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../components/common/Header";
 import BottomNav from "../../components/common/BottomNav";
-import { getMyProfileApi, updateProfileApi } from "../../api/userApi.js";
+import { getMyProfileApi, updateProfileApi, uploadProfileApi } from "../../api/userApi.js";
 
 export default function Profile() {
 
@@ -30,7 +30,7 @@ export default function Profile() {
           setUser(res.user);
         }
       } catch (error) {
-        console.log("Failed to fetch profile", error.message);
+        console.log("Failed to fetch profile", error);
         return;
       }
     };
@@ -66,6 +66,23 @@ export default function Profile() {
       setLoading(false);
     }
   }
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const res = await uploadProfileApi(file);
+
+      if (!res.success) return;
+
+      // update UI instantly
+      setUser(res.user);
+      console.log(res);
+    } catch (error) {
+      console.log("Upload failed");
+    }
+  }
   return (
     <div className="max-w-md mx-auto px-4 py-6 space-y-6 h-dvh">
 
@@ -73,24 +90,41 @@ export default function Profile() {
       <Header title="My Profile" />
 
       {/* Profile Card */}
-      <div className=" p-5 flex flex-col items-center space-y-4">
-
+      <div className=" p-5 flex flex-col items-center space-y-4 relative">
         {/* Profile Image */}
-        <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-200">
+        <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-200 relative cursor-pointer">
+
           {user.profilePic ? (
             <img
-              src={user.profilePic}
+              src={`${user.profilePic}?t=${Date.now()}`}
               alt="Profile"
               className="w-full h-full object-cover"
             />
           ) : (
-            // Placeholder when no profile picture
             <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-              <span className="text-gray-400 text-2xl">
-                {user.name ? user.name.charAt(0).toUpperCase() : "?"}
-              </span>
+              <div
+                className={`w-38 h-38 rounded-full bg-gray-300
+                  overflow-hidden relative flex items-end justify-center`}
+              >
+                {/* Head */}
+                <div
+                  className={`w-15 h-15 top-6 absolute left-1/2 -translate-x-1/2
+                    rounded-full bg-slate-500`}
+                />
+                {/* Body / shoulders */}
+                <div
+                  className={`w-27 h-15 rounded-t-full bg-slate-500`}
+                />
+              </div>
             </div>
           )}
+
+          <input
+            type="file"
+            accept="image/*"
+            className="absolute inset-0 opacity-0 cursor-pointer"
+            onChange={handleImageChange}
+          />
         </div>
 
         {/* Name */}
@@ -147,7 +181,7 @@ export default function Profile() {
         {/* Edit Profile */}
         <button
           onClick={() => setShowEditModal(true)}
-          className="w-full bg-slate-800 text-white py-3 rounded-2xl font-medium">
+          className="w-full bg-slate-800 text-white py-3 rounded-4xl font-medium">
           Edit Profile
         </button>
 
