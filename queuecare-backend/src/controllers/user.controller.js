@@ -1,6 +1,7 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import cloudinary from "../config/cloudinary.js";
 
 const registerUser = async (req, res) => {
     try {
@@ -147,9 +148,47 @@ const updateProfile = async (req, res) => {
     }
 }
 
+const uploadProfileImage = async (req, res) => {
+    try {
+        if(!req.file) {
+            return res.status(400).json({
+                message: "No file uploaded",
+            });
+        }
+
+        // convert buffer tp base64
+        const b64 = Buffer.from(req.file.buffer).toString("base64");
+        const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+
+        //upload to cloudinary
+        const result = await cloudinary.uploader.upload(dataURI, {
+            folder: "queuecare_user_profiles"
+        });
+
+        //save url in db
+        const user = await User.findByIdAndUpdate(
+            req.userId,
+            { profilePic: result.secure_url },
+            { new: true }
+        ).select("-password");
+
+        return res.json({
+            success: true,
+            imageUrl: result.secure_url,
+            user,
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: "Image upload failed",
+            error: "error.message",
+        });
+    }
+}
+
 export {
     registerUser,
     loginUser,
     getMyProfile,
     updateProfile,
+    uploadProfileImage,
 }
