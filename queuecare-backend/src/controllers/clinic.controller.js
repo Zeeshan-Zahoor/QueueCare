@@ -164,7 +164,6 @@ const joinQueue = async (req, res) => {
         await doctor.save();
 
         // response
-        console.log("user joined: ", userId);
         return res.status(200).json({
             message: "Entered Queue Successfully!",
             success: true,
