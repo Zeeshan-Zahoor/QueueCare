@@ -204,6 +204,9 @@ const getMyTokens = async (req, res) => {
                     myTokens.push({
                         doctorId: doctor._id,
                         doctorName: doctor.name,
+                        doctorSpecialization: doctor.specialization,
+                        doctorClinicId: doctor.clinicId,
+                        doctorImage: doctor.image,
                         token: entry.token,
                         name: entry.name,
                         phone: entry.phone,
