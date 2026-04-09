@@ -256,7 +256,7 @@ function DoctorDetails() {
 
             <button
               onClick={() =>
-                navigate(`/queue-status/${doctor._id}?token=${myToken}`)
+                navigate("/my-tokens")
               }
               className="w-full mt-4 bg-slate-800 text-white py-2.5 rounded-4xl cursor-pointer"
             >

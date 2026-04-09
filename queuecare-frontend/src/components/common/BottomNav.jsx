@@ -7,7 +7,8 @@ const navItems = [
   { to: "/home", icon: Home },
   { to: "/doctors", icon: MapPin },
   { to: "/settings", icon: Settings },
-  { to: "/profile", icon: User}
+  { to: "/profile", icon: User},
+  { to: "/my-tokens", icon: IdCardLanyard},
 ];
 
 export default function BottomNav() {
@@ -17,19 +18,11 @@ export default function BottomNav() {
   const [noTokenModal, setNoTokenModal] = useState(false);
 
 
-  const handleMyTokenClick = () => {
-    if (!activeToken) {
-      setNoTokenModal(true);
-      return;
-    }
+  // const handleMyTokenClick = () => {
+    
+  // };
 
-    console.log("My Token: ", activeToken)
-    navigate(
-      `/queue-status/${activeToken.doctorId}?token=${activeToken.token}`
-    );
-  };
-
-  const isUserActive = activeToken && location.pathname.startsWith(`/queue-status/${activeToken.doctorId}`);
+  // const isUserActive = activeToken && location.pathname.startsWith(`/queue-status/${activeToken.doctorId}`);
 
   return (
     <>
@@ -52,19 +45,19 @@ export default function BottomNav() {
           ))}
 
           {/* My Token Button */}
-          <button
+          {/* <button
             onClick={handleMyTokenClick}
             className={`flex items-center justify-center w-10 h-10 rounded-full transition-all ${isUserActive ? "bg-gray-200" : ""}`}
             >
             <IdCardLanyard
               className={`w-5.5 h-5.5 transition-colors ${isUserActive ? "text-gray-700" : "text-gray-400"}`}
             />
-          </button>
+          </button> */}
         </div>
       </div>
 
       {/* No Active Token Modal */}
-      {noTokenModal && (
+      {/* {noTokenModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
           <div className="bg-white p-6 rounded-2xl w-72 text-center space-y-4">
             <h3 className="text-lg font-semibold text-slate-800">
@@ -78,7 +71,7 @@ export default function BottomNav() {
             </button>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 }

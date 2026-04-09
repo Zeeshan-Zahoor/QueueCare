@@ -17,7 +17,8 @@ export default function QueueStatus() {
   const [showCancel, setShowCancel] = useState(false);
   const [notAllowedModal, setNotAllowedModal] = useState(false);
 
-  const { doctorId } = useParams();
+  const { doctorId, username } = useParams();
+
   const location = useLocation();
 
   const searchParams = new URLSearchParams(location.search);
@@ -105,17 +106,16 @@ export default function QueueStatus() {
       </div>
 
       <div className="bg-white p-3 rounded-xl border border-gray-300 shadow-[0_5px_10px_rgba(0,0,0,0.3)] flex gap-2">
+        
         <div className='w-13 h-13 bg-[#B3DAE7] rounded-full'>
           <img
             src={doctorIcon}
             alt={doctor.name} />
         </div>
         <div className='flex-1'>
+          <span className='text-slate-800 font-medium'>{username}</span>
           <p className="text-sm text-gray-700 font-medium">
-            Currently seeing patient :
-          </p>
-          <p className="text-lg text-slate-800 font-bold">
-            #{currentToken}
+            Currently seeing patient : #{currentToken}
           </p>
         </div>
       </div>

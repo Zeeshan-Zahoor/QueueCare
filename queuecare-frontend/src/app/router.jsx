@@ -13,6 +13,7 @@ import DoctorDetails from "../pages/patient/DoctorDetails";
 import QueueStatus from "../pages/patient/QueueStatus";
 import PatientSettings from "../pages/patient/PatientSettings";
 import Profile from "../pages/patient/Profile.jsx";
+import MyTokens from "../pages/patient/MyTokens.jsx";
 
 import ClinicLogin from "../pages/clinic/ClinicLogin";
 import Dashboard from "../pages/clinic/Dashboard";
@@ -69,7 +70,11 @@ export const router = createBrowserRouter([
                 element: <Profile />
             },
             {
-                path: 'queue-status/:doctorId',
+                path: 'my-tokens',
+                element: <MyTokens />
+            },
+            {
+                path: 'queue-status/:doctorId/:username',
                 element: <QueueStatus />
             },
         ]
