@@ -93,10 +93,7 @@ function ClinicLogin() {
           {/* Sign In — dark navy matching image */}
           <button
             onClick={handleSignIn}
-            className="w-full text-white font-semibold py-2.5 rounded-lg text-sm transition-all duration-200 shadow-sm"
-            style={{ backgroundColor: "#1e3a5f" }}
-            onMouseEnter={e => e.currentTarget.style.backgroundColor = "#162d4a"}
-            onMouseLeave={e => e.currentTarget.style.backgroundColor = "#1e3a5f"}
+            className="w-full text-white font-semibold py-2.5 rounded-lg text-sm transition-all duration-200 shadow-sm bg-slate-800 hover:bg-slate-700"
             disabled={loading}
           >
             {loading ? "Signing In..." : "Sign In"}
@@ -141,13 +138,13 @@ function ClinicLogin() {
               <input
                 type="text"
                 placeholder="Registered phone number"
-                className="w-full border border-gray-200 rounded-lg pl-9 pr-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                className="w-full border border-gray-200 rounded-lg pl-9 pr-4 py-2.5 text-sm text-slate-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
               />
             </div>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowForgot(false)}
-                className="flex-1 border border-gray-200 text-gray-600 font-semibold py-2.5 rounded-lg text-sm hover:bg-gray-50 transition-colors"
+                className="flex-1 border border-gray-200 text-slate-800 font-semibold py-2.5 rounded-lg text-sm hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>

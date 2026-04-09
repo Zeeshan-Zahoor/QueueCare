@@ -84,7 +84,7 @@ export default function Profile() {
     }
   }
   return (
-    <div className="max-w-md mx-auto px-4 py-6 space-y-6 h-dvh">
+    <div className="max-w-md mx-auto px-4 py-6 space-y-6 pb-[calc(70px+env(safe-area-inset-bottom))]">
 
       {/* Header */}
       <Header title="My Profile" />

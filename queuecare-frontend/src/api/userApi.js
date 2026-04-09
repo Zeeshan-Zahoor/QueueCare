@@ -80,3 +80,15 @@ export const uploadProfileApi = async (file) => {
 
     return res.json();
 }
+
+export const getMyTokensApi = async () => {
+    const user_jwt_token = localStorage.getItem("user_jwt_token");
+
+    const res = await fetch(`${BASE_URL}/my-tokens`, {
+        headers: {
+            Authorization: `Bearer ${user_jwt_token}`,
+        }
+    });
+
+    return res.json();
+}
