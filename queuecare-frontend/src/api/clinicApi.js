@@ -28,10 +28,13 @@ export const getDoctorsApi =  async (clinicId) => {
 }
 
 export const joinQueueApi = async (doctorId, data) => {
+    const user_jwt_token = localStorage.getItem("user_jwt_token");
+
     const res = await fetch(`${BASE_URL}/doctor/${doctorId}/join`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": user_jwt_token ? `Bearer ${user_jwt_token}` : ""
         },
         body: JSON.stringify(data),
     });
