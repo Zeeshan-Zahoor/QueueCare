@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { optionalUserAuthMiddleware } from "../middlewares/optionalUserAuthMiddleware.js";
 import { loginClinic,
          getClinicDoctors, 
          joinQueue, 
@@ -23,7 +24,7 @@ router.route("/clinics").get(getAllClinics);
 router.route("/doctors").get(getAllDoctors);
 
 router.route("/doctor/:doctorId").get(getDoctorById);
-router.route("/doctor/:doctorId/join").post(joinQueue);
+router.route("/doctor/:doctorId/join").post(optionalUserAuthMiddleware, joinQueue);
 router.route("/doctor/:doctorId/exit").post(exitQueue);
 router.route("/doctor/:doctorId/advance").post(authMiddleware, advanceToken);
 router.route("/doctor/:doctorId/toggle-day").post(authMiddleware, toggleDay);

@@ -103,6 +103,7 @@ const joinQueue = async (req, res) => {
     try {
         const { doctorId } = req.params;
         const { name, phone, source } = req.body;
+        const userId = req.userId;
 
         // validate
         if(!name || !phone) {
@@ -156,12 +157,14 @@ const joinQueue = async (req, res) => {
             name, 
             phone,
             source,
+            userId,
         })
 
         // save in database
         await doctor.save();
 
         // response
+        console.log("user joined: ", userId);
         return res.status(200).json({
             message: "Entered Queue Successfully!",
             success: true,

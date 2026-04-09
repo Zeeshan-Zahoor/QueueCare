@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 const patientSchema = new mongoose.Schema({
     token: Number,
@@ -11,6 +11,10 @@ const patientSchema = new mongoose.Schema({
         type: String,
         enum: ["online", "walk-in"],
         default: "online",
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
     }
 });
 
