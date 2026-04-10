@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Header from "../../components/common/Header";
 import {
   Bell,
@@ -11,11 +11,15 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import BottomNav from '../../components/common/BottomNav';
+import LocationModal from "../../components/patient/LocationModal";
+import { LocationContext } from "../../contexts/LocationContext";
 
 function PatientSettings() {
   const navigate = useNavigate();
+  const { location } = useContext(LocationContext);
 
   const [confirmLogout, setConfirmLogout] = useState(false);
+  const [locationModalOpen, setLocationModalOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("user_jwt_token");
@@ -46,6 +50,7 @@ function PatientSettings() {
             icon={<MapPin size={20} />}
             title="Location"
             subtitle="Current Location"
+            clickHandler={() => setLocationModalOpen(true)}
           />
 
           {/* Language */}
@@ -62,6 +67,16 @@ function PatientSettings() {
             subtitle="Light"
           />
         </div>
+
+
+        {/* location modal */}
+        {locationModalOpen && (
+          <LocationModal 
+            location={location}
+            isOpen={locationModalOpen}
+            onClose={() => setLocationModalOpen(false)}
+          />
+        )}
       </div>
 
       {/* logout */}
@@ -141,9 +156,12 @@ function PatientSettings() {
 }
 
 /* Reusable Setting Row */
-function SettingItem({ icon, title, subtitle }) {
+function SettingItem({ icon, title, subtitle, clickHandler }) {
   return (
-    <div className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-gray-50 transition">
+    <div
+
+     onClick={clickHandler}
+     className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-gray-50 transition">
 
       <div className="flex items-center gap-4">
         <div className="bg-slate-200 text-slate-700 p-2 rounded-lg">

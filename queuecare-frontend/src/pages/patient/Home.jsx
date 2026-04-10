@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { getAllClinicsApi } from '../../api/clinicApi.js';
 import { useNavigate } from 'react-router-dom'
-import { Search, MapPin } from 'lucide-react'
+import { Search, MapPin, Link } from 'lucide-react'
 import ClinicCard from '../../components/patient/ClinicCard';
 import heroImage from "../../assets/heroImage.png"
 import BottomNav from '../../components/common/BottomNav';
 import CliniccardSkeleton from '../../components/loaders/CliniccardSkeleton.jsx';
+import { LocationContext } from '../../contexts/LocationContext.jsx';
+
 
 export default function Home() {
   const navigate = useNavigate();
 
+  const { location } = useContext(LocationContext);
+
   const [loading, setLoading] = useState(true);
   const [clinics, setClinics] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
+  
   useEffect(() => {
     const fetchClinics = async () => {
       try {
@@ -22,17 +26,20 @@ export default function Home() {
         if(res.success) {
           setClinics(res.clinics);
         }
-        console.log("Error is: ", res.error);
       } catch (error) {
         console.log("Failed to fetch clinics");
       } finally {
         setLoading(false);
       }
     };
-
     fetchClinics();
   }, []);
-  
+
+  const goToLocation = (lat, lon) => {
+    const url = `https://www.google.com/maps?q=${lat},${lon}`;
+
+    window.open(url, "_blank");
+  }
 
   // find clinic by search
   const filteredClinics = clinics.filter(clinic => {
@@ -42,14 +49,19 @@ export default function Home() {
 
     return clinicName.includes(searchLower);
   })
+
+  console.log(location);
   return (
     <div className='max-w-md mx-auto px-4 py-3 space-y-2 min-h-dvh pb-[calc(70px+env(safe-area-inset-bottom))]'>
 
       {/* Location */}
       <span className='text-sm text-slate-500'>Location</span>
-      <div className='flex items-center gap-2 text-slate-700'>
-        <MapPin className='w-5 h-5 text-[#1C2A3A]' />
-        <span className='text-sm font-medium'>Sopore, Kashmir</span>
+      <div 
+        role='button'
+        onClick={() => location.status === "available" && goToLocation(location.latitude, location.longitude)}
+        className='flex items-center gap-2 text-slate-700 '>
+        <MapPin className='w-5 h-5 text-[#1C2A3A] cursor-pointer' />
+        <span className='text-sm font-medium cursor-pointer hover:underline'>{location.status === "available" ? (location.suburb) : ("Unavailable")}, {location.state}</span>
       </div>
 
       {/* Search Bar */}
