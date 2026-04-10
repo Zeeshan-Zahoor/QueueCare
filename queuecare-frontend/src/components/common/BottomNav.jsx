@@ -1,28 +1,16 @@
-import { Home, MapPin, Settings, User, IdCardLanyard } from "lucide-react";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { Home, Stethoscope, Settings, User, IdCardLanyard } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 
 const navItems = [
   { to: "/home", icon: Home },
-  { to: "/doctors", icon: MapPin },
+  { to: "/doctors", icon: Stethoscope },
   { to: "/settings", icon: Settings },
   { to: "/profile", icon: User},
   { to: "/my-tokens", icon: IdCardLanyard},
 ];
 
 export default function BottomNav() {
-  const activeToken = JSON.parse(localStorage.getItem("activeToken"));
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [noTokenModal, setNoTokenModal] = useState(false);
-
-
-  // const handleMyTokenClick = () => {
-    
-  // };
-
-  // const isUserActive = activeToken && location.pathname.startsWith(`/queue-status/${activeToken.doctorId}`);
 
   return (
     <>
@@ -43,35 +31,10 @@ export default function BottomNav() {
               )}
             </NavLink>
           ))}
-
-          {/* My Token Button */}
-          {/* <button
-            onClick={handleMyTokenClick}
-            className={`flex items-center justify-center w-10 h-10 rounded-full transition-all ${isUserActive ? "bg-gray-200" : ""}`}
-            >
-            <IdCardLanyard
-              className={`w-5.5 h-5.5 transition-colors ${isUserActive ? "text-gray-700" : "text-gray-400"}`}
-            />
-          </button> */}
         </div>
       </div>
 
-      {/* No Active Token Modal */}
-      {/* {noTokenModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-2xl w-72 text-center space-y-4">
-            <h3 className="text-lg font-semibold text-slate-800">
-              No active token found
-            </h3>
-            <button
-              onClick={() => setNoTokenModal(false)}
-              className="w-full bg-slate-800 text-white py-2 rounded-xl"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )} */}
+      
     </>
   );
 }
