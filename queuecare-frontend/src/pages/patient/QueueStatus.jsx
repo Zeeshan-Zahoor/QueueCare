@@ -7,6 +7,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from '../../components/common/BottomNav';
 import { getDoctorByIdApi, exitQueueApi } from '../../api/clinicApi.js';
+import Spinner from '../../components/loaders/Spinner.jsx';
 
 export default function QueueStatus() {
   const navigate = useNavigate();
@@ -49,23 +50,19 @@ export default function QueueStatus() {
 
   }, [doctorId])
   
-  if(!doctor) return <p>Loading...</p>;
+  if(!doctor) return <Spinner />;
 
   const currentToken = doctor.currentlyServing;
 
-  const peopleAhead = Math.max(0, token - doctor.currentlyServing);
+  let peopleAhead = 0;
+  doctor.queue.forEach(patient => {
+    if(patient.token < token) peopleAhead ++;
+    else return;
+  })
 
   const estimatedWait = peopleAhead * doctor.consultationTime;
 
   const canCancel = token > doctor.currentlyServing;
-
-  const isCompleted = token < doctor.currentlyServing || (token === doctor.currentlyServing && doctor.status === "closed")
-
-  if(isCompleted) { // already served
-    // delete from localStorage
-    localStorage.removeItem("activeToken")
-  }
-
 
   const handleCancelToken = async () => {
     try {

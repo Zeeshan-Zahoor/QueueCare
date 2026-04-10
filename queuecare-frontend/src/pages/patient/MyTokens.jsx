@@ -27,17 +27,16 @@ export default function MyTokens() {
         fetchClinics();
     }, []);
 
-    console.log(typeof clinics);
     const viewQueueStatus = (doctorId, name,  token) => {
         navigate(`/queue-status/${doctorId}/${name}?token=${token}`)
     }
     return (
-        <div className="max-w-md mx-auto px-4 py-6 space-y-4 h-dvh">
+        <div className="max-w-md mx-auto px-4 py-6 space-y-4 pb-[calc(70px+env(safe-area-inset-bottom))]">
 
             <Header title="My Tokens" />
 
             {tokens.length === 0 ? (
-                <p className="text-center text-gray-500 my-auto">
+                <p className="text-center text-gray-400 mt-[50%]">
                     No tokens booked yet
                 </p>
             ) : (
@@ -48,11 +47,11 @@ export default function MyTokens() {
                     >
 
                         <div className='flex items-center'>
-                            <span className='mr-2 text-slate-800 font-bold pl-1'>#1</span>
+                            <span className='mr-2 text-slate-800 font-bold pl-1'>#{t.token}</span>
                             <div className='w-px h-5 bg-gray-400' />
-                            <span className='ml-2 text-slate-800 font-medium flex-1'>Zeeshan Zahoor</span>
+                            <span className='ml-2 text-slate-800 font-medium flex-1'>{t.name}</span>
                             <div className='w-px h-5 mx-2 bg-gray-300' />
-                            <span className='text-xs text-slate-500 flex-1'>7006152972</span>
+                            <span className='text-xs text-slate-500 flex-1'>{t.phone}</span>
                         </div>
                         
 
@@ -92,7 +91,7 @@ export default function MyTokens() {
                                     <span>{
                                     (clinics.find((clinic) => 
                                         clinic._id === t.doctorClinicId)
-                                    ).name
+                                    )?.name
                                     }</span>
                                 </div>
 

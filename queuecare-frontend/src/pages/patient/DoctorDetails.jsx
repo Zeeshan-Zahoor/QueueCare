@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import SuccessTick from "../../assets/shield_tick.svg?react";
 import { joinQueueApi } from '../../api/clinicApi.js';
 import { getDoctorByIdApi, getClinicApi } from '../../api/clinicApi.js';
+import Spinner from '../../components/loaders/Spinner.jsx';
 
 function DoctorDetails() {
 
@@ -52,12 +53,7 @@ function DoctorDetails() {
     fetchDoctor();
   }, [doctorId, clinicId])
 
-  console.log("DoctorId: ", doctorId);
-  console.log("This doctor: ", doctor)
-  console.log("Its clinicId: ", doctor?.clinicId);
-
-
-  if (!doctor) return <p>Loading...</p>
+  if (!doctor) return <Spinner />
 
   const tokensLeft = doctor.maxTokens - (doctor.currentlyServing + doctor.queue.length);
 

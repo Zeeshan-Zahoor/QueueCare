@@ -13,6 +13,7 @@ export default function Doctors() {
   const [doctors, setDoctors] = useState([]);
   const [clinics, setClinics] = useState({});
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -52,8 +53,18 @@ export default function Doctors() {
   }, []);
 
 
+  //filter doctors based on search term
+  const filteredDoctors = doctors.filter((doctor) => {
+    const searchLower = searchTerm.toLowerCase();
+    const doctorName = doctor.name?.toLowerCase() || '';
+    const clinic = clinics[doctor.clinicId];
+    const clinicName = clinic?.name?.toLowerCase() || "";
+
+    return doctorName.includes(searchLower) || clinicName.includes(searchLower)
+  });
+
   return (
-    <div className='max-w-md mx-auto px-4 py-5 space-y-2 h-dvh'>
+    <div className='max-w-md mx-auto px-4 py-5 space-y-2 pb-[calc(70px+env(safe-area-inset-bottom))]'>
       {/* Header */}
       <Header
         title="All Doctors"
@@ -66,16 +77,19 @@ export default function Doctors() {
           type="text"
           placeholder='Search doctor or clinic...'
           className='text-[#374151] rounded-lg p-2 outline-none flex-1'
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
       {/* Doctor List */}
       <div className='space-y-4'>
-        {loading && (
-          <DoctorCardSkeleton />
+        {loading && <DoctorCardSkeleton />}
+        {!loading && filteredDoctors.length === 0 && (
+          <p className="text-center text-gray-500 py-8">No doctors found.</p>
         )}
 
-        {doctors.map((doctor) => (
+        {filteredDoctors.map((doctor) => (
           <DoctorCard
             key={doctor._id}
             doctor={doctor}
