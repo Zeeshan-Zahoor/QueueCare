@@ -3,18 +3,26 @@ import Header from '../../components/common/Header';
 import BottomNav from '../../components/common/BottomNav';
 import { getMyTokensApi } from '../../api/userApi.js';
 import { getAllClinicsApi } from '../../api/clinicApi.js';
-import { MapPin } from 'lucide-react';
+import { LocateFixed, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import Spinner from '../../components/loaders/Spinner.jsx';
 
 export default function MyTokens() {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     const [clinics, setClinics] = useState([]);
     const [tokens, setTokens] = useState([]);
     useEffect(() => {
         const fetchTokens = async () => {
-            const res = await getMyTokensApi();
-            if (res.success) {
-                setTokens(res.tokens);
+            try {
+                const res = await getMyTokensApi();
+                if (res.success) {
+                    setTokens(res.tokens);
+                }
+            } catch (error) {
+                console.log("Failed to fetch tokens");
+            } finally {
+                setLoading(false);
             }
         };
         const fetchClinics = async () => {
@@ -26,6 +34,8 @@ export default function MyTokens() {
         fetchTokens();
         fetchClinics();
     }, []);
+
+    if(loading) return <Spinner />
 
     const viewQueueStatus = (doctorId, name,  token) => {
         navigate(`/queue-status/${doctorId}/${name}?token=${token}`)

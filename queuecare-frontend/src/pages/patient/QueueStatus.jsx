@@ -5,7 +5,6 @@ import consultingIcon from "../../assets/consultingIcon.png";
 import { Clock, CircleXIcon, BanIcon, AlertTriangle } from 'lucide-react';
 import { useParams, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import BottomNav from '../../components/common/BottomNav';
 import { getDoctorByIdApi, exitQueueApi } from '../../api/clinicApi.js';
 import Spinner from '../../components/loaders/Spinner.jsx';
 
@@ -203,8 +202,7 @@ export default function QueueStatus() {
       </div>
 
 
-      {/* Bottom Navigation */}
-      <BottomNav />
+      
 
       {/* Cancel Token confirmation modal */}
       {showCancel && (

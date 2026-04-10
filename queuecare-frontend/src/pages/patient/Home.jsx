@@ -12,6 +12,7 @@ export default function Home() {
 
   const [loading, setLoading] = useState(true);
   const [clinics, setClinics] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchClinics = async () => {
@@ -32,6 +33,15 @@ export default function Home() {
     fetchClinics();
   }, []);
   
+
+  // find clinic by search
+  const filteredClinics = clinics.filter(clinic => {
+    const searchLower = searchTerm.toLowerCase() || "";
+
+    const clinicName = clinic?.name?.toLowerCase() || "";
+
+    return clinicName.includes(searchLower);
+  })
   return (
     <div className='max-w-md mx-auto px-4 py-3 space-y-2 min-h-dvh pb-[calc(70px+env(safe-area-inset-bottom))]'>
 
@@ -49,6 +59,8 @@ export default function Home() {
           type="text"
           placeholder='Search clinic...'
           className='text-[#374151] rounded-lg p-2 outline-none flex-1'
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
@@ -75,15 +87,19 @@ export default function Home() {
       {/* Nearby Project Section */}
       <div>
         <h3 className="text-lg font-semibold text-slate-700 mb-2 mt-4">
-          Nearby Medical Centers
+          Medical Centers
         </h3>
 
         {loading && (
           <CliniccardSkeleton />
         )}
 
+        {!loading && filteredClinics.length === 0 && (
+          <p className="text-center text-gray-500 py-8">No clinics found.</p>
+        )}
+
         <div className="space-y-3">
-          {clinics.map((clinic) => (
+          {filteredClinics.map((clinic) => (
             <ClinicCard key={clinic._id} clinic={clinic} />
           ))}
         </div>
