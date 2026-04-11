@@ -247,7 +247,7 @@ const forgotPassord = async (req, res) => {
         const otp = Math.floor(10000 + Math.random() * 90000).toString();
 
         user.otp = otp;
-        user.otpExpir = Date.now() + 5 * 60 * 1000; // 5 min
+        user.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 min
 
         await user.save();
 
@@ -279,6 +279,75 @@ const forgotPassord = async (req, res) => {
     }
 }
 
+const verifyOtp = async (req, res) => {
+    try {
+        const { otp, email } = req.body;
+
+        const user = await User.findOne({ email });
+        if(!user || user.otp !== otp) {
+            return res.status(400).json({
+                message: "Invalid OTP",
+            });
+        }
+
+        if(user.otpExpiry < Date.now()) {
+            return res.status(400).json({
+                message: "OTP Expired",
+            });
+        } 
+
+        return res.json({
+            success: true,
+            message: "OTP verified",
+        });
+        
+        
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to verify OTP",
+        });
+    }
+}
+
+const resetPassword = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ email });
+        if(!user) {
+            return res.status(404).json({
+                message: "User not found",
+            })
+        }
+
+        //hash new password
+        const hashed = await bcrypt.hash(password, 10);
+
+        user.password = hashed;
+        user.otp = null;
+        user.otpExpiry = null;
+
+        await user.save();
+
+        //login user automatically
+        const user_jwt_token = jwt.sign(
+            { userId: user._id},
+            process.env.USER_ACCESS_TOKEN_SECRET,
+            { expiresIn: process.env.USER_ACCESS_TOKEN_EXPIRY }
+        );
+
+        return res.json({
+            success: true,
+            token,
+            message: "Password reset successful",
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error reseting password",
+        })
+    }
+}
 
 export {
     registerUser,
@@ -288,4 +357,6 @@ export {
     uploadProfileImage,
     getMyTokens,
     forgotPassord,
+    verifyOtp,
+    resetPassword,
 }

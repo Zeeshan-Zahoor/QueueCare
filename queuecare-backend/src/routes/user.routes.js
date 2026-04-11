@@ -1,5 +1,5 @@
 import express from "express";
-import { loginUser, registerUser, getMyProfile, updateProfile, uploadProfileImage, getMyTokens, forgotPassord } from "../controllers/user.controller.js";
+import { loginUser, registerUser, getMyProfile, updateProfile, uploadProfileImage, getMyTokens, forgotPassord, verifyOtp, resetPassword } from "../controllers/user.controller.js";
 import { userAuthMiddleware } from "../middlewares/userAuthMiddleware.js";
 import { upload } from "../middlewares/uploadMiddleware.js";
 
@@ -12,5 +12,7 @@ router.route("/update").put(userAuthMiddleware, updateProfile);
 router.route("/upload-profile").post(userAuthMiddleware, upload.single("image"), uploadProfileImage);
 router.route("/my-tokens").get(userAuthMiddleware, getMyTokens);
 router.route("/forgot-password").post(forgotPassord);
+router.route("/verify-otp").post(verifyOtp);
+router.route("/reset-password").post(resetPassword);
 
 export default router;
