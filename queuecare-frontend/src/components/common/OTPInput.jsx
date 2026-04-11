@@ -56,7 +56,7 @@ export default function OTPInput({
 
 
   return (
-    <div className={`flex gap-1 ${className}`} onPaste={handlePaste}>
+    <div className={`flex gap-3 ${className}`} onPaste={handlePaste}>
         {otp.map((digit, index) => (
             <input 
                 key={index}

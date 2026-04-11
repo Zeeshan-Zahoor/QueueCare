@@ -2,6 +2,7 @@ import React , { useState } from 'react'
 import { Hospital } from 'lucide-react';
 import Header from '../../components/common/Header';
 import OTPInput from '../../components/common/OTPInput';
+import { useNavigate } from 'react-router-dom';
 
 export default function VerifyOtp() {
     const [loading, setLoading] = useState(false);
@@ -9,9 +10,10 @@ export default function VerifyOtp() {
 
     const [code, setCode] = useState("");
 
+    const navigate = useNavigate();
 
     const handleVerifyCode = () => {
-
+      navigate("/reset-password");
     }
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -39,7 +41,7 @@ export default function VerifyOtp() {
           {/* OTP input */}
           <div className='w-full flex justify-center'>
             <OTPInput 
-            length={6}
+            length={5}
             onChange={(val) => setCode(val)}
             onComplete={(val) => console.log("Completed Code: ", val)}
             />
