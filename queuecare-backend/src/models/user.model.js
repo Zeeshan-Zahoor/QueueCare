@@ -22,6 +22,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["male", "female", "other"],
         default: "male",
+    }, 
+    otp: {
+        type: String,
+    }, 
+    otpExpir: {
+        type: Date,
     }
 
 }, {timestamps: true});

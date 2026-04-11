@@ -3,6 +3,7 @@ import { Doctor } from "../models/doctor.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import cloudinary from "../config/cloudinary.js";
+import nodemailer from "nodemailer";
 
 const registerUser = async (req, res) => {
     try {
@@ -230,6 +231,55 @@ const getMyTokens = async (req, res) => {
         })
     }
 }
+
+const forgotPassord = async (req, res) => {
+    try {
+        const { email } = req.body;
+        
+        const user = await User.findOne({ email });
+        if(!user) {
+            return res.status(404).json({
+                message: "User not found",
+            })
+        }
+
+        //generate otp 5-digit
+        const otp = Math.floor(10000 + Math.random() * 90000).toString();
+
+        user.otp = otp;
+        user.otpExpir = Date.now() + 5 * 60 * 1000; // 5 min
+
+        await user.save();
+
+        //send email
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.EMAIL_PASSWORD,
+            }
+        })
+
+        await transporter.sendMail({
+            from: process.env.EMAIL,
+            to: email,
+            subject: "QueueCare Password Reset OTP",
+            text: `Your OTP is ${otp}`,
+        });
+
+        return res.json({
+            success: true,
+            message: "OTP sent to email",
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to send OTP",
+        })
+    }
+}
+
+
 export {
     registerUser,
     loginUser,
@@ -237,4 +287,5 @@ export {
     updateProfile,
     uploadProfileImage,
     getMyTokens,
+    forgotPassord,
 }
