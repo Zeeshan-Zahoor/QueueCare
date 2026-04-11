@@ -11,7 +11,7 @@ const registerUser = async (req, res) => {
         const { name, email, password, gender } = req.body;
 
         //validate
-        if(!name || !email || !password) {
+        if (!name || !email || !password) {
             return res.status(400).json({
                 message: "All required fields must be filled",
             });
@@ -19,7 +19,7 @@ const registerUser = async (req, res) => {
 
         //check existing user
         const existingUser = await User.findOne({ email });
-        if(existingUser) {
+        if (existingUser) {
             return res.status(400).json({
                 message: "User already exists",
             })
@@ -30,7 +30,7 @@ const registerUser = async (req, res) => {
 
         // create user
         const user = User.create({
-            name, 
+            name,
             email,
             password: hashedPassword,
             gender
@@ -57,7 +57,7 @@ const loginUser = async (req, res) => {
         const { email, password } = req.body;
 
         //validate
-        if(!email || !password) {
+        if (!email || !password) {
             return res.status(400).json({
                 message: "Phone and passord are required",
             });
@@ -65,7 +65,7 @@ const loginUser = async (req, res) => {
 
         //find user
         const user = await User.findOne({ email });
-        if(!user) {
+        if (!user) {
             return res.status(404).json({
                 message: "User not found",
             });
@@ -73,7 +73,7 @@ const loginUser = async (req, res) => {
 
         //check password
         const isMatch = await bcrypt.compare(password, user.password);
-        if(!isMatch) {
+        if (!isMatch) {
             return res.status(400).json({
                 message: "Invalid Password",
             });
@@ -88,7 +88,7 @@ const loginUser = async (req, res) => {
 
         //return response
         return res.status(200).json({
-            success: true, 
+            success: true,
             message: "Login Successfull",
             user_jwt_token,
             userId: user._id
@@ -106,7 +106,7 @@ const getMyProfile = async (req, res) => {
     try {
         const user = await User.findById(req.userId).select("-password");
 
-        if(!user) {
+        if (!user) {
             return res.status(404).json({
                 message: "User not found",
             })
@@ -152,7 +152,7 @@ const updateProfile = async (req, res) => {
 
 const uploadProfileImage = async (req, res) => {
     try {
-        if(!req.file) {
+        if (!req.file) {
             return res.status(400).json({
                 message: "No file uploaded",
             });
@@ -201,7 +201,7 @@ const getMyTokens = async (req, res) => {
 
         doctors.forEach((doctor) => {
             doctor.queue.forEach((entry) => {
-                if(entry.userId?.toString() === userId) {
+                if (entry.userId?.toString() === userId) {
                     myTokens.push({
                         doctorId: doctor._id,
                         doctorName: doctor.name,
@@ -212,8 +212,8 @@ const getMyTokens = async (req, res) => {
                         name: entry.name,
                         phone: entry.phone,
                         status: entry.token < doctor.currentlyServing ? "completed"
-                        : entry.token === doctor.currentlyServing ? "ongoing"
-                        : "waiting",
+                            : entry.token === doctor.currentlyServing ? "ongoing"
+                                : "waiting",
                     });
                 }
             })
@@ -223,7 +223,7 @@ const getMyTokens = async (req, res) => {
             success: true,
             tokens: myTokens,
         });
-        
+
     } catch (error) {
         return res.status(500).json({
             message: "Error finding tokens",
@@ -235,9 +235,9 @@ const getMyTokens = async (req, res) => {
 const forgotPassord = async (req, res) => {
     try {
         const { email } = req.body;
-        
+
         const user = await User.findOne({ email });
-        if(!user) {
+        if (!user) {
             return res.status(404).json({
                 message: "User not found",
             })
@@ -264,7 +264,12 @@ const forgotPassord = async (req, res) => {
             from: process.env.EMAIL,
             to: email,
             subject: "QueueCare Password Reset OTP",
-            text: `Your OTP is ${otp}`,
+            html: `
+                <h2>Password Reset</h2>
+                <p>Your OTP is:</p>
+                <h1>${otp}</h1>
+                <p>This expires in 5 minutes.</p>
+                `,
         });
 
         return res.json({
@@ -275,6 +280,7 @@ const forgotPassord = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             message: "Failed to send OTP",
+            error: error.message,
         })
     }
 }
@@ -284,24 +290,24 @@ const verifyOtp = async (req, res) => {
         const { otp, email } = req.body;
 
         const user = await User.findOne({ email });
-        if(!user || user.otp !== otp) {
+        if (!user || user.otp !== otp) {
             return res.status(400).json({
                 message: "Invalid OTP",
             });
         }
 
-        if(user.otpExpiry < Date.now()) {
+        if (user.otpExpiry < Date.now()) {
             return res.status(400).json({
                 message: "OTP Expired",
             });
-        } 
+        }
 
         return res.json({
             success: true,
             message: "OTP verified",
         });
-        
-        
+
+
     } catch (error) {
         return res.status(500).json({
             message: "Failed to verify OTP",
@@ -314,7 +320,7 @@ const resetPassword = async (req, res) => {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
-        if(!user) {
+        if (!user) {
             return res.status(404).json({
                 message: "User not found",
             })
@@ -331,20 +337,21 @@ const resetPassword = async (req, res) => {
 
         //login user automatically
         const user_jwt_token = jwt.sign(
-            { userId: user._id},
+            { userId: user._id },
             process.env.USER_ACCESS_TOKEN_SECRET,
             { expiresIn: process.env.USER_ACCESS_TOKEN_EXPIRY }
         );
 
         return res.json({
             success: true,
-            token,
+            user_jwt_token,
             message: "Password reset successful",
         });
 
     } catch (error) {
         return res.status(500).json({
             message: "Error reseting password",
+            error: error.message,
         })
     }
 }
