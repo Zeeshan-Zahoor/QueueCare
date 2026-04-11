@@ -7,6 +7,8 @@ import AuthRedirect from "./AuthRedirect.jsx";
 
 import UserRegistration from "../pages/patient/UserRegistration.jsx";
 import UserLogin from "../pages/patient/UserLogin.jsx";
+import ForgotPassword from "../pages/patient/ForgotPassword.jsx";
+import VerifyOtp from "../pages/patient/VerifyOtp.jsx";
 import Home from "../pages/patient/Home";
 import Doctors from "../pages/patient/Doctors";
 import DoctorDetails from "../pages/patient/DoctorDetails";
@@ -40,6 +42,14 @@ export const router = createBrowserRouter([
             {
                 path: 'login',
                 element: <UserLogin />
+            },
+            {
+                path: 'forgot-password',
+                element: <ForgotPassword />
+            },
+            {
+                path: 'verify-otp',
+                element: <VerifyOtp />
             },
             {
                 path: 'home',

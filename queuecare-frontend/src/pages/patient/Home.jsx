@@ -50,7 +50,6 @@ export default function Home() {
     return clinicName.includes(searchLower);
   })
 
-  console.log(location);
   return (
     <div className='max-w-md mx-auto px-4 py-3 space-y-2 min-h-dvh pb-[calc(70px+env(safe-area-inset-bottom))]'>
 

@@ -131,7 +131,9 @@ export default function UserLogin() {
           </button>
 
           {/* Forgot Password */}
-          <button className="text-sm font-medium text-blue-600 hover:text-orange-600 text-center transition-colors cursor-pointer">
+          <button 
+          onClick={() => navigate("/forgot-password")}
+          className="text-sm font-medium text-blue-600 hover:text-orange-600 text-center transition-colors cursor-pointer">
             Forgot password?
           </button>
 
