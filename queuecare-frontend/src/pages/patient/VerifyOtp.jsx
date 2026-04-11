@@ -2,19 +2,41 @@ import React , { useState } from 'react'
 import { Hospital } from 'lucide-react';
 import Header from '../../components/common/Header';
 import OTPInput from '../../components/common/OTPInput';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { verifyOtpApi } from "../../api/userApi.js";
 
 export default function VerifyOtp() {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const email = location.state?.email;
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [data, setData] = useState({
+      email: email,
+      otp: "",
+    })
 
-    const [code, setCode] = useState("");
+    const handleVerifyCode = async () => {
+      try {
+        setLoading(true);
+        const res = await verifyOtpApi(data);
+        if(!res.success) {
+          setError(res.message);
+          return;
+        }
 
-    const navigate = useNavigate();
-
-    const handleVerifyCode = () => {
-      navigate("/reset-password");
+        navigate("/reset-password", {
+          state: { email }
+        });
+      } catch (error) {
+        setError("Failed to verify OTP");
+      } finally {
+        setLoading(false);
+      }
     }
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white rounded-3xl shadow-lg w-full h-screen sm:max-w-sm sm:h-auto sm:max-h-[90%] px-8 py-10 flex flex-col items-center">
@@ -42,7 +64,10 @@ export default function VerifyOtp() {
           <div className='w-full flex justify-center'>
             <OTPInput 
             length={5}
-            onChange={(val) => setCode(val)}
+            onChange={(val) => setData(prev => ({
+              ...prev,
+              otp: val,
+            }))}
             onComplete={(val) => console.log("Completed Code: ", val)}
             />
           </div>

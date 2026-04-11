@@ -2,16 +2,31 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Hospital, Mail } from 'lucide-react';
 import Header from "../../components/common/Header";
+import { forgotPasswordApi } from '../../api/userApi';
 
 export default function ForgotPassword() {
-    const [email, setEmail] = useState("");
+    const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
     const navigate = useNavigate();
 
-    const handleSendCode = () => {
-        navigate("/verify-otp");
+    const handleSendCode = async () => {
+        try {
+          setLoading(true);
+          const res = await forgotPasswordApi(email);
+          if(!res.success) {
+            setError("Error sending OTP. Try again");
+            return;
+          }
+          navigate("/verify-otp", {
+            state: { email }
+          });
+        } catch (error) {
+          setError("Failed to send OTP");
+        } finally {
+          setLoading(false);
+        }
     }
 
   return (
@@ -56,7 +71,7 @@ export default function ForgotPassword() {
             disabled={loading}
             onClick={handleSendCode}
             className="w-full py-3.5 mt-1 bg-slate-800 text-white rounded-4xl text-sm font-semibold hover:bg-slate-700 active:scale-[0.98] transition-all cursor-pointer">
-            {loading ? "Sending In..." : "Send Code"}
+            {loading ? "Sending..." : "Send Code"}
           </button>
 
           {error && (

@@ -92,3 +92,39 @@ export const getMyTokensApi = async () => {
 
     return res.json();
 }
+
+export const forgotPasswordApi = async (email) => {
+    const res = await fetch(`${BASE_URL}/forgot-password`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+    });
+    
+    return res.json();
+}
+
+export const verifyOtpApi = async (data) => {
+    const res = await fetch(`${BASE_URL}/verify-otp` , {
+        method: "POST",
+        headers: {
+            "Content-Type" : "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+
+    return res.json();
+}
+
+export const resetPasswordApi = async (data) => {
+    const res = await fetch(`${BASE_URL}/reset-password`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    });
+
+    return res.json();
+}

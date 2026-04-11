@@ -1,16 +1,46 @@
 import React, { useState } from 'react'
 import { Hospital, Lock } from "lucide-react";
 import Header from '../../components/common/Header';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { resetPasswordApi } from '../../api/userApi';
 
 export default function ResetPassword() {
-    const [password, setPassword] = useState("");
+    const navigate = useNavigate();
+    const location = useLocation();
+    const email = location.state?.email;
+
+    const [data, setData] = useState({
+      password: "",
+      email,
+    });
     const [confirmedPassword, setConfirmedPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
 
-    const handleResetPassword = () => {
-        
+    
+    const handleResetPassword = async () => {
+        if(data.password.length < 6) {
+          setError("Password should contain atleast 6 characters")
+          return;
+        }
+        if(data.password !== confirmedPassword) {
+          setError("Both passwords are not matching!");
+          return;
+        }
+        try {
+          const res = await resetPasswordApi(data);
+          if(!res.success) {
+            setError(res.message);
+            return;
+          }
+          localStorage.setItem("user_jwt_token", res.user_jwt_token);
+          navigate('/home');
+        } catch (error) {
+          setError("Failed to reset password");
+        } finally {
+          setLoading(false);
+        }
     }
 
   return (
@@ -44,8 +74,11 @@ export default function ResetPassword() {
             <input
               type="password"
               placeholder="New Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={data.password}
+              onChange={(e) => setData(prev => ({
+                ...prev,
+                password: e.target.value
+              }))}
               className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm text-slate-800 bg-gray-50 outline-none focus:border-[#1a2744] transition-colors placeholder:text-gray-400"
             />
           </div>
@@ -64,6 +97,10 @@ export default function ResetPassword() {
             />
           </div>
 
+          {error && (
+            <p className="text-red-500 text-sm text-center">{error}</p>
+          )}
+
           {/* Send Code Button */}
           <button 
             disabled={loading}
@@ -71,10 +108,6 @@ export default function ResetPassword() {
             className="w-full py-3.5 mt-3 bg-slate-800 text-white rounded-4xl text-sm font-semibold hover:bg-slate-700 active:scale-[0.98] transition-all cursor-pointer">
             {loading ? "Reseting..." : "Reset Password"}
           </button>
-
-          {error && (
-            <p className="text-red-500 text-sm text-center">{error}</p>
-          )}
 
         </div>
       </div>
