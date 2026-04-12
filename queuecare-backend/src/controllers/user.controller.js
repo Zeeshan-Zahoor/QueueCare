@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 import cloudinary from "../config/cloudinary.js";
 import nodemailer from "nodemailer";
 
+import { OAuth2Client } from "google-auth-library";
+
 const registerUser = async (req, res) => {
     try {
         //get data
@@ -356,6 +358,54 @@ const resetPassword = async (req, res) => {
     }
 }
 
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const googleLogin = async (req, res) => {
+    try {
+        const { token } = req.body;
+
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+
+        const { email, name, picture } = payload;
+
+        //check if user exists
+        let user = await User.findOne({ email });
+
+        if(!user) {
+            user = await User.create({
+                name,
+                email,
+                password: "google_auth", //dummy
+                profilePic: picture,
+            });
+        }
+
+        // create JWT 
+        const appToken = jwt.sign(
+            { userId: user._id },
+            process.env.USER_ACCESS_TOKEN_SECRET,
+            { expiresIn: process.env.USER_ACCESS_TOKEN_EXPIRY }
+        );
+
+        return res.json({
+            success: true,
+            token: appToken,
+        });
+
+    } catch (error) {
+        console.log("ERROR: ", error);
+        return res.status(500).json({
+            message: "Google login failed",
+            error: error.message,
+        });
+    }
+}
+
 export {
     registerUser,
     loginUser,
@@ -366,4 +416,5 @@ export {
     forgotPassord,
     verifyOtp,
     resetPassword,
+    googleLogin,
 }
