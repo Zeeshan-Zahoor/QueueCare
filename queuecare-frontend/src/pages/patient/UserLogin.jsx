@@ -1,29 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Hospital, Mail, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { loginUserApi } from "../../api/userApi.js";
-
-const GoogleIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17.64 9.2045c0-.6381-.0573-1.2518-.1636-1.8409H9v3.4814h4.8436c-.2086 1.125-.8427 2.0782-1.7959 2.7164v2.2581h2.9087c1.7018-1.5668 2.6836-3.874 2.6836-6.615z" fill="#4285F4"/>
-    <path d="M9 18c2.43 0 4.4673-.806 5.9564-2.1805l-2.9087-2.2581c-.8059.54-1.8368.859-3.0477.859-2.3441 0-4.3282-1.5832-5.036-3.7105H.9574v2.3318C2.4382 15.9832 5.4818 18 9 18z" fill="#34A853"/>
-    <path d="M3.964 10.71c-.18-.54-.2822-1.1168-.2822-1.71s.1023-1.17.2822-1.71V4.9582H.9574C.3477 6.1732 0 7.5482 0 9s.3477 2.8268.9574 4.0418L3.964 10.71z" fill="#FBBC05"/>
-    <path d="M9 3.5795c1.3214 0 2.5077.4541 3.4405 1.346l2.5813-2.5814C13.4632.8918 11.4259 0 9 0 5.4818 0 2.4382 2.0168.9574 4.9582L3.964 7.29C4.6718 5.1627 6.6559 3.5795 9 3.5795z" fill="#EA4335"/>
-  </svg>
-);
+import GoogleAuthBtn from "../../components/patient/GoogleAuthBtn.jsx";
 
 export default function UserLogin() {
   const navigate = useNavigate();
-  const [error, setError] =  useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
 
-
   const handleLoginUser = async () => {
-    if(!formData.email || !formData.password) {
+    if (!formData.email || !formData.password) {
       setError("All fields are required");
       return;
     }
@@ -32,14 +23,14 @@ export default function UserLogin() {
       setLoading(true);
       const res = await loginUserApi(formData);
 
-      if(!res.success) {
+      if (!res.success) {
         setError(res.message || "Login failed");
         return;
       }
 
       localStorage.setItem("user_jwt_token", res.user_jwt_token);
       navigate('/home');
-      
+
     } catch (error) {
       console.log("Error loggin in user");
       setError("Something went wrong");
@@ -55,7 +46,7 @@ export default function UserLogin() {
 
         {/* Logo */}
         <div className="flex flex-col items-center gap-2 mb-6">
-          <Hospital size={50} className="text-slate-800"/>
+          <Hospital size={50} className="text-slate-800" />
           <span className="text-base font-semibold tracking-tight">
             <span className="text-gray-500">Queue</span>
             <span className="text-slate-800 font-bold">Care</span>
@@ -74,7 +65,7 @@ export default function UserLogin() {
           {/* Email */}
           <div className="relative flex items-center">
             <span className="absolute left-3.5 pointer-events-none flex items-center">
-              <Mail size={18} className="text-gray-400"/>
+              <Mail size={18} className="text-gray-400" />
             </span>
             <input
               type="email"
@@ -91,7 +82,7 @@ export default function UserLogin() {
           {/* Password */}
           <div className="relative flex items-center">
             <span className="absolute left-3.5 pointer-events-none flex items-center">
-              <Lock size={18} className="text-gray-400"/>
+              <Lock size={18} className="text-gray-400" />
             </span>
             <input
               type="password"
@@ -106,7 +97,7 @@ export default function UserLogin() {
           </div>
 
           {/* Sign In Button */}
-          <button 
+          <button
             onClick={handleLoginUser}
             disabled={loading}
             className="w-full py-3.5 mt-1 bg-slate-800 text-white rounded-4xl text-sm font-semibold hover:bg-slate-700 active:scale-[0.98] transition-all cursor-pointer">
@@ -125,24 +116,23 @@ export default function UserLogin() {
           </div>
 
           {/* Google Button */}
-          <button className="w-full py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 bg-white flex items-center justify-center gap-2.5 hover:bg-gray-50 active:scale-[0.98] transition-all cursor-pointer">
-            <GoogleIcon />
-            Sign In with Google
-          </button>
+          <GoogleAuthBtn
+            text="signin_with"
+          />
 
           {/* Forgot Password */}
-          <button 
-          onClick={() => navigate("/forgot-password")}
-          className="text-sm font-medium text-blue-600 hover:text-orange-600 text-center transition-colors cursor-pointer">
+          <button
+            onClick={() => navigate("/forgot-password")}
+            className="text-sm font-medium text-blue-600 hover:text-orange-600 text-center transition-colors cursor-pointer">
             Forgot password?
           </button>
 
           {/* Sign Up Link */}
           <p className="text-xs text-gray-500 text-center">
             Don't have an account yet?{" "}
-            <button 
-            onClick={() => navigate("/register")}
-            className="text-blue-600 font-semibold hover:underline cursor-pointer">
+            <button
+              onClick={() => navigate("/register")}
+              className="text-blue-600 font-semibold hover:underline cursor-pointer">
               Sign up
             </button>
           </p>

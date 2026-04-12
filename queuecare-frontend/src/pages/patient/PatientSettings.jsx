@@ -43,6 +43,7 @@ function PatientSettings() {
           <SettingItem
             icon={<Bell size={20} />}
             title="Notification Settings"
+            subtitle="Comming Soon"
           />
 
           {/* Location */}
@@ -57,14 +58,14 @@ function PatientSettings() {
           <SettingItem
             icon={<Globe size={20} />}
             title="Language"
-            subtitle="English"
+            subtitle="Comming Soon"
           />
 
           {/* Appearance */}
           <SettingItem
             icon={<Sun size={20} />}
             title="Appearance"
-            subtitle="Light"
+            subtitle="Comming Soon"
           />
         </div>
 

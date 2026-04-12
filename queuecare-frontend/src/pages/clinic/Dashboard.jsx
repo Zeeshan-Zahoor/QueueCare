@@ -21,8 +21,6 @@ export default function Dashboard() {
 
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
 
-  const [doctorInfo, setDoctorInfo] = useState(null);
-
   const [showWalkInModal, setShowWalkInModal] = useState(false);
   const [showDuplicatePatient, setShowDuplicatePatient] = useState(false);
 
@@ -62,6 +60,13 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, [clinicId]);
 
+  useEffect(() => { // select last selected doctor again automatically on refresh
+    const lastSelectedDoctorId = localStorage.getItem("selectedDoctorId");
+
+    if(!lastSelectedDoctorId) return;
+    else setSelectedDoctorId(lastSelectedDoctorId);
+  }, [])
+
   const selectedDoctor = doctors.find((doc) => doc._id === selectedDoctorId);
 
   if (!selectedDoctor && selectedDoctorId) {
@@ -70,6 +75,7 @@ export default function Dashboard() {
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor._id);
+    localStorage.setItem("selectedDoctorId", doctor._id);
   }
 
   const handleCallNextPatient = async () => {
@@ -87,8 +93,6 @@ export default function Dashboard() {
       const updated = await getDoctorByIdApi(selectedDoctorId);
       if (updated.success) {
         const updatedDoctor = updated.doctor;
-
-        setDoctorInfo(updatedDoctor);
 
         setDoctors((prev) =>
           prev.map((doc) =>
@@ -115,8 +119,6 @@ export default function Dashboard() {
       const updated = await getDoctorByIdApi(selectedDoctorId);
       if (updated.success) {
         const updatedDoctor = updated.doctor;
-
-        setDoctorInfo(updatedDoctor);
 
         setDoctors((prev) =>
           prev.map((doc) =>
