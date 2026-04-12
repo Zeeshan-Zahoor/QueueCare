@@ -320,6 +320,7 @@ const toggleDay = async (req, res) => {
         });
 
     } catch (error) {
+        console.log("ERROR: ", error);
         return res.status(500).json({
             message: "Failed to toggle day",
             error: error.message,
