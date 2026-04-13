@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Building2, Phone, Plus, BanIcon, ArrowRight, AlertTriangle, Settings } from "lucide-react";
+import { AiOutlineDelete } from "react-icons/ai";
 import cloudIcon from "../../assets/cloud_icon.jpg";
 import DoctorCardClinic from "../../components/clinic/DoctorCardClinic";
 import { useParams, useNavigate } from "react-router-dom";
@@ -16,6 +17,7 @@ import { getDoctorsApi,
 from "../../api/clinicApi.js";
 import InnerSpinner from "../../components/loaders/InnerSpinner.jsx";
 import AddDoctorModal from "../../components/clinic/AddDoctorModal";
+import DeleteDoctorModal from "../../components/clinic/DeleteDoctorModal.jsx";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -27,6 +29,7 @@ export default function Dashboard() {
   const [showDuplicatePatient, setShowDuplicatePatient] = useState(false);
 
   const [openAddDoctor, setOpenAddDoctor] = useState(false);
+  const [openDeleteDoctor, setOpenDeleteDoctor] = useState(false);
 
   const [walkInPatientData, setWalkInPatientData] = useState({
     name: "",
@@ -343,14 +346,19 @@ export default function Dashboard() {
             ))}
           </div>
 
-        <div className="flex justify-end px-4">
+        <div className="flex justify-end px-4 flex-col items-end gap-2 outer-doctor-bar">
           <Plus 
             onClick={() => setOpenAddDoctor(true)}
             size={40} 
             className="text-white bg-slate-700 p-2 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer active:scale-95 transition-all"
           />
-        </div>
+          <AiOutlineDelete
+            onClick={() => setOpenDeleteDoctor(true)}
+            size={30} className={`text-gray-500 bg-white border border-gray-400 p-2 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer active:scale-95 transition-all ${!selectedDoctor && "hidden"}`}
+          />
           
+        </div>
+            
         </div>
 
         {/* Main  */}
@@ -618,6 +626,14 @@ export default function Dashboard() {
       {openAddDoctor && (
         <AddDoctorModal 
           onClose={() => setOpenAddDoctor(false)}
+        />
+      )}
+
+      {/* Delete Doctor Modal */}
+      {openDeleteDoctor && (
+        <DeleteDoctorModal 
+          doctor={selectedDoctor}
+          onClose={() => setOpenDeleteDoctor(false)}
         />
       )}
     </div>

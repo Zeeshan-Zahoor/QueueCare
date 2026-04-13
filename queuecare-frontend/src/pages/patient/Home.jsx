@@ -5,7 +5,7 @@ import { Search, MapPin, Link } from 'lucide-react'
 import ClinicCard from '../../components/patient/ClinicCard';
 import heroImage from "../../assets/heroImage.png"
 import BottomNav from '../../components/common/BottomNav';
-import CliniccardSkeleton from '../../components/loaders/CliniccardSkeleton.jsx';
+import ClinicCardSkeleton from '../../components/loaders/ClinicCardSkeleton.jsx';
 import { LocationContext } from '../../contexts/LocationContext.jsx';
 
 
@@ -102,7 +102,7 @@ export default function Home() {
         </h3>
 
         {loading && (
-          <CliniccardSkeleton />
+          <ClinicCardSkeleton />
         )}
 
         {!loading && filteredClinics.length === 0 && (
