@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
 import { Plus, Stethoscope } from "lucide-react"
 import { useParams } from "react-router-dom";
+import { addDoctorApi } from '../../api/clinicApi';
 
 function AddDoctorModal({
-    onClose, addDoctorHandler
+    onClose
 }) {
     const { clinicId } = useParams();
 
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
         specialization: "",
@@ -14,6 +17,23 @@ function AddDoctorModal({
         queue: [],
     })
 
+
+    const handleAddDoctor = async () => {
+      try {
+        setLoading(true);
+        const res = await addDoctorApi(formData);
+        if(!res.success) {
+          setError(res.message);
+          return;
+        }
+        onClose();
+      } catch (error) {
+        setError("Error adding doctor");
+        console.log("ERROR: ", error)
+      } finally {
+        setLoading(false);
+      }
+    }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
 
@@ -69,6 +89,10 @@ function AddDoctorModal({
                   />
                 </div>
               </div>
+
+              {error && (
+                <p className='text-sm text-red-500 text-center'>{error}</p>
+              )}
             </div>
 
             {/* Footer */}
@@ -82,11 +106,12 @@ function AddDoctorModal({
               </button>
 
               <button
-                onClick={addDoctorHandler}
+                disabled={loading}
+                onClick={handleAddDoctor}
                 className="flex items-center gap-2 rounded-md bg-slate-800 px-6 py-3 text-white cursor-pointer hover:bg-slate-700"
               >
                 <Plus size={20} />
-                Add Doctor
+                {loading ? "Adding..." : "Add Doctor"}
               </button>
 
             </div>

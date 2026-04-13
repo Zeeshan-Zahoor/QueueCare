@@ -14,12 +14,13 @@ import { getDoctorsApi,
          updateDoctorSettingsApi,
         } 
 from "../../api/clinicApi.js";
-import Spinner from "../../components/loaders/Spinner.jsx";
+import InnerSpinner from "../../components/loaders/InnerSpinner.jsx";
 import AddDoctorModal from "../../components/clinic/AddDoctorModal";
 
 export default function Dashboard() {
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(true);
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
 
   const [showWalkInModal, setShowWalkInModal] = useState(false);
@@ -37,8 +38,6 @@ export default function Dashboard() {
 
   const [doctors, setDoctors] = useState([]);
 
-
-
   const { clinicId } = useParams();
 
   useEffect(() => {
@@ -50,6 +49,8 @@ export default function Dashboard() {
           }
         } catch (error) {
           console.log("Error to fetch the doctors");
+        } finally {
+          setLoading(false);
         }
     }
   
@@ -74,9 +75,9 @@ export default function Dashboard() {
 
   const selectedDoctor = doctors.find((doc) => doc._id === selectedDoctorId);
 
-  if (!selectedDoctor && selectedDoctorId) {
-    return <Spinner/> 
-  }
+  // if (!selectedDoctor && selectedDoctorId) {
+  //   return <Spinner/> 
+  // }
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor._id);
@@ -161,8 +162,6 @@ export default function Dashboard() {
         if (updated.success) {
           const updatedDoctor = updated.doctor;
 
-          setDoctorInfo(updatedDoctor);
-
           //update doctor list also in side bar
           setDoctors((prev) =>
             prev.map((doctor) =>
@@ -220,8 +219,6 @@ export default function Dashboard() {
       if(updated.success) {
         const updatedDoctor = updated.doctor;
         
-        setDoctorInfo(updatedDoctor);
-
         setDoctors((prev) => 
           prev.map(doctor => 
             doctor._id === updatedDoctor._id ? updatedDoctor : doctor
@@ -255,14 +252,9 @@ export default function Dashboard() {
     }
   }
 
-
   const handleLogout= () => {
     localStorage.removeItem("jwt_token");
     navigate("/clinic");
-  }
-
-  const addDoctorHandler = () => {
-
   }
 
   return (
@@ -324,9 +316,14 @@ export default function Dashboard() {
         </div>
 
         {/* Doctor bar  */}
-        <div className="w-80 bg-white border-r border-gray-300 h-full">
-          <div className="p-3 space-y-2">
+        <div className="w-80 bg-white border-r border-gray-300 max-h-dvh overflow-auto">
+          <div className={`p-3 space-y-2 ${loading ? "flex flex-col justify-center" : ""}`}>
             <h2 className="text-lg text-slate-800 font-bold">Doctors</h2>
+            {loading && (
+              <div className="w-full min-h-50 flex justify-center items-center">
+                <InnerSpinner className="m-auto"/>
+              </div>
+            )}
 
             {doctors.map((doctor) => (
               <DoctorCardClinic
@@ -613,7 +610,6 @@ export default function Dashboard() {
       {openAddDoctor && (
         <AddDoctorModal 
           onClose={() => setOpenAddDoctor(false)}
-          addDoctorHandler={addDoctorHandler}
         />
       )}
     </div>

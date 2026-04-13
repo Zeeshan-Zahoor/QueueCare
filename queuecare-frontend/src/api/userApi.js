@@ -40,9 +40,9 @@ export const getMyProfileApi = async () => {
         },
     });
 
-    if(!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to fetch profile");
+    if(res.status === 401) {
+        localStorage.removeItem("user_jwt_token");
+        window.location.href("/login");
     }
 
     return await res.json();
