@@ -14,6 +14,7 @@ import { loginClinic,
          updateDoctorSettings,
          updateClinicSettings,
          getClinic,
+         addDoctor,
         } from "../controllers/clinic.controller.js";
 
 const router = Router();
@@ -35,5 +36,6 @@ router.route("/doctor/:doctorId/settings").put(authMiddleware, updateDoctorSetti
 router.route("/:clinicId/doctors").get(getClinicDoctors);
 router.route("/:clinicId").get(getClinic);
 router.route("/:clinicId").put(authMiddleware, updateClinicSettings);
+router.route("/add-doctor").post(authMiddleware, addDoctor);
 
 export default router;

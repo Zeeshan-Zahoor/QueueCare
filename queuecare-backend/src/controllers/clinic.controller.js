@@ -485,6 +485,31 @@ const updateClinicSettings = async(req, res) => {
     }
 }
 
+const addDoctor = async (req, res) => {
+    try {
+        const data = req.body;
+        
+        const doctor = await Doctor.create(data);
+        if(!doctor) {
+            return res.status(400).json({
+                message: "Failed to add doctor",
+            })
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Doctor added",
+            doctorId: doctor._id,
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error adding doctor",
+            error: error.message,
+        })
+    }
+}
+
 export {
     loginClinic,
     getClinicDoctors,
@@ -499,4 +524,5 @@ export {
     updateDoctorSettings,
     updateClinicSettings,
     getClinic,
+    addDoctor,
 }
