@@ -84,6 +84,14 @@ export default function Dashboard() {
     localStorage.setItem("selectedDoctorId", doctor._id);
   }
 
+  document.getElementById("doctor-bar")?.addEventListener("click", (e) => {
+    if(e.target.classList.contains("outer-doctor-bar")) {
+      localStorage.removeItem("selectedDoctorId");
+      setSelectedDoctorId(null);
+    }
+  })
+
+
   const handleCallNextPatient = async () => {
     if (!selectedDoctorId) return;
 
@@ -316,7 +324,7 @@ export default function Dashboard() {
         </div>
 
         {/* Doctor bar  */}
-        <div className="w-80 bg-white border-r border-gray-300 max-h-dvh overflow-auto">
+        <div id="doctor-bar" className="w-80 bg-white border-r border-gray-300 max-h-dvh overflow-auto outer-doctor-bar">
           <div className={`p-3 space-y-2 ${loading ? "flex flex-col justify-center" : ""}`}>
             <h2 className="text-lg text-slate-800 font-bold">Doctors</h2>
             {loading && (

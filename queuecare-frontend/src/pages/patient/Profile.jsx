@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/common/Header";
 import BottomNav from "../../components/common/BottomNav";
 import { getMyProfileApi, updateProfileApi, uploadProfileApi } from "../../api/userApi.js";
+import InnerSpinner from "../../components/loaders/InnerSpinner.jsx";
 
 export default function Profile() {
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [imageUploadLoading, setImageUploadLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     gender: "",
@@ -72,6 +73,7 @@ export default function Profile() {
     if (!file) return;
 
     try {
+      setImageUploadLoading(true);
       const res = await uploadProfileApi(file);
 
       if (!res.success) return;
@@ -81,6 +83,8 @@ export default function Profile() {
       console.log(res);
     } catch (error) {
       console.log("Upload failed");
+    } finally {
+      setImageUploadLoading(false);
     }
   }
   return (
@@ -93,13 +97,18 @@ export default function Profile() {
       <div className=" p-5 flex flex-col items-center space-y-4 relative">
         {/* Profile Image */}
         <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-200 relative cursor-pointer">
-
           {user.profilePic ? (
-            <img
-              src={`${user.profilePic}?t=${Date.now()}`}
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
+            imageUploadLoading ? (
+              <div className="w-full h-full flex justify-center items-center">
+                <InnerSpinner/>
+              </div>
+            ) : (
+              <img
+                src={`${user.profilePic}`}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            )
           ) : (
             <div className="w-full h-full bg-gray-200 flex items-center justify-center">
               <div
