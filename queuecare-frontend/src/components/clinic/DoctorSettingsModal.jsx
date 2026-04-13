@@ -35,8 +35,9 @@ export default function DoctorSettingsModal({ onClose, doctor, onSave }) {
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-6">
+        <div className="flex w-full justify-between px-12">
 
+          <div className="py-6 space-y-6 flex-1 pr-10">
           {/* Consultation Time */}
           <div>
             <label className="flex items-center gap-2 text-lg font-medium text-gray-600 mb-2">
@@ -71,6 +72,22 @@ export default function DoctorSettingsModal({ onClose, doctor, onSave }) {
               className="w-full outline outline-gray-400 rounded-lg px-3 py-3 text-lg focus:outline-0 focus:ring-2 focus:ring-blue-500"
               placeholder="Enter max tokens"
             />
+          </div>
+
+          </div>
+
+          {/* image */}
+          <div className="pt-5 text-center">
+            <div className="w-48 h-48 p-2 bg-slate-700 rounded-full">
+              <img 
+                src={doctor?.image} 
+                alt=""
+                className="w-full h-full object-cover rounded-full"
+                />
+            </div>
+            {/* Name */}
+            <h1 className="text-slate-800 font-semibold text-xl">{doctor?.name}</h1>
+          <h1 className="text-xs text-gray-400">Click on image to change</h1>
           </div>
 
         </div>

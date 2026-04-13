@@ -15,6 +15,7 @@ import { getDoctorsApi,
         } 
 from "../../api/clinicApi.js";
 import Spinner from "../../components/loaders/Spinner.jsx";
+import AddDoctorModal from "../../components/clinic/AddDoctorModal";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -23,6 +24,8 @@ export default function Dashboard() {
 
   const [showWalkInModal, setShowWalkInModal] = useState(false);
   const [showDuplicatePatient, setShowDuplicatePatient] = useState(false);
+
+  const [openAddDoctor, setOpenAddDoctor] = useState(false);
 
   const [walkInPatientData, setWalkInPatientData] = useState({
     name: "",
@@ -33,6 +36,8 @@ export default function Dashboard() {
   const [doctorSettingsModal, setDoctorSettingsModal] = useState(false);
 
   const [doctors, setDoctors] = useState([]);
+
+
 
   const { clinicId } = useParams();
 
@@ -189,8 +194,6 @@ export default function Dashboard() {
       const updated = await getDoctorByIdApi(selectedDoctorId);
       if(updated.success) {
         const updatedDoctor = updated.doctor;
-        
-        setDoctorInfo(updatedDoctor);
 
         setDoctors((prev) => 
           prev.map(doctor => 
@@ -242,8 +245,6 @@ export default function Dashboard() {
 
       const updatedDoctor = res.doctor;
 
-      setDoctorInfo(updatedDoctor);
-
       setDoctors(prev => 
         prev.map(doctor => 
           doctor._id === updatedDoctor._id ? updatedDoctor : doctor
@@ -258,6 +259,10 @@ export default function Dashboard() {
   const handleLogout= () => {
     localStorage.removeItem("jwt_token");
     navigate("/clinic");
+  }
+
+  const addDoctorHandler = () => {
+
   }
 
   return (
@@ -301,9 +306,9 @@ export default function Dashboard() {
       </div>
 
       {/* body */}
-      <div className="flex w-full flex-1 min-h-0"> {/* Added min-h-0 here */}
+      <div className="flex w-full flex-1 min-h-0">
 
-        {/* Sidebar - unchanged */}
+        {/* Sidebar */}
         <div className="w-60 bg-white border-r border-gray-300">
           <div className="p-4 space-y-2">
             <button className="w-full flex items-center gap-3 bg-slate-800 text-white px-4 py-2 rounded">
@@ -318,7 +323,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Doctor bar - unchanged */}
+        {/* Doctor bar  */}
         <div className="w-80 bg-white border-r border-gray-300 h-full">
           <div className="p-3 space-y-2">
             <h2 className="text-lg text-slate-800 font-bold">Doctors</h2>
@@ -331,11 +336,19 @@ export default function Dashboard() {
                 active={selectedDoctorId === doctor._id}
               />
             ))}
-
           </div>
+
+        <div className="flex justify-end px-4">
+          <Plus 
+            onClick={() => setOpenAddDoctor(true)}
+            size={40} 
+            className="text-white bg-slate-700 p-2 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer active:scale-95 transition-all"
+          />
+        </div>
+          
         </div>
 
-        {/* Main - FIXED SECTION */}
+        {/* Main  */}
         {selectedDoctor ? (
           <div className="flex flex-col flex-1 min-h-0"> {/* Added min-h-0 */}
 
@@ -594,6 +607,14 @@ export default function Dashboard() {
 
           </div>
         </div>
+      )}
+
+      {/* Add Doctor Modal */}
+      {openAddDoctor && (
+        <AddDoctorModal 
+          onClose={() => setOpenAddDoctor(false)}
+          addDoctorHandler={addDoctorHandler}
+        />
       )}
     </div>
   );
