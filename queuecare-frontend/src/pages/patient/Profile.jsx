@@ -80,13 +80,14 @@ export default function Profile() {
 
       // update UI instantly
       setUser(res.user);
-      console.log(res);
     } catch (error) {
       console.log("Upload failed");
     } finally {
       setImageUploadLoading(false);
     }
   }
+
+
   return (
     <div className="max-w-md mx-auto px-4 py-6 space-y-6 pb-[calc(70px+env(safe-area-inset-bottom))]">
 

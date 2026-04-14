@@ -1,3 +1,4 @@
+import cloudinary from "../config/cloudinary.js";
 import { Clinic } from "../models/clinic.model.js";
 import { Doctor } from "../models/doctor.model.js";
 import bcrypt from "bcryptjs";
@@ -320,7 +321,6 @@ const toggleDay = async (req, res) => {
         });
 
     } catch (error) {
-        console.log("ERROR: ", error);
         return res.status(500).json({
             message: "Failed to toggle day",
             error: error.message,
@@ -534,6 +534,47 @@ const deleteDoctor = async (req, res) => {
     }
 }
 
+const uploadDoctorProfilePic = async (req, res) => {
+    try {
+        const { doctorId } = req.body;
+        // check file uploaded or not
+        if(!req.file) {
+            return res.status(400).json({
+                message: "No file uploaded",
+            });
+        }
+
+        // convert buffer to base64
+        const b64 = Buffer.from(req.file.buffer).toString("base64");
+        
+        const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+
+        // upload to cloudinary
+        const result = await cloudinary.uploader.upload(dataURI, {
+            folder: "queuecare_doctor_profiles"
+        })
+
+        // save url to db
+        const doctor = await Doctor.findByIdAndUpdate(doctorId,
+            { image: result.secure_url },
+            { new: true }
+        );
+
+        // response
+        return res.status(200).json({
+            success: true,
+            message: "Profile updated successfully",
+            imageUrl: result.secure_url,
+            doctor,
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to upload image",
+            error: error.message,
+        });
+    }
+}
+
 export {
     loginClinic,
     getClinicDoctors,
@@ -550,4 +591,5 @@ export {
     getClinic,
     addDoctor,
     deleteDoctor,
+    uploadDoctorProfilePic,
 }

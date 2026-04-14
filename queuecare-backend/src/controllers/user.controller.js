@@ -114,8 +114,6 @@ const getMyProfile = async (req, res) => {
             })
         }
 
-        console.log(user);
-
         return res.status(200).json({
             success: true,
             user,
@@ -160,7 +158,7 @@ const uploadProfileImage = async (req, res) => {
             });
         }
 
-        // convert buffer tp base64
+        // convert buffer to base64
         const b64 = Buffer.from(req.file.buffer).toString("base64");
         const dataURI = `data:${req.file.mimetype};base64,${b64}`;
 
@@ -182,7 +180,6 @@ const uploadProfileImage = async (req, res) => {
             user,
         })
     } catch (error) {
-        console.log("Error: ", error);
         return res.status(500).json({
             message: "Image upload failed",
             error: "error.message",
@@ -358,7 +355,6 @@ const resetPassword = async (req, res) => {
     }
 }
 
-
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const googleLogin = async (req, res) => {
     try {
@@ -398,7 +394,6 @@ const googleLogin = async (req, res) => {
         });
 
     } catch (error) {
-        console.log("ERROR: ", error);
         return res.status(500).json({
             message: "Google login failed",
             error: error.message,

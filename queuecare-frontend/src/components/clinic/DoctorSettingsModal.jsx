@@ -1,7 +1,11 @@
 import { X, Clock, Ticket } from "lucide-react";
 import { useState } from "react";
+import { uploadDoctorProfileApi } from "../../api/clinicApi";
+import InnerSpinner from "../loaders/InnerSpinner";
 
 export default function DoctorSettingsModal({ onClose, doctor, onSave }) {
+  const [error, setError] = useState(false);
+  const [uploadLoading, setUploadLoading] = useState(false);
   const [consultationTime, setConsultationTime] = useState(
     doctor?.consultationTime || 10
   );
@@ -17,9 +21,28 @@ export default function DoctorSettingsModal({ onClose, doctor, onSave }) {
     onClose();
   };
 
+  const handleDoctorImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+    try {
+      setUploadLoading(true);
+      const res = await uploadDoctorProfileApi(file, doctor._id);
+      if (!res.success) {
+        setError(res.message);
+        return;
+      }
+    } catch (error) {
+      setError("Error uploading image");
+    } finally {
+      setUploadLoading(false);
+    }
+
+  }
   return (
     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
-      
+
       {/* Modal */}
       <div className="w-160 p-1 rounded-lg bg-white shadow-xl">
 
@@ -38,56 +61,73 @@ export default function DoctorSettingsModal({ onClose, doctor, onSave }) {
         <div className="flex w-full justify-between px-12">
 
           <div className="py-6 space-y-6 flex-1 pr-10">
-          {/* Consultation Time */}
-          <div>
-            <label className="flex items-center gap-2 text-lg font-medium text-gray-600 mb-2">
-              <Clock className="w-5 h-5" />
-              Consultation Time
-            </label>
+            {/* Consultation Time */}
+            <div>
+              <label className="flex items-center gap-2 text-lg font-medium text-gray-600 mb-2">
+                <Clock className="w-5 h-5" />
+                Consultation Time
+              </label>
 
-            <select
-              value={consultationTime}
-              onChange={(e) => setConsultationTime(Number(e.target.value))}
-              className="w-full outline outline-gray-400 rounded-lg px-3 py-3 text-lg focus:outline-0 focus:ring-2 focus:ring-blue-500"
-            >
-              {[5, 10, 15, 20, 30].map((time) => (
-                <option key={time} value={time}>
-                  {time} min
-                </option>
-              ))}
-            </select>
-          </div>
+              <select
+                value={consultationTime}
+                onChange={(e) => setConsultationTime(Number(e.target.value))}
+                className="w-full outline outline-gray-400 rounded-lg px-3 py-3 text-lg focus:outline-0 focus:ring-2 focus:ring-blue-500"
+              >
+                {[5, 10, 15, 20, 30].map((time) => (
+                  <option key={time} value={time}>
+                    {time} min
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* Daily Token Limit */}
-          <div>
-            <label className="flex items-center gap-2 text-lg font-medium text-gray-600 mb-2">
-              <Ticket className="w-5 h-5" />
-              Daily Token Limit
-            </label>
+            {/* Daily Token Limit */}
+            <div>
+              <label className="flex items-center gap-2 text-lg font-medium text-gray-600 mb-2">
+                <Ticket className="w-5 h-5" />
+                Daily Token Limit
+              </label>
 
-            <input
-              type="number"
-              value={maxTokens}
-              onChange={(e) => setMaxTokens(Number(e.target.value))}
-              className="w-full outline outline-gray-400 rounded-lg px-3 py-3 text-lg focus:outline-0 focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter max tokens"
-            />
-          </div>
+              <input
+                type="number"
+                value={maxTokens}
+                onChange={(e) => setMaxTokens(Number(e.target.value))}
+                className="w-full outline outline-gray-400 rounded-lg px-3 py-3 text-lg focus:outline-0 focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter max tokens"
+              />
+            </div>
 
           </div>
 
           {/* image */}
           <div className="pt-5 text-center">
-            <div className="w-48 h-48 p-2 bg-slate-700 rounded-full">
-              <img 
-                src={doctor?.image} 
-                alt=""
-                className="w-full h-full object-cover rounded-full"
+            <div className="w-48 h-48 p-2 bg-gray-300 rounded-full relative">
+              {uploadLoading ? (
+                <div className="w-full h-full flex justify-center items-center">
+                  <InnerSpinner />
+                </div>
+              ) : (
+                <img
+                  src={doctor?.image}
+                  alt=""
+                  className="w-full h-full object-cover rounded-full"
                 />
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                className="absolute rounded-full inset-0 opacity-0 cursor-pointer"
+                onChange={handleDoctorImageChange}
+              />
             </div>
+
             {/* Name */}
             <h1 className="text-slate-800 font-semibold text-xl">{doctor?.name}</h1>
-          <h1 className="text-xs text-gray-400">Click on image to change</h1>
+            <h1 className="text-xs text-gray-400">Click on image to change</h1>
+
+            {error && (
+              <p className="text-center text-red-500 text-sm">{error}</p>
+            )}
           </div>
 
         </div>

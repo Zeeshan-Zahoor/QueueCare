@@ -169,7 +169,7 @@ export const addDoctorApi = async (data) => {
 
     if(res.status === 401) {
         localStorage.removeItem("jwt_token");
-        window.location.href("/clinic");
+        window.location.href = "/clinic";
     }
 
     return res.json();
@@ -189,8 +189,31 @@ export const deleteDoctorApi = async (doctorId) => {
 
     if(res.status === 401) {
         localStorage.removeItem("jwt_token");
-        window.location.href("/clinic");
+        window.location.href = "/clinic";
     }
 
+    return res.json();
+}
+
+export const uploadDoctorProfileApi = async (file, doctorId) => {
+    const jwt_token = localStorage.getItem("jwt_token");
+
+    const formData = new FormData();
+    formData.append("doctorImage", file);
+    formData.append("doctorId", doctorId);
+
+    console.log("DoctorId: ", doctorId);
+    const res = await fetch(`${BASE_URL}/upload-profile`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${jwt_token}`,
+        },
+        body: formData,
+    });
+
+    if(res.status === 401) {
+        localStorage.removeItem("jwt_token");
+        window.location.href = "/clinic";
+    }
     return res.json();
 }

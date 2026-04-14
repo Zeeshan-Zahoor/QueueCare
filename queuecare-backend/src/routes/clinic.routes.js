@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { optionalUserAuthMiddleware } from "../middlewares/optionalUserAuthMiddleware.js";
+import { upload } from "../middlewares/uploadMiddleware.js";
 import { loginClinic,
          getClinicDoctors, 
          joinQueue, 
@@ -16,6 +17,7 @@ import { loginClinic,
          getClinic,
          addDoctor,
          deleteDoctor,
+         uploadDoctorProfilePic,
         } from "../controllers/clinic.controller.js";
 import { auth } from "google-auth-library";
 
@@ -40,5 +42,5 @@ router.route("/:clinicId").get(getClinic);
 router.route("/:clinicId").put(authMiddleware, updateClinicSettings);
 router.route("/add-doctor").post(authMiddleware, addDoctor);
 router.route("/delete-doctor").post(authMiddleware, deleteDoctor);
-
+router.route("/upload-profile").post(authMiddleware, upload.single("doctorImage"), uploadDoctorProfilePic);
 export default router;

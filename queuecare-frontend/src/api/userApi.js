@@ -42,7 +42,7 @@ export const getMyProfileApi = async () => {
 
     if(res.status === 401) {
         localStorage.removeItem("user_jwt_token");
-        window.location.href("/login");
+        window.location.href = "/login";
     }
 
     return await res.json();
