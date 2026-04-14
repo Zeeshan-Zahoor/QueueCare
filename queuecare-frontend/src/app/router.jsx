@@ -19,6 +19,9 @@ import Profile from "../pages/patient/Profile.jsx";
 import MyTokens from "../pages/patient/MyTokens.jsx";
 
 import ClinicLogin from "../pages/clinic/ClinicLogin";
+import ForgotClinicPassword from "../pages/clinic/ForgotClinicPassword.jsx";
+import VerifyClinicOtp from "../pages/clinic/VerifyClinicOtp.jsx";
+import ResetClinicPassword from "../pages/clinic/ResetClinicPassword.jsx";
 import Dashboard from "../pages/clinic/Dashboard";
 import Settings from "../pages/clinic/Settings";
 import ClinicDetails from "../pages/patient/ClinicDetails";
@@ -99,7 +102,18 @@ export const router = createBrowserRouter([
         element: <ClinicLayout />,
         children: [
             { index: true, element: <ClinicLogin /> },
-
+            {
+                path: "forgot-password",
+                element: <ForgotClinicPassword />
+            },
+            {
+                path: "verify-otp",
+                element: <VerifyClinicOtp />
+            },
+            {
+                path: "reset-password",
+                element: <ResetClinicPassword />
+            },
             {
                 path: ":clinicId", 
                 children: [
