@@ -510,6 +510,30 @@ const addDoctor = async (req, res) => {
     }
 }
 
+const deleteDoctor = async (req, res) => {
+    try {
+        const { doctorId } = req.body;
+        
+        const deletedDoctor = await Doctor.findByIdAndDelete(doctorId);
+        if(!deletedDoctor) {
+            return res.status(404).json({
+                message: "Doctor not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Doctor deleted successfully",
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error deleting doctor",
+            error: error.message,
+        })
+    }
+}
+
 export {
     loginClinic,
     getClinicDoctors,
@@ -525,4 +549,5 @@ export {
     updateClinicSettings,
     getClinic,
     addDoctor,
+    deleteDoctor,
 }

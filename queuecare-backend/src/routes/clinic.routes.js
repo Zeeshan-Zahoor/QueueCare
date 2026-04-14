@@ -15,7 +15,9 @@ import { loginClinic,
          updateClinicSettings,
          getClinic,
          addDoctor,
+         deleteDoctor,
         } from "../controllers/clinic.controller.js";
+import { auth } from "google-auth-library";
 
 const router = Router();
 
@@ -37,5 +39,6 @@ router.route("/:clinicId/doctors").get(getClinicDoctors);
 router.route("/:clinicId").get(getClinic);
 router.route("/:clinicId").put(authMiddleware, updateClinicSettings);
 router.route("/add-doctor").post(authMiddleware, addDoctor);
+router.route("/delete-doctor").post(authMiddleware, deleteDoctor);
 
 export default router;
