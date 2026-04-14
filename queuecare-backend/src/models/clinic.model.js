@@ -5,7 +5,7 @@ const clinicSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    phone: {
+    email: {
         type: String,
         required: true,
         unique: true,
@@ -16,7 +16,6 @@ const clinicSchema = new mongoose.Schema({
     },
     address: {
         type: String,
-        required: true,
     },
     workingDays: {
         mon: { type: Boolean, default: true },
@@ -41,6 +40,7 @@ const clinicSchema = new mongoose.Schema({
     },
     image: {
         type: String,
+        default: ""
     }
 }, { timestamps: true });
 

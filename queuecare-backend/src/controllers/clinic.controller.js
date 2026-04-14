@@ -7,19 +7,19 @@ import jwt from "jsonwebtoken";
 const loginClinic = async (req, res) => {
     try {
         //get clinic credentials
-        const { phone, password } = await req.body; 
+        const { email, password } = await req.body; 
 
         //check number and password
-        if(!phone || !password) {
+        if(!email || !password) {
             return res
                     .status(400)
                     .json({
-                        message: "Phone and password are required",
+                        message: "Email and password are required",
                     });
         }
 
         //find the clinic
-        const clinic = await Clinic.findOne({ phone });
+        const clinic = await Clinic.findOne({ email });
         if(!clinic) {
             return res.status(404).json({
                 message: "Clinic not found!",
@@ -36,8 +36,8 @@ const loginClinic = async (req, res) => {
         }
 
         const jwt_token = jwt.sign(
-            { clinicId: clinic._id },  // payload 
-            process.env.CLINIC_ACCESS_TOKEN_SECRET,   // secret key (will improve later)
+            { clinicId: clinic._id }, // payload 
+            process.env.CLINIC_ACCESS_TOKEN_SECRET,   
             { expiresIn: process.env.CLINIC_ACCESS_TOKEN_EXPIRY }
         )
 
