@@ -174,3 +174,23 @@ export const addDoctorApi = async (data) => {
 
     return res.json();
 }
+
+export const deleteDoctorApi = async (doctorId) => {
+    const jwt_token = localStorage.getItem("jwt_token");
+
+    const res = await fetch(`${BASE_URL}/delete-doctor`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${jwt_token}`,
+        },
+        body: JSON.stringify({ doctorId }),
+    });
+
+    if(res.status === 401) {
+        localStorage.removeItem("jwt_token");
+        window.location.href("/clinic");
+    }
+
+    return res.json();
+}

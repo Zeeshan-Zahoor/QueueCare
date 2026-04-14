@@ -64,7 +64,7 @@ export default function Dashboard() {
       console.log("Polling...");
       fetchDoctors();
     }
-    }, 3000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [clinicId]);
@@ -353,7 +353,9 @@ export default function Dashboard() {
             className="text-white bg-slate-700 p-2 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer active:scale-95 transition-all"
           />
           <AiOutlineDelete
-            onClick={() => setOpenDeleteDoctor(true)}
+            onClick={() => {
+              setOpenDeleteDoctor(true);
+            }}
             size={30} className={`text-gray-500 bg-white border border-gray-400 p-2 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer active:scale-95 transition-all ${!selectedDoctor && "hidden"}`}
           />
           
@@ -632,8 +634,8 @@ export default function Dashboard() {
       {/* Delete Doctor Modal */}
       {openDeleteDoctor && (
         <DeleteDoctorModal 
-          doctor={selectedDoctor}
           onClose={() => setOpenDeleteDoctor(false)}
+          doctor={selectedDoctor}
         />
       )}
     </div>

@@ -1,11 +1,34 @@
-import React from 'react'
+import { useState } from 'react';
 import { X, AlertTriangle } from 'lucide-react';
+import { deleteDoctorApi } from '../../api/clinicApi';
 
 function DeleteDoctorModal({
     onClose,
     doctor,
-    selectedDoctorId,
 }) {
+  
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  console.log("Selected Doctor: ", doctor);
+  const handleDeleteDoctor = async () => {
+    try {
+      setLoading(true);
+      const res = await deleteDoctorApi(doctor._id);
+
+      if(!res.success) {
+        setError(res.message);
+        return;
+      }
+      onClose();
+      
+    } catch (error) {
+      setError("Error removing doctor");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
       
@@ -30,11 +53,15 @@ function DeleteDoctorModal({
                 <AlertTriangle 
                 size={50}
                 className='text-yellow-800'/>
-                <h2 className="text-sm text-yellow-800 mt-0.5">Are you sure you want to remove <strong>{doctor.name}</strong> from clinic!</h2>
+                <h2 className="text-sm text-yellow-800 mt-0.5">Are you sure you want to remove <strong>{doctor?.name}</strong> from clinic!</h2>
             </div>
       
 
         </div>
+
+        {error && (
+          <p className='text-red-500 text-sm text-center'>{error}</p>
+        )}
 
         {/* Footer */}
         <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-300 mt-5">
@@ -46,9 +73,11 @@ function DeleteDoctorModal({
           </button>
 
           <button
+            disabled={loading}
+            onClick={handleDeleteDoctor}
             className="flex-1 px-6 py-3 text-lg font-semibold rounded-lg bg-orange-600 text-white hover:bg-orange-700"
           >
-            Remove
+            {loading ? "Removing..." : "Remove"}
           </button>
         </div>
 
