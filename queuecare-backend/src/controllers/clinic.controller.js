@@ -626,6 +626,41 @@ const forgotClinicPassword = async (req, res) => {
     }
 }
 
+const verifyClinicOtp = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        const clinic = await Clinic.findOne({ email });
+        
+        if(clinic.otp !== otp) {
+            return res.status(400).json({
+                message: "Invalid OTP",
+            });
+        }
+
+        if(clinic.otpExpiry < Date.now()) {
+            return res.status(400).json({
+                message: "OTP Expired",
+            });
+        }
+
+        clinic.otp = null;
+        clinic.otpExpiry = null;
+
+        await clinic.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "OTP verifed",
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to verify OTP",
+            error: error.message,
+        });
+    }
+}
+
 export {
     loginClinic,
     getClinicDoctors,
@@ -644,4 +679,5 @@ export {
     deleteDoctor,
     uploadDoctorProfilePic,
     forgotClinicPassword,
+    verifyClinicOtp
 }
