@@ -217,3 +217,37 @@ export const uploadDoctorProfileApi = async (file, doctorId) => {
     }
     return res.json();
 }
+
+export const forgotClincPasswordApi = async (email) => {
+    const res = await fetch(`${BASE_URL}/forgot-password`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({email}),
+    });
+
+    return res.json();
+}
+
+export const verifyClinicOtpApi = async (data) => {
+    const res = await fetch(`${BASE_URL}/verify-otp`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    })
+}
+
+export const resetClinicPasswordApi = async (data) => {
+    const res = await fetch(`${BASE_URL}/reset-password`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    }); 
+    
+    return res.json();
+}
