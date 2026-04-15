@@ -75,10 +75,7 @@ export default function QueueStatus() {
 
       setShowCancel(false);
 
-      //remove from localStorage
-      localStorage.removeItem("activeToken");
-
-      navigate(`/doctor/${doctorId}`);
+      navigate(`/doctor/${doctorId}`, { replace: true });
 
     } catch (error) {
       console.log("Cancel failed");

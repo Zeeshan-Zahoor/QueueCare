@@ -69,11 +69,19 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'doctors',
-                element: <Doctors />
+                element: (
+                    <UserProtectedRoute>
+                        <Doctors />
+                    </UserProtectedRoute>
+                )
             },
             {
                 path: 'settings',
-                element: <PatientSettings />
+                element: (
+                    <UserProtectedRoute>
+                        <PatientSettings />
+                    </UserProtectedRoute>
+                )
             },
             {
                 path: 'clinic/:clinicId',
@@ -85,11 +93,19 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'profile',
-                element: <Profile />
+                element: (
+                    <UserProtectedRoute>
+                        <Profile />
+                    </UserProtectedRoute>
+                )
             },
             {
                 path: 'my-tokens',
-                element: <MyTokens />
+                element: (
+                    <UserProtectedRoute>
+                        <MyTokens />
+                    </UserProtectedRoute>
+                )
             },
             {
                 path: 'queue-status/:doctorId/:username',

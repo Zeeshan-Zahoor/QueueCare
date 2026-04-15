@@ -120,6 +120,12 @@ function ClinicLogin() {
               Contact Support
             </a>
           </div>
+          <button
+              onClick={() => navigate("/login")}
+              className="text-xs font-semibold text-green-600 hover:text-green-700 transition-colors hover:underline cursor-pointer"
+            >
+               Sign In as Patient
+            </button>
         </div>
       </div>
 

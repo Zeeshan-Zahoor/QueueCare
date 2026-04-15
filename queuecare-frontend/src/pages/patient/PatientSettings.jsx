@@ -23,7 +23,7 @@ function PatientSettings() {
 
   const handleLogout = () => {
     localStorage.removeItem("user_jwt_token");
-    navigate("/login");
+    navigate("/login", { replace: true });
   }
 
   return (
