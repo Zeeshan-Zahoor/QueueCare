@@ -59,12 +59,7 @@ const doctorSchema = new mongoose.Schema({
         default: "https://static.vecteezy.com/system/resources/previews/015/684/653/non_2x/doctor-flat-greyscale-icon-vector.jpg",
     },
     queue: [patientSchema],
-    otp: {
-        type: String,
-    },
-    otpExpiry: {
-        type: Date,
-    },
+    
 }, {timestamps: true});
 
 export const Doctor = mongoose.model("Doctor", doctorSchema);

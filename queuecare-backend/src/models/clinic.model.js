@@ -41,7 +41,13 @@ const clinicSchema = new mongoose.Schema({
     image: {
         type: String,
         default: ""
-    }
+    },
+    otp: {
+        type: String,
+    },
+    otpExpiry: {
+        type: Date,
+    },
 }, { timestamps: true });
 
 export const Clinic = mongoose.model("Clinic", clinicSchema);

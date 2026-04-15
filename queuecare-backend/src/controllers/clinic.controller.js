@@ -630,8 +630,14 @@ const verifyClinicOtp = async (req, res) => {
     try {
         const { email, otp } = req.body;
         const clinic = await Clinic.findOne({ email });
-        
-        if(!clinic || clinic.otp !== otp) {
+
+        if(!clinic) {
+            return res.status(404).json({
+                message: "Clinic not found",
+            })
+        }
+
+        if(clinic.otp !== otp) {
             return res.status(400).json({
                 message: "Invalid OTP",
             });
@@ -658,7 +664,7 @@ const verifyClinicOtp = async (req, res) => {
 
 const resetClinicPassword = async (req, res) => {
     try {
-        const { email, newPassword } = req.body;
+        const { email, password } = req.body;
 
         const clinic = await Clinic.findOne({ email });
         
@@ -669,7 +675,7 @@ const resetClinicPassword = async (req, res) => {
         }
 
         // hash new password
-        const hashed = await bcrypt.hash(newPassword, 10);
+        const hashed = await bcrypt.hash(password, 10);
 
         clinic.password = hashed;
         clinic.otp = null;
@@ -687,10 +693,12 @@ const resetClinicPassword = async (req, res) => {
         return res.status(200).json({
             success: true,
             jwt_token,
+            clinicId: clinic._id,
             message: "Password Updated",
         })
 
     } catch (error) {
+        console.log("Error: ", error);
         return res.status(500).json({
             message: "Failed to reset password",
             error: error.message,
