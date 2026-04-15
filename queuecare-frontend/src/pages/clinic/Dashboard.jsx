@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Building2, Phone, Plus, BanIcon, ArrowRight, AlertTriangle, Settings } from "lucide-react";
+import { Hospital, Phone, Plus, BanIcon, ArrowRight, AlertTriangle, Settings } from "lucide-react";
 import { AiOutlineDelete } from "react-icons/ai";
 import cloudIcon from "../../assets/cloud_icon.jpg";
 import DoctorCardClinic from "../../components/clinic/DoctorCardClinic";
@@ -273,7 +273,7 @@ export default function Dashboard() {
       {/* Top Bar - unchanged */}
       <div className="bg-white border-b border-gray-400 px-8 py-4 flex items-center justify-end gap-8">
         <div className="flex items-center space-x-3 flex-1 bg-white">
-          <Building2 />
+          <Hospital className="text-slate-800"/>
           <span className="text-slate-800 font-semibold text-lg">Clinic Dashboard</span>
         </div>
 

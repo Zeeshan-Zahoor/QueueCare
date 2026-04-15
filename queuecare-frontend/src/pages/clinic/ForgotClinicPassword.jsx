@@ -1,15 +1,36 @@
 import React, { useState } from 'react'
 import { Hospital, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { forgotClincPasswordApi } from '../../api/clinicApi';
 
 function ForgotClinicPassword() {
   const navigate = useNavigate();
 
-  const [loading, SetLoading] = useState(false);
-  const [error, SetError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [email, setEmail] = useState("");
-  const handleSendCode = () => {
-    navigate("/clinic/verify-otp")
+  const handleSendCode = async () => {  
+    if(!email) {
+      setError("Please enter a valid email")
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await forgotClincPasswordApi(email);
+
+      if(!res.success) {
+        setError(res.message);
+        return;
+      }
+
+      localStorage.setItem("clinicEmail", email);
+      navigate("/clinic/verify-otp");
+
+    } catch (error) {
+      setError("Error generating OTP");
+    } finally {
+      setLoading(false);
+    }
   }
   return (
     <div

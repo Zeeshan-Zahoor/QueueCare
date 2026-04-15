@@ -1,17 +1,51 @@
 import React, { useState } from 'react'
 import { Hospital, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { resetClinicPasswordApi } from '../../api/clinicApi';
 
 function ResetClinicPassword() {
-  const [loading, SetLoading] = useState(false);
-  const [error, SetError] = useState(false);
+  const navigate = useNavigate();
+
+  const email = localStorage.getItem("clinicEmail");
+
+  if(!email) {
+    navigate("/clinic/forgot-password");
+    return;
+  }
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [data, setData] = useState({
-    email: "",
+    email,
     password: "",
   })
   const [confirmedPassword, setConfirmedPassword] = useState("");
-  const handleResetPassword = () => {
+  const handleResetPassword = async () => {
+    if(data.password !== confirmedPassword) {
+      setError("Both passwords should match");
+      return;
+    }
+    if(data.password.length < 6) {
+      setError("Password should contain atleast 6 characters");
+      return;
+    }
 
+    try {
+      setLoading(true);
+      const res = await resetClinicPasswordApi(data);
+
+      if(!res.success) {
+        setError(res.message);
+        return;
+      }
+
+      localStorage.removeItem("clinicEmail");
+      localStorage.setItem("jwt_token", res.jwt_token);
+      navigate(`/clinic/${res.clinicId}/dashboard`);
+    } catch (error) {
+      setError("Failed to rest password");
+    } finally {
+      setLoading(false);
+    }
   }
   return (
     <div
@@ -71,7 +105,7 @@ function ResetClinicPassword() {
           {/* Send Code */}
           <button
             onClick={handleResetPassword}
-            className="w-full text-white font-semibold py-2.5 rounded-lg text-sm transition-all duration-200 shadow-sm bg-slate-800 hover:bg-slate-700"
+            className="w-full text-white font-semibold py-2.5 rounded-lg text-sm transition-all duration-200 shadow-sm bg-slate-800 hover:bg-slate-700 mt-3"
             disabled={loading}
           >
             {loading ? "Reseting..." : "Reset Password"}

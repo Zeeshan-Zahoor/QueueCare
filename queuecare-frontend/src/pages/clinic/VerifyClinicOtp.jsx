@@ -2,21 +2,45 @@ import React, { useState } from 'react'
 import { Hospital, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import OTPInput from '../../components/common/OTPInput';
+import { verifyClinicOtpApi } from '../../api/clinicApi';
 
 function VerifyClinicOtp() {
     const navigate = useNavigate();
 
-    const [loading, SetLoading] = useState(false);
-    const [error, SetError] = useState(false);
+    const email = localStorage.getItem("clinicEmail");
+    if(!email) {
+      navigate("/clinic/forgot-password");
+      return;
+    }
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
 
     const [data, setData] = useState({
-          email: "",
+          email: email,
           otp: "",
         })
 
-    const handleVerifyOtp = () => { 
-        navigate("/clinic/reset-password")
+    const handleVerifyOtp = async () => { 
+      if(!data.otp) {
+        setError("Enter the OTP");
+        return;
+      }
+      try {
+        setLoading(true);
+        const res = await verifyClinicOtpApi(data);
+        if(!res.success) {
+          setError(res.message);
+          return;
+        }
+        navigate("/clinic/reset-password", {
+          state: { email },
+        })
+      } catch (error) {
+        setError("Error verifying OTP");
+      } finally {
+        setLoading(false);
+      }
     }
   return ( 
     <div

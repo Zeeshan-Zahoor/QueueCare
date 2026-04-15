@@ -237,7 +237,9 @@ export const verifyClinicOtpApi = async (data) => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-    })
+    });
+
+    return res.json();
 }
 
 export const resetClinicPasswordApi = async (data) => {
@@ -248,6 +250,6 @@ export const resetClinicPasswordApi = async (data) => {
         },
         body: JSON.stringify(data),
     }); 
-    
+
     return res.json();
 }
