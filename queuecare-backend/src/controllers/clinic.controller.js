@@ -3,6 +3,7 @@ import { Clinic } from "../models/clinic.model.js";
 import { Doctor } from "../models/doctor.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
 
 const loginClinic = async (req, res) => {
     try {
@@ -575,6 +576,56 @@ const uploadDoctorProfilePic = async (req, res) => {
     }
 }
 
+const forgotClinicPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const clinic = await Clinic.findOne({ email });
+        if(!clinic) {
+            return res.status(404).json({
+                message: "No clinic found by this email",
+            });
+        }
+
+        // generate otp
+        const otp = Math.floor(10000 + Math.random() * 90000).toString();
+
+        clinic.otp = otp;
+        clinic.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 minutes
+
+        await clinic.save();
+
+        // send mail
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.EMAIL_PASSWORD,
+            }
+        })
+
+        await transporter.sendMail({
+            from: process.env.EMAIL,
+            to: email,
+            subject: "QueueCare Clinic Password Reset OTP",
+            html: `<h2>Password Reset</h2>
+                    <p>Your OTP is:</p>
+                    <h1>${otp}</h1>
+                    <p>This expires in 5 minutes.</p>`
+        })
+
+        //response
+        return res.status(200).json({
+            success: true,
+
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to generate OTP",
+            error: error.message,
+        })
+    }
+}
+
 export {
     loginClinic,
     getClinicDoctors,
@@ -592,4 +643,5 @@ export {
     addDoctor,
     deleteDoctor,
     uploadDoctorProfilePic,
+    forgotClinicPassword,
 }
