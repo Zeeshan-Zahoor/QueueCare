@@ -20,8 +20,8 @@ import { loginClinic,
          uploadDoctorProfilePic,
          forgotClinicPassword,
          verifyClinicOtp,
+         resetClinicPassword,
         } from "../controllers/clinic.controller.js";
-import { auth } from "google-auth-library";
 
 const router = Router();
 
@@ -47,4 +47,5 @@ router.route("/delete-doctor").post(authMiddleware, deleteDoctor);
 router.route("/upload-profile").post(authMiddleware, upload.single("doctorImage"), uploadDoctorProfilePic);
 router.route("/forgot-password").post(forgotClinicPassword);
 router.route("/verify-otp").post(verifyClinicOtp);
+router.route("/reset-password").post(resetClinicPassword);
 export default router;

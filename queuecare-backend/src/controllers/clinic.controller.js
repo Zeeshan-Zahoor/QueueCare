@@ -631,7 +631,7 @@ const verifyClinicOtp = async (req, res) => {
         const { email, otp } = req.body;
         const clinic = await Clinic.findOne({ email });
         
-        if(clinic.otp !== otp) {
+        if(!clinic || clinic.otp !== otp) {
             return res.status(400).json({
                 message: "Invalid OTP",
             });
@@ -643,11 +643,6 @@ const verifyClinicOtp = async (req, res) => {
             });
         }
 
-        clinic.otp = null;
-        clinic.otpExpiry = null;
-
-        await clinic.save();
-
         return res.status(200).json({
             success: true,
             message: "OTP verifed",
@@ -658,6 +653,48 @@ const verifyClinicOtp = async (req, res) => {
             message: "Failed to verify OTP",
             error: error.message,
         });
+    }
+}
+
+const resetClinicPassword = async (req, res) => {
+    try {
+        const { email, newPassword } = req.body;
+
+        const clinic = await Clinic.findOne({ email });
+        
+        if(!clinic) {
+            return res.status(404).json({
+                message: "Clinic not found",
+            });
+        }
+
+        // hash new password
+        const hashed = await bcrypt.hash(newPassword, 10);
+
+        clinic.password = hashed;
+        clinic.otp = null;
+        clinic.otpExpiry = null;
+
+        await clinic.save();
+
+        //login automatically
+        const jwt_token = jwt.sign(
+            { clinicId: clinic._id},
+            process.env.CLINIC_ACCESS_TOKEN_SECRET,
+            { expiresIn: process.env.CLINIC_ACCESS_TOKEN_EXPIRY },
+        )
+
+        return res.status(200).json({
+            success: true,
+            jwt_token,
+            message: "Password Updated",
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to reset password",
+            error: error.message,
+        })
     }
 }
 
@@ -679,5 +716,6 @@ export {
     deleteDoctor,
     uploadDoctorProfilePic,
     forgotClinicPassword,
-    verifyClinicOtp
+    verifyClinicOtp,
+    resetClinicPassword,
 }
