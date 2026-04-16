@@ -95,7 +95,7 @@ export default function Profile() {
       <Header title="My Profile" />
 
       {/* Profile Card */}
-      <div className=" p-5 flex flex-col items-center space-y-4 relative">
+      <div className=" p-5 flex flex-col items-center space-y-3 relative">
         {/* Profile Image */}
         <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-200 relative cursor-pointer">
           {user.profilePic ? (
@@ -150,7 +150,7 @@ export default function Profile() {
       </div>
 
       {/* Details Section */}
-      <div className="bg-white rounded-2xl shadow-[0_5px_15px_rgba(0,0,0,0.25)] p-5 space-y-4">
+      <div className="bg-white rounded-2xl shadow-[0_5px_15px_rgba(0,0,0,0.25)] p-4 space-y-3">
 
         {/* Gender */}
         <div className="flex justify-between items-center">

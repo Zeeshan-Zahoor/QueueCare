@@ -166,6 +166,7 @@ export default function Dashboard() {
         setWalkInPatientData({
           name: "",
           phone: "",
+          source: "walk-in",
         });
 
         //update doctor state

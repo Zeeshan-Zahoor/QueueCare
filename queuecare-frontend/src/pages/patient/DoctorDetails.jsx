@@ -17,6 +17,7 @@ function DoctorDetails() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
+    source: "online",
   })
   const [myToken, setMyToken] = useState(null);
   const [showDuplicatePatient, setShowDuplicatePatient] = useState(false);

@@ -1,5 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 
+import LandingPage from "../pages/landing/LandingPage.jsx";
+
 import PatientLayout from "../layouts/PatientLayout";
 import ClinicLayout from "../layouts/ClinicLayout";
 
@@ -38,6 +40,10 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 element: <AuthRedirect />
+            },
+            {
+                path: 'landing',
+                element: <LandingPage />
             },
             {
                 path: 'register',
