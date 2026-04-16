@@ -213,8 +213,19 @@ export default function AppPreview() {
                 Settings
               </p>
             </div>
-
           </div>
+          <p className="text-slate-800 font-medium text-center mt-10">
+            Clinics are onboarded by Admin to ensure security and prevent fake registrations.
+          </p>
+          <div className='w-full px-5 text-center mt-3'>
+            <span className="text-gray-500 font-medium mt-10">
+              Want your clinic onboarded?
+            </span>
+            <a 
+            href='https://wa.me/7006152972?text=Hey! I want my clinic onboarded.'
+            className='text-[#3ea789] font-semibold hover:underline ml-1'> Contact Us</a>
+          </div>
+
         </div>
 
 

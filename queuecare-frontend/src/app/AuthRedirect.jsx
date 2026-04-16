@@ -1,14 +1,21 @@
 import { Navigate } from "react-router-dom";
 
 export default function AuthRedirect() {
-    const user_jwt_token = localStorage.getItem("user_jwt_token");
-    const jwt_token = localStorage.getItem("jwt_token");
+    const userToken = localStorage.getItem("user_jwt_token");
+    const clinicToken = localStorage.getItem("clinic_jwt_token");
 
-    if(user_jwt_token) {
-        return <Navigate to='/home'/>
-    } else if (jwt_token) {
-        return <Navigate to='/clinic'/>
+    
+    if (userToken && clinicToken) {
+        return <Navigate to="/clinic" replace />;
     }
 
-    return <Navigate to= '/login'/>
+    if (userToken) {
+        return <Navigate to="/home" replace />;
+    }
+
+    if (clinicToken) {
+        return <Navigate to="/clinic" replace />;
+    }
+
+    return <Navigate to="/landing" replace />;
 }

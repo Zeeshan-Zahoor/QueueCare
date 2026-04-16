@@ -12,6 +12,8 @@ function DoctorDetails() {
   const { doctorId } = useParams();
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
@@ -60,10 +62,19 @@ function DoctorDetails() {
 
   const isFull = tokensLeft <= 0;
 
+  const isValidPhone = (phone) => {
+    return /^[6-9]\d{9}$/.test(phone);
+  };
+
   const handleConfirmJoin = async () => {
     if (!formData.name || !formData.phone) return;
 
+    if (!isValidPhone(formData.phone)) {
+      setError("Please enter a valid 10-digit phone number");
+      return;
+    }
     try {
+      setLoading(true);
       const res = await joinQueueApi(doctor._id, formData);
 
       if (!res.success) {
@@ -73,22 +84,13 @@ function DoctorDetails() {
         return;
       }
 
-      const token = res.token;
-
-      //store locally (temporarily)
-      localStorage.setItem(
-        "activeToken",
-        JSON.stringify({
-          doctorId: doctor._id,
-          token,
-        })
-      );
-
-      setMyToken(token);
+      setMyToken(res.token);
       setShowSuccess(true);
 
     } catch (error) {
-      console.log("Join Queue failed");
+      setError("Error generating token");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -216,11 +218,16 @@ function DoctorDetails() {
                 className="w-full border p-2 rounded-lg"
               />
 
+              {error && (
+                <p>{error}</p>
+              )}
+
               <button
+                disabled={loading}
                 type="submit"
                 className="w-full bg-slate-800 text-white py-2 rounded-4xl cursor-pointer"
               >
-                Confirm
+                {loading ? "Generating..." : "Confirm"}
               </button>
             </form>
 

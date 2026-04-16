@@ -13,9 +13,17 @@ export default function UserLogin() {
     password: "",
   })
 
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+  
   const handleLoginUser = async () => {
     if (!formData.email || !formData.password) {
       setError("All fields are required");
+      return;
+    }
+    if(!isValidEmail(formData.email)) {
+      setError("Please enter a valid email address");
       return;
     }
     try {
@@ -29,7 +37,7 @@ export default function UserLogin() {
       }
 
       localStorage.setItem("user_jwt_token", res.user_jwt_token);
-      navigate('/home');
+      navigate('/home', { replace: true });
 
     } catch (error) {
       console.log("Error loggin in user");
@@ -136,6 +144,10 @@ export default function UserLogin() {
               Sign up
             </button>
           </p>
+
+          <p 
+          onClick={() => navigate("/clinic")}
+          className="text-xs font-medium text-blue-600 hover:text-green-600 text-center transition-colors cursor-pointer hover:underline">Sign in as Clinic</p>
 
         </div>
       </div>

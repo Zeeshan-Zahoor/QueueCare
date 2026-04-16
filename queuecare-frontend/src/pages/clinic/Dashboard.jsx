@@ -5,16 +5,17 @@ import cloudIcon from "../../assets/cloud_icon.jpg";
 import DoctorCardClinic from "../../components/clinic/DoctorCardClinic";
 import { useParams, useNavigate } from "react-router-dom";
 import DoctorSettingsModal from "../../components/clinic/DoctorSettingsModal";
-import { getDoctorsApi,
-         getDoctorByIdApi, 
-         advanceTokenApi, 
-         joinQueueApi, 
-         exitQueueApi, 
-         toggleConsultationApi, 
-         toggleDayApi, 
-         updateDoctorSettingsApi,
-        } 
-from "../../api/clinicApi.js";
+import {
+  getDoctorsApi,
+  getDoctorByIdApi,
+  advanceTokenApi,
+  joinQueueApi,
+  exitQueueApi,
+  toggleConsultationApi,
+  toggleDayApi,
+  updateDoctorSettingsApi,
+}
+  from "../../api/clinicApi.js";
 import InnerSpinner from "../../components/loaders/InnerSpinner.jsx";
 import AddDoctorModal from "../../components/clinic/AddDoctorModal";
 import DeleteDoctorModal from "../../components/clinic/DeleteDoctorModal.jsx";
@@ -23,6 +24,8 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [isClosing, setIsClosing] = useState(false);
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
 
   const [showWalkInModal, setShowWalkInModal] = useState(false);
@@ -44,26 +47,41 @@ export default function Dashboard() {
   const { clinicId } = useParams();
 
   useEffect(() => {
-    const fetchDoctors = async () => {
-        try {
-          const res = await getDoctorsApi(clinicId);
-          if (res.success) {
-            setDoctors(res.doctors);
-          }
-        } catch (error) {
-          console.log("Error to fetch the doctors");
-        } finally {
-          setLoading(false);
-        }
+    if (error) {
+      const timer = setTimeout(() => {
+        setIsClosing(true); // trigger exit animation
+
+        setTimeout(() => {
+          setError(null);
+          setIsClosing(false);
+        }, 300); // match animation duration
+      }, 3000); // visible for 3 sec
+
+      return () => clearTimeout(timer);
     }
-  
+  }, [error]);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const res = await getDoctorsApi(clinicId);
+        if (res.success) {
+          setDoctors(res.doctors);
+        }
+      } catch (error) {
+        setError("Error fetching doctors doctors");
+      } finally {
+        setLoading(false);
+      }
+    }
+
     fetchDoctors();
 
     const interval = setInterval(() => {
       if (document.visibilityState === "visible") { // small optimization -> when page is active 
-      console.log("Polling...");
-      fetchDoctors();
-    }
+        console.log("Polling...");
+        fetchDoctors();
+      }
     }, 2000);
 
     return () => clearInterval(interval);
@@ -72,15 +90,11 @@ export default function Dashboard() {
   useEffect(() => { // select last selected doctor again automatically on refresh
     const lastSelectedDoctorId = localStorage.getItem("selectedDoctorId");
 
-    if(!lastSelectedDoctorId) return;
+    if (!lastSelectedDoctorId) return;
     else setSelectedDoctorId(lastSelectedDoctorId);
   }, [])
 
   const selectedDoctor = doctors.find((doc) => doc._id === selectedDoctorId);
-
-  // if (!selectedDoctor && selectedDoctorId) {
-  //   return <Spinner/> 
-  // }
 
   const handleDoctorClick = (doctor) => {
     setSelectedDoctorId(doctor._id);
@@ -88,12 +102,11 @@ export default function Dashboard() {
   }
 
   document.getElementById("doctor-bar")?.addEventListener("click", (e) => {
-    if(e.target.classList.contains("outer-doctor-bar")) {
+    if (e.target.classList.contains("outer-doctor-bar")) {
       localStorage.removeItem("selectedDoctorId");
       setSelectedDoctorId(null);
     }
   })
-
 
   const handleCallNextPatient = async () => {
     if (!selectedDoctorId) return;
@@ -102,7 +115,7 @@ export default function Dashboard() {
       const res = await advanceTokenApi(selectedDoctorId);
 
       if (!res.success) {
-        console.log("Failed to advance token");
+        setError(res.message);
         return;
       }
 
@@ -119,7 +132,7 @@ export default function Dashboard() {
       }
 
     } catch (error) {
-      console.log("Error advancing token: ", error.message);
+      setError("Error calling next patient");
     }
   };
 
@@ -128,7 +141,7 @@ export default function Dashboard() {
       const res = await exitQueueApi(selectedDoctorId, token);
 
       if (!res.success) {
-        console.log("Failed to remove patient: ");
+        setError(res.message);
         return;
       }
 
@@ -145,12 +158,21 @@ export default function Dashboard() {
       }
 
     } catch (error) {
-      console.log("Error removing the patient");
+      setError("Error removing the patient");
     }
   }
 
+  const isValidPhone = (phone) => {
+    return /^[6-9]\d{9}$/.test(phone);
+  };
+
   const handleWalkInPatient = async () => {
     if (!walkInPatientData.name || !walkInPatientData.phone) return;
+
+    if (!isValidPhone(walkInPatientData.phone)) {
+      setError("Please enter a valid 10-digit phone number");
+      return;
+    }
 
     try {
       const res = await joinQueueApi(selectedDoctorId, walkInPatientData);
@@ -180,12 +202,10 @@ export default function Dashboard() {
               doctor._id === updatedDoctor._id ? updatedDoctor : doctor
             )
           )
-
         }
-
       }
     } catch (error) {
-      console.log("Error adding walk-in");
+      setError("Error adding walk-in");
     }
 
   };
@@ -197,24 +217,24 @@ export default function Dashboard() {
     try {
       const res = await toggleConsultationApi(selectedDoctorId);
 
-      if(!res.success) {
-        console.log("Failed to toggle consultation");
+      if (!res.success) {
+        setError(res.message);
         return;
       }
 
       const updated = await getDoctorByIdApi(selectedDoctorId);
-      if(updated.success) {
+      if (updated.success) {
         const updatedDoctor = updated.doctor;
 
-        setDoctors((prev) => 
-          prev.map(doctor => 
+        setDoctors((prev) =>
+          prev.map(doctor =>
             doctor._id === updatedDoctor._id ? updatedDoctor : doctor
           )
-        ) 
+        )
       }
 
     } catch (error) {
-      console.log("Error toggling Consultation");
+      setError("Error toggling Consultation");
     }
   }
 
@@ -222,24 +242,24 @@ export default function Dashboard() {
     try {
       const res = await toggleDayApi(selectedDoctorId);
 
-      if(!res.success) {
-        console.log("Failed to toggle day");
+      if (!res.success) {
+        setError(res.message);
         return;
       }
 
       const updated = await getDoctorByIdApi(selectedDoctorId);
-      if(updated.success) {
+      if (updated.success) {
         const updatedDoctor = updated.doctor;
-        
-        setDoctors((prev) => 
-          prev.map(doctor => 
+
+        setDoctors((prev) =>
+          prev.map(doctor =>
             doctor._id === updatedDoctor._id ? updatedDoctor : doctor
           )
-        ) 
+        )
       }
 
     } catch (error) {
-      console.log("Error toggling day");
+      setError("Error toggling day");
     }
   }
 
@@ -247,24 +267,24 @@ export default function Dashboard() {
     try {
       const res = await updateDoctorSettingsApi(selectedDoctorId, data);
 
-      if(!res.success) {
-        console.log("Failed to update doctor settings");
+      if (!res.success) {
+        setError(res.message);
         return;
       }
 
       const updatedDoctor = res.doctor;
 
-      setDoctors(prev => 
-        prev.map(doctor => 
+      setDoctors(prev =>
+        prev.map(doctor =>
           doctor._id === updatedDoctor._id ? updatedDoctor : doctor
         )
       )
     } catch (error) {
-      console.log("Error updating doctor settings");
+      setError("Error updating doctor settings");
     }
   }
 
-  const handleLogout= () => {
+  const handleLogout = () => {
     localStorage.removeItem("jwt_token");
     navigate("/clinic");
   }
@@ -274,7 +294,7 @@ export default function Dashboard() {
       {/* Top Bar - unchanged */}
       <div className="bg-white border-b border-gray-400 px-8 py-4 flex items-center justify-end gap-8">
         <div className="flex items-center space-x-3 flex-1 bg-white">
-          <Hospital className="text-slate-800"/>
+          <Hospital className="text-slate-800" />
           <span className="text-slate-800 font-semibold text-lg">Clinic Dashboard</span>
         </div>
 
@@ -296,8 +316,8 @@ export default function Dashboard() {
         <button
           onClick={handleToggleDay}
           className={`${selectedDoctor?.status === "open" ? "bg-slate-800" : "bg-green-700"} text-white px-4 py-2 rounded disabled:bg-gray-400 ${selectedDoctorId ? "" : "hidden"} active:scale-95 transition-transform duration-150`}
-          
-          >
+
+        >
           {selectedDoctor?.status === "open" ? "End Consultation" : "Start Consultation"}
         </button>
 
@@ -333,7 +353,7 @@ export default function Dashboard() {
             <h2 className="text-lg text-slate-800 font-bold">Doctors</h2>
             {loading && (
               <div className="w-full min-h-50 flex justify-center items-center">
-                <InnerSpinner className="m-auto"/>
+                <InnerSpinner className="m-auto" />
               </div>
             )}
 
@@ -347,21 +367,21 @@ export default function Dashboard() {
             ))}
           </div>
 
-        <div className="flex justify-end px-4 flex-col items-end gap-2 outer-doctor-bar">
-          <Plus 
-            onClick={() => setOpenAddDoctor(true)}
-            size={40} 
-            className="text-white bg-slate-700 p-2 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer active:scale-95 transition-all"
-          />
-          <AiOutlineDelete
-            onClick={() => {
-              setOpenDeleteDoctor(true);
-            }}
-            size={30} className={`text-gray-500 bg-white border border-gray-400 p-2 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer active:scale-95 transition-all ${!selectedDoctor && "hidden"}`}
-          />
-          
-        </div>
-            
+          <div className="flex justify-end px-4 flex-col items-end gap-2 outer-doctor-bar">
+            <Plus
+              onClick={() => setOpenAddDoctor(true)}
+              size={40}
+              className="text-white bg-slate-700 p-2 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer active:scale-95 transition-all"
+            />
+            <AiOutlineDelete
+              onClick={() => {
+                setOpenDeleteDoctor(true);
+              }}
+              size={30} className={`text-gray-500 bg-white border border-gray-400 p-2 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer active:scale-95 transition-all ${!selectedDoctor && "hidden"}`}
+            />
+
+          </div>
+
         </div>
 
         {/* Main  */}
@@ -627,19 +647,53 @@ export default function Dashboard() {
 
       {/* Add Doctor Modal */}
       {openAddDoctor && (
-        <AddDoctorModal 
+        <AddDoctorModal
           onClose={() => setOpenAddDoctor(false)}
         />
       )}
 
       {/* Delete Doctor Modal */}
       {openDeleteDoctor && (
-        <DeleteDoctorModal 
+        <DeleteDoctorModal
           onClose={() => setOpenDeleteDoctor(false)}
           doctor={selectedDoctor}
         />
       )}
+
+      {/* error toast */}
+      {error && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center top-40">
+          {/* toast */}
+          <div
+            className={`relative bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 min-w-75 transition-all duration-300
+      ${isClosing ? "opacity-0 scale-90" : "opacity-100 scale-100"}`}
+          >
+            <svg
+              className="w-6 h-6 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+
+            <span className="flex-1">{error}</span>
+
+            <button
+              onClick={() => setError(null)}
+              className="ml-4 hover:text-gray-300"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
-  
+
 }

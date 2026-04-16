@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Hospital, Lock, AlertCircle, Mail } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { replace, useNavigate } from 'react-router-dom';
 import { loginClinicApi } from '../../api/clinicApi.js';
 
 
@@ -12,7 +12,22 @@ function ClinicLogin() {
   })
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+  
   const handleSignIn = async () => {
+    if(!loginData.email || !loginData.password) {
+      setError("Please enter all required fields");
+      return;
+    }
+
+    if(!isValidEmail(loginData.email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
     try {
       setLoading(true);
       const res = await loginClinicApi(loginData);
@@ -26,7 +41,7 @@ function ClinicLogin() {
 
       const clinicId = res.clinicId;
       localStorage.setItem("jwt_token", res.jwt_token);
-      navigate(`/clinic/${clinicId}/dashboard`);
+      navigate(`/clinic/${clinicId}/dashboard`, { replace: true });
 
     } catch (error) {
       setError("Something went wrong");
@@ -88,6 +103,10 @@ function ClinicLogin() {
               className="w-full border border-gray-200 rounded-lg pl-9 pr-4 py-2.5 text-sm text-slate-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent transition-all"
             />
           </div>
+
+          {error && (
+            <p className='text-red-500 text-center text-sm'>{error}</p>
+          )}
  
           {/* Sign In */}
           <button

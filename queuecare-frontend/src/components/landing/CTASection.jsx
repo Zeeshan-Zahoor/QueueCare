@@ -6,7 +6,7 @@ export default function CTASection() {
 
 
     return (
-        <section className="py-20 bg-linear-to-r from-slate-900 via-slate-800 to-slate-700 relative overflow-hidden">
+        <section className="py-20 px-3 bg-linear-to-r from-slate-900 via-slate-800 to-slate-700 relative overflow-hidden">
 
             {/* Glow Background */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(62,167,137,0.15),transparent)]"></div>
@@ -19,7 +19,7 @@ export default function CTASection() {
                 </h2>
 
                 <p className="text-lg text-slate-300 mb-8 max-w-2xl mx-auto">
-                    Join thousands of patients saving time every day — free, fast, and effortless.
+                    Get Started and save your time. It is free, fast, and effortless.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

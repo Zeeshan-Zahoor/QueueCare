@@ -24,10 +24,11 @@ export default function Navbar() {
                             }
                         }}
                         className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-slate-800 text-white rounded-lg flex items-center justify-center font-bold">
-                            <img src={Logo} alt="" />
+                        <div className="w-8 h-8 p-0 bg-transparent text-white rounded-lg flex items-center justify-center font-bold">
+                            <img 
+                            src={Logo} alt="" />
                         </div>
-                        <span className='text-gray-600 font-medium text-xl'>Queue</span>
+                        <span className='text-gray-600 font-medium text-xl -ml-2'>ueue</span>
                         <span className="text-xl font-bold text-slate-800 -ml-1.5">Care</span>
                     </div>
 

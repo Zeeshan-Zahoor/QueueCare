@@ -14,11 +14,26 @@ export default function UserRegistration() {
     password: "",
   })
 
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
   const handleRegisterUser = async () => {
     if(!formData.name || !formData.email || !formData.password) {
       setError("All fields are required");
       return;
     }
+
+    if(formData.password.length < 6) {
+      setError("Password should contain atleast 6 characters");
+      return;
+    }
+
+    if(!isValidEmail(formData.email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
     try {
       setLoading(true);
       const res = await registerUserApi(formData);
@@ -29,7 +44,7 @@ export default function UserRegistration() {
         return;
       }
 
-      navigate("/login");
+      navigate("/login", { replace: true });
 
     } catch (error) {
       console.log("Error registering user");
@@ -144,6 +159,10 @@ export default function UserRegistration() {
               Sign In
             </button>
           </p>
+
+          <p 
+          onClick={() => navigate("/clinic")}
+          className="text-xs font-medium text-blue-600 hover:text-green-600 text-center transition-colors cursor-pointer hover:underline">Sign in as Clinic</p>
 
         </div>
       </div>

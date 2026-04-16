@@ -27,7 +27,7 @@ export default function GoogleAuthBtn({
     
         if (res.success) {
             localStorage.setItem("user_jwt_token", res.token);
-            navigate("/home");
+            navigate("/home", { replace: true });
         }
     }
 
