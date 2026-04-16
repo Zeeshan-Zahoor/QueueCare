@@ -7,6 +7,8 @@ import doctorDetailsImage from "../../assets/doctordetails.png";
 import myTokensImage from "../../assets/mytokens.png";
 import profileImage from "../../assets/profile.png";
 import settingsImage from "../../assets/settings.png";
+import clinicDashboard from "../../assets/dashboard.jpeg"
+import clinicSettings from "../../assets/clinicsettings.jpeg"
 
 export default function AppPreview() {
   const carouselRef = useRef(null);
@@ -78,20 +80,20 @@ export default function AppPreview() {
                   <div className="bg-white rounded-[2.5rem] border-8 border-slate-800 overflow-hidden">
                     {/* Dynamic Island */}
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-5 bg-slate-800 rounded-b-2xl z-10"></div>
-                    
+
                     {/* Screenshot Image */}
-                    <img 
-                      src={screen.screenshot} 
+                    <img
+                      src={screen.screenshot}
                       alt={screen.title}
                       className="w-full h-auto object-cover pt-2"
                     />
-                    
+
                     {/* Bottom Home Indicator */}
                     <div className="py-3 flex justify-center">
                       <div className="w-12 h-1 bg-slate-300 rounded-full"></div>
                     </div>
                   </div>
-                  
+
                   {/* Floating Label */}
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-3 py-1 rounded-full whitespace-nowrap shadow-md z-20">
                     {screen.title}
@@ -116,11 +118,10 @@ export default function AppPreview() {
           {screenshots.map((_, idx) => (
             <button
               key={idx}
-              className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                idx === activeIndex 
-                  ? 'bg-[#3ea789] w-4' 
-                  : 'bg-slate-300 hover:bg-[#3ea789]/50'
-              }`}
+              className={`w-2 h-2 rounded-full transition-all duration-200 ${idx === activeIndex
+                ? 'bg-[#3ea789] w-4'
+                : 'bg-slate-300 hover:bg-[#3ea789]/50'
+                }`}
               onClick={() => {
                 if (carouselRef.current) {
                   const scrollPosition = idx * 312;
@@ -131,6 +132,92 @@ export default function AppPreview() {
             />
           ))}
         </div>
+
+
+        {/* Clinic Preview Section */}
+        <div className="mt-20">
+
+          {/* Header */}
+          <div className="text-center mb-10">
+            <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">
+              For Clinics
+            </h3>
+            <p className="text-slate-500">
+              Powerful dashboard to manage queues efficiently
+            </p>
+          </div>
+
+          {/* Screens */}
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-10">
+
+            {/* Dashboard */}
+            <div className="group">
+              <div className="bg-white">
+                {/* Desktop Monitor Shape */}
+                <div className="relative p-2 bg-gray-800 rounded-2xl border border-slate-200 shadow-md overflow-hidden hover:shadow-xl transition">
+                  {/* Screen Bezel */}
+                  <div className="relative bg-black rounded-lg overflow-hidden shadow-inner">
+                    {/* Screen Glare (optional) */}
+                    <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent pointer-events-none z-10"></div>
+
+                    {/* Dashboard Image */}
+                    <img
+                      src={clinicDashboard}
+                      alt="Clinic Dashboard"
+                      className="w-full max-w-md object-cover mx-auto"
+                    />
+                  </div>
+                </div>
+
+                {/* Monitor Stand */}
+                <div className="flex justify-center">
+                  <div className="w-10 h-3 bg-gray-600"></div>
+                </div>
+                <div className="flex justify-center">
+                  <div className="w-16 h-2 bg-gray-700 rounded-t-md"></div>
+                </div>
+              </div>
+              <p className="text-center text-sm text-slate-600 mt-3">
+                Dashboard
+              </p>
+            </div>
+
+            {/* Settings */}
+            <div className="group">
+              <div className="bg-white">
+                {/* Desktop Monitor Shape */}
+                <div className="relative p-2 bg-gray-800 rounded-2xl border border-slate-200 shadow-md overflow-hidden hover:shadow-xl transition">
+                  {/* Screen Bezel */}
+                  <div className="relative bg-black rounded-lg overflow-hidden shadow-inner">
+                    {/* Screen Glare (optional) */}
+                    <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent pointer-events-none z-10"></div>
+
+                    {/* Dashboard Image */}
+                    <img
+                      src={clinicSettings}
+                      alt="Clinic Dashboard"
+                      className="w-full max-w-md object-cover mx-auto"
+                    />
+                  </div>
+                </div>
+
+                {/* Monitor Stand */}
+                <div className="flex justify-center">
+                  <div className="w-10 h-3 bg-gray-600"></div>
+                </div>
+                <div className="flex justify-center">
+                  <div className="w-16 h-2 bg-gray-700 rounded-t-md"></div>
+                </div>
+              </div>
+              <p className="text-center text-sm text-slate-600 mt-3">
+                Settings
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+
       </div>
 
       <style jsx>{`
