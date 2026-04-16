@@ -666,7 +666,7 @@ export default function Dashboard() {
           {/* toast */}
           <div
             className={`relative bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 min-w-75 transition-all duration-300
-      ${isClosing ? "opacity-0 scale-90" : "opacity-100 scale-100"}`}
+            ${isClosing ? "opacity-0 scale-90" : "opacity-100 scale-100"}`}
           >
             <svg
               className="w-6 h-6 shrink-0"

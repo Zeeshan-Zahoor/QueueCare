@@ -180,6 +180,7 @@ const uploadProfileImage = async (req, res) => {
             user,
         })
     } catch (error) {
+        console.log("ERROR: ", error)
         return res.status(500).json({
             message: "Image upload failed",
             error: "error.message",

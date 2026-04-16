@@ -105,7 +105,13 @@ const joinQueue = async (req, res) => {
     try {
         const { doctorId } = req.params;
         const { name, phone, source } = req.body;
-        const userId = req.userId;
+
+        let userId; 
+        if(source === "online") {  // to handle walks-in contradiction
+            userId = req.userId;
+        } else {
+            userId = null;
+        }
 
         // validate
         if(!name || !phone) {
