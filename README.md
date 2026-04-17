@@ -259,8 +259,8 @@ npm run dev
 
 **Zeeshan Zahoor**
 
-* GitHub: https://github.com/your-username
-* LinkedIn: https://linkedin.com/in/your-profile
+* GitHub: https://github.com/zeeshan-zahoor
+* LinkedIn: https://www.linkedin.com/in/zeeshan-zahoor-2564b73aa
 
 ---
 
