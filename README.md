@@ -220,15 +220,15 @@ npm run dev
 
 #### 🏠 Home (Clinic List)
 
-![Home](./screenshots/home.png)
+![Home]<img src="./screenshots/home.png" width="45%">
 
 #### 🎫 Queue Status
 
-![Queue](./screenshots/queuestatus.png)
+![Queue]<img src="./screenshots/queuestatus.png" width="45%">
 
 #### 👤 Profile
 
-![Profile](./screenshots/profile.png)
+![Profile]<img src="./screenshots/profile.png" width="45%">
 
 ---
 
@@ -236,11 +236,11 @@ npm run dev
 
 #### 📊 Dashboard
 
-![Dashboard](./screenshots/dashboard.jpeg)
+![Dashboard]<img src="./screenshots/dashboard.png" width="45%">
 
 #### ⚙️ Settings
 
-![Settings](./screenshots/settings.jpeg)
+![Settings]<img src="./screenshots/clinicsettings.png" width="45%">
 
 
 ---
