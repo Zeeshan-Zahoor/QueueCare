@@ -236,11 +236,11 @@ npm run dev
 
 #### 📊 Dashboard
 
-<img src="./screenshots/dashboard.png" width="45%">
+<img src="./screenshots/dashboard.png">
 
 #### ⚙️ Settings
 
-<img src="./screenshots/clinicsettings.png" width="45%">
+<img src="./screenshots/clinicsettings.png">
 
 
 ---
