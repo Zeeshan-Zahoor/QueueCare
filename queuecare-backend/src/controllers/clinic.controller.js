@@ -503,6 +503,12 @@ const addDoctor = async (req, res) => {
             })
         }
 
+        const clinic = await Clinic.findByIdAndUpdate(
+            data.clinicId, 
+            { $inc: { doctorCount: 1 } },
+            { new: true }
+        );
+
         return res.status(200).json({
             success: true,
             message: "Doctor added",
@@ -519,7 +525,7 @@ const addDoctor = async (req, res) => {
 
 const deleteDoctor = async (req, res) => {
     try {
-        const { doctorId } = req.body;
+        const { doctorId, clinicId } = req.body;
         
         const deletedDoctor = await Doctor.findByIdAndDelete(doctorId);
         if(!deletedDoctor) {
@@ -527,6 +533,12 @@ const deleteDoctor = async (req, res) => {
                 message: "Doctor not found",
             });
         }
+
+        const clinic = await Clinic.findByIdAndUpdate(
+            clinicId,
+            { $inc: { doctorCount: -1 } },
+            { new: true }
+        );
 
         return res.status(200).json({
             success: true,

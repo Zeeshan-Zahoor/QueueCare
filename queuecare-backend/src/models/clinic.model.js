@@ -48,6 +48,10 @@ const clinicSchema = new mongoose.Schema({
     otpExpiry: {
         type: Date,
     },
+    doctorCount: {
+        type: Number,
+        default: 0,
+    }
 }, { timestamps: true });
 
 export const Clinic = mongoose.model("Clinic", clinicSchema);
