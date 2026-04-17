@@ -10,11 +10,14 @@ function DeleteDoctorModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  console.log("Selected Doctor: ", doctor);
+  const data = {
+    doctorId: doctor._id,
+    clinicId: doctor.clinicId,
+  }
   const handleDeleteDoctor = async () => {
     try {
       setLoading(true);
-      const res = await deleteDoctorApi(doctor._id);
+      const res = await deleteDoctorApi(data);
 
       if(!res.success) {
         setError(res.message);

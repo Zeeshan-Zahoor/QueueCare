@@ -175,7 +175,7 @@ export const addDoctorApi = async (data) => {
     return res.json();
 }
 
-export const deleteDoctorApi = async (doctorId) => {
+export const deleteDoctorApi = async (data) => {
     const jwt_token = localStorage.getItem("jwt_token");
 
     const res = await fetch(`${BASE_URL}/delete-doctor`, {
@@ -184,7 +184,7 @@ export const deleteDoctorApi = async (doctorId) => {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${jwt_token}`,
         },
-        body: JSON.stringify({ doctorId }),
+        body: JSON.stringify(data),
     });
 
     if(res.status === 401) {

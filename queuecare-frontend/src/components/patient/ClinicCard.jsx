@@ -30,21 +30,12 @@ export default function ClinicCard({ clinic }) {
             <hr className='text-[#D0D3D9] mt-2' />
 
             {/* TEMP INFO */}
-            <div className="flex justify-between items-center mt-1 text-sm">
-                <span>2 Doctors</span>
+            <div className="flex justify-between items-center mt-1 text-sm text-slate-800 font-medium">
+                <span>{clinic.doctorCount} Doctors</span>
 
                 <span className='text-green-600 font-medium'>
-                    Available
+                    Demo Clinic
                 </span>
-
-                {/* <span
-                    className={`font-medium ${isOpen
-                        ? "text-green-600"
-                        : "text-red-600"
-                        }`}
-                >
-                    {isOpen ? `${openDoctors} Doctors • Open` : "Closed"}
-                </span> */}
             </div>
 
         </div>
