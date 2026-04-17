@@ -27,7 +27,7 @@ const SingleSkeleton = () => {
   );
 }
 
-function ClinicCardSkeleton({count = 6}) {
+function ClinicCardSkeletonLoader({count = 6}) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6">
         {Array(count).fill().map((_, index)=> (
@@ -37,4 +37,4 @@ function ClinicCardSkeleton({count = 6}) {
   )
 }
 
-export default ClinicCardSkeleton;
+export default ClinicCardSkeletonLoader;
