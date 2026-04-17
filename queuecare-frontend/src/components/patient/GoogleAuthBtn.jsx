@@ -32,6 +32,6 @@ export default function GoogleAuthBtn({
     }
 
     return (
-        <div id="google-login-btn" className="m-auto w-full text-center"></div>
+        <div id="google-login-btn" className="m-auto w-full text-center flex justify-center"></div>
     );
 }
