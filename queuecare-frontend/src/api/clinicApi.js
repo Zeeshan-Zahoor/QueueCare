@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000/api/clinic";
+const BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/api/clinic`;
 
 export const loginClinicApi = async(data) => {
     const res = await fetch(`${BASE_URL}/login`, {

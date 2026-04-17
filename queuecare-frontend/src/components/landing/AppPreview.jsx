@@ -52,6 +52,8 @@ export default function AppPreview() {
           </p>
         </div>
 
+        <p className='text-center text-slate-800'><strong>Note: </strong>There are Demo clinic for showcasing until real clinics are onboarded.</p>
+
         {/* Carousel Container */}
         <div className="relative group">
           {/* Left Scroll Button */}
