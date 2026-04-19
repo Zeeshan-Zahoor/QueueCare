@@ -51,7 +51,7 @@ export default function Home() {
   })
 
   return (
-    <div className='max-w-md mx-auto px-4 py-3 space-y-2 min-h-dvh pb-[calc(70px+env(safe-area-inset-bottom))]'>
+    <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 space-y-2 min-h-dvh pb-[calc(70px+env(safe-area-inset-bottom))]'>
 
       {/* Location */}
       <span className='text-sm text-slate-500'>Location</span>
@@ -81,10 +81,10 @@ export default function Home() {
           backgroundImage: `url(${heroImage})`,
         }}
       >
-        <h2 className='text-lg font-bold text-white'>
+        <h2 className='text-lg sm:text-xl font-bold text-white'>
           Get today's token
         </h2>
-        <p className="w-1/2 text-sm text-white mt-1">
+        <p className="w-1/2 sm:w-1/2 md:w-2/5 text-sm text-white mt-1">
           Avoid standing in long queues. Join digitally.
         </p>
         <button
@@ -95,7 +95,7 @@ export default function Home() {
       </div>
 
 
-      {/* Nearby Project Section */}
+      {/* Medical Centers Section */}
       <div>
         <h3 className="text-lg font-semibold text-slate-700 mb-2 mt-4">
           Medical Centers
@@ -109,7 +109,7 @@ export default function Home() {
           <p className="text-center text-gray-500 py-8">No clinics found.</p>
         )}
 
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredClinics.map((clinic) => (
             <ClinicCard key={clinic._id} clinic={clinic} />
           ))}

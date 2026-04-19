@@ -6,12 +6,12 @@ export default function GoogleAuthBtn({
     text,
 }) {
     useEffect(() => {
-        window.google.accounts.id.initialize({
+        window.google.accounts?.id.initialize({
             client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
             callback: handleGoogleLogin,
         });
 
-        window.google.accounts.id.renderButton(
+        window.google.accounts?.id.renderButton(
             document.getElementById("google-login-btn"),
             {
                 theme: "outline",
