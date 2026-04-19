@@ -17,13 +17,13 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [clinics, setClinics] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   useEffect(() => {
     const fetchClinics = async () => {
       try {
         const res = await getAllClinicsApi();
-        
-        if(res.success) {
+
+        if (res.success) {
           setClinics(res.clinics);
         }
       } catch (error) {
@@ -55,10 +55,10 @@ export default function Home() {
 
       {/* Location */}
       <span className='text-sm text-slate-500'>Location</span>
-      <div 
+      <div
         role='button'
         onClick={() => location.status === "available" && goToLocation(location.latitude, location.longitude)}
-        className='flex items-center gap-2 text-slate-700 '>
+        className='flex items-center gap-2 text-slate-700'>
         <MapPin className='w-5 h-5 text-[#1C2A3A] cursor-pointer' />
         <span className='text-sm font-medium cursor-pointer hover:underline'>{location.status === "available" ? (location.suburb) : ("Unavailable")}, {location.state}</span>
       </div>
@@ -69,27 +69,28 @@ export default function Home() {
         <input
           type="text"
           placeholder='Search clinic...'
-          className='text-[#374151] rounded-lg p-2 outline-none flex-1'
+          className='text-[#374151] rounded-lg p-2 outline-none flex-1 text-sm sm:text-base'
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
       {/* Hero section */}
-      <div className='bg-black/40 rounded-2xl p-5 bg-cover bg-center'
-        style={{
-          backgroundImage: `url(${heroImage})`,
-        }}
+      <div
+        className='bg-black/40 rounded-2xl bg-cover bg-center flex flex-col justify-center
+             p-4 sm:p-6 md:p-10
+             min-h-55 sm:min-h-70 md:min-h-90'
+        style={{ backgroundImage: `url(${heroImage})` }}
       >
-        <h2 className='text-lg sm:text-xl font-bold text-white'>
+        <h2 className='text-xl sm:text-2xl md:text-3xl font-bold text-white max-w-2xl'>
           Get today's token
         </h2>
-        <p className="w-1/2 sm:w-1/2 md:w-2/5 text-sm text-white mt-1">
-          Avoid standing in long queues. Join digitally.
+        <p className="text-sm sm:text-base md:text-lg text-white mt-2 max-w-md sm:max-w-lg md:max-w-xl">
+          Avoid standing in long queues.<br/>Join digitally.
         </p>
         <button
           onClick={() => navigate("/doctors")}
-          className='mt-4 bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-medium cursor-pointer'>
+          className='mt-5 sm:mt-6 bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm sm:text-base font-medium cursor-pointer w-fit'>
           Find Doctors
         </button>
       </div>
@@ -97,7 +98,7 @@ export default function Home() {
 
       {/* Medical Centers Section */}
       <div>
-        <h3 className="text-lg font-semibold text-slate-700 mb-2 mt-4">
+        <h3 className="text-lg sm:text-xl font-semibold text-slate-700 mb-2 mt-4">
           Medical Centers
         </h3>
 
