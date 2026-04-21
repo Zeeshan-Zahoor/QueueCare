@@ -64,29 +64,33 @@ export default function Doctors() {
   });
 
   return (
-    <div className='max-w-md mx-auto px-4 py-5 space-y-2 pb-[calc(70px+env(safe-area-inset-bottom))]'>
+    <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-2 pb-[calc(70px+env(safe-area-inset-bottom))]'>
       {/* Header */}
       <Header
         title="All Doctors"
       />
 
       {/* Search Bar */}
-      <div className=' bg-gray-200/65 flex items-center rounded-lg mb-6 m-auto px-3'>
-        <Search className='w-6 h-6 ml-3 text-gray-500 shrink-0' />
+      <div className=' bg-gray-200/65 flex items-center rounded-lg mb-4 m-auto px-3'>
+        <Search className='w-6 h-6 ml-3 text-gray-500 shrink-0'/>
         <input
           type="text"
           placeholder='Search doctor or clinic...'
-          className='text-[#374151] rounded-lg p-2 outline-none flex-1'
+          className='text-[#374151] rounded-lg p-2 outline-none flex-1 text-sm sm:text-base'
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
       {/* Doctor List */}
-      <div className='space-y-4'>
-        {loading && <DoctorCardSkeleton />}
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+        {loading && (
+          Array.from({ length: 10 }).map((_, i) => (
+            <DoctorCardSkeleton key={i}/>
+          ))
+        )}
         {!loading && filteredDoctors.length === 0 && (
-          <p className="text-center text-gray-500 py-8">No doctors found.</p>
+          <p className="text-center text-gray-500 py-8 col-span-full">No doctors found.</p>
         )}
 
         {filteredDoctors.map((doctor) => (

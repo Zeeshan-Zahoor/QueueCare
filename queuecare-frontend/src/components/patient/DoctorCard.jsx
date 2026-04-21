@@ -21,7 +21,7 @@ export default function DoctorCard({ doctor, clinic }) {
         navigate(`/doctor/${doctor._id}`);
     }}
 
-    className='bg-white m-auto rounded-2xl shadow-[0_5px_15px_rgba(0,0,0,0.2)] hover:shadow-[0_5px_15px_rgba(0,0,0,0.25)] hover:-translate-y-1 transition-all duration-300 p-3 flex gap-3 items-center mb-2'>
+    className='bg-white m-auto rounded-2xl shadow-[0_5px_15px_rgba(0,0,0,0.2)] hover:shadow-[0_5px_15px_rgba(0,0,0,0.25)] hover:-translate-y-1 transition-all duration-300 p-3 flex gap-3 items-center mb-2 w-full'>
         
         {/* Doctor Image */}
         <div className="w-30 h-30 rounded-xl overflow-hidden shrink-0">
