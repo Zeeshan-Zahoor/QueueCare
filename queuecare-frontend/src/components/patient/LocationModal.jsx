@@ -20,11 +20,11 @@ export default function LocationModal({ location, isOpen, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/45 flex items-end justify-center z-50"
+      className="fixed inset-0 bg-black/45 flex items-center justify-center z-50 p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white w-full rounded-t-2xl max-h-[85vh] overflow-y-auto">
-        {/* Handle bar */}
+      <div className="bg-white w-full max-w-md rounded-2xl max-h-[85vh] overflow-y-auto">
+        {/* Handle bar (only visible on mobile, optional) */}
         <div className="w-9 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-2" />
 
         {isUnavailable ? (
