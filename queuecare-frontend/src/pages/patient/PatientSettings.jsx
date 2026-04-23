@@ -27,91 +27,83 @@ function PatientSettings() {
   }
 
   return (
-    <div className="max-w-md min-h-dvh mx-auto px-4 py-5 bg-gray-50 flex flex-col pb-[calc(70px+env(safe-area-inset-bottom))]">
-
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 min-h-dvh bg-gray-50 flex flex-col pb-[calc(70px+env(safe-area-inset-bottom))]">
       <Header title="Settings" />
 
       {/* SETTINGS CARD */}
-      <div className="mt-6 bg-slate-200 rounded-xl">
-        <h2 className="text-lg font-semibold text-slate-800 p-2 pl-4">
-          Settings
-        </h2>
+      <div className="mt-6 max-w-2xl lg:max-w-3xl mx-auto w-full">
+        <div className="bg-slate-200 rounded-xl">
+          <h2 className="text-lg font-semibold text-slate-800 p-2 pl-4">
+            Settings
+          </h2>
 
-        <div className="bg-white shadow-sm divide-y text-gray-300 rounded-b-xl">
+          <div className="bg-white shadow-sm divide-y text-gray-300 rounded-b-xl">
+            {/* Notification */}
+            <SettingItem
+              icon={<Bell size={20} />}
+              title="Notification Settings"
+              subtitle="Coming Soon"
+            />
 
-          {/* Notification */}
-          <SettingItem
-            icon={<Bell size={20} />}
-            title="Notification Settings"
-            subtitle="Comming Soon"
-          />
+            {/* Location */}
+            <SettingItem
+              icon={<MapPin size={20} />}
+              title="Location"
+              subtitle="Current Location"
+              clickHandler={() => setLocationModalOpen(true)}
+            />
 
-          {/* Location */}
-          <SettingItem
-            icon={<MapPin size={20} />}
-            title="Location"
-            subtitle="Current Location"
-            clickHandler={() => setLocationModalOpen(true)}
-          />
+            {/* Language */}
+            <SettingItem
+              icon={<Globe size={20} />}
+              title="Language"
+              subtitle="Coming Soon"
+            />
 
-          {/* Language */}
-          <SettingItem
-            icon={<Globe size={20} />}
-            title="Language"
-            subtitle="Comming Soon"
-          />
+            {/* Appearance */}
+            <SettingItem
+              icon={<Sun size={20} />}
+              title="Appearance"
+              subtitle="Coming Soon"
+            />
+          </div>
 
-          {/* Appearance */}
-          <SettingItem
-            icon={<Sun size={20} />}
-            title="Appearance"
-            subtitle="Comming Soon"
-          />
+          {/* location modal */}
+          {locationModalOpen && (
+            <LocationModal 
+              location={location}
+              isOpen={locationModalOpen}
+              onClose={() => setLocationModalOpen(false)}
+            />
+          )}
         </div>
-
-
-        {/* location modal */}
-        {locationModalOpen && (
-          <LocationModal 
-            location={location}
-            isOpen={locationModalOpen}
-            onClose={() => setLocationModalOpen(false)}
-          />
-        )}
       </div>
 
       {/* logout */}
       <div 
         onClick={() => setConfirmLogout(true)}
-        className="w-full p-3 bg-red-100 mt-2 rounded-xl shadow-lg">
-        <button
-          className="flex items-center gap-4 pl-1 text-red-600 font-medium"
-        >
+        className="w-full max-w-2xl lg:max-w-3xl mx-auto mt-2 p-3 bg-red-100 rounded-xl shadow-lg cursor-pointer"
+      >
+        <button className="flex items-center gap-4 pl-1 text-red-600 font-medium">
           <div className="p-2 bg-red-200 rounded-lg">
-            <LogOutIcon
-              size={20}
-              className="text-red-600"
-            />
+            <LogOutIcon size={20} className="text-red-600" />
           </div>
           Logout
         </button>
       </div>
 
       {confirmLogout && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center px-10 z-10 ">
-          <div className="bg-white rounded-4xl w-full max-w-xs p-8 flex flex-col items-center shadow-xl">
-
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center px-4 z-50">
+          <div className="bg-white rounded-4xl w-full max-w-sm p-8 flex flex-col items-center shadow-xl">
             {/* Icon */}
-              <div className="bg-[#9fc5be] rounded-full flex items-center justify-center p-6">
-                <LogOutIcon className="text-white" size={40}/>
-              </div>
-
+            <div className="bg-[#9fc5be] rounded-full flex items-center justify-center p-6">
+              <LogOutIcon className="text-white" size={40} />
+            </div>
             {/* Text */}
             <h2 className="text-xl font-bold text-slate-800 mb-2 mt-2">Logout?</h2>
             <p className="text-sm text-gray-400 text-center mb-7 leading-relaxed">
               Are you sure you want to log out of your account?
             </p>
-
             {/* Buttons */}
             <button
               onClick={handleLogout}
@@ -125,33 +117,31 @@ function PatientSettings() {
             >
               Cancel
             </button>
-
           </div>
         </div>
       )}
 
       {/* LOGIN AS CLINIC */}
-      <div className="mt-8">
+      <div className="mt-8 max-w-2xl lg:max-w-3xl mx-auto w-full">
         <h2 className="font-semibold text-slate-500 mb-3 pl-3">
           Login as Clinic / Hospital
         </h2>
-
         <button
           onClick={() => navigate('/clinic')}
-          className="w-full bg-slate-800 hover:bg-slate-900 text-white rounded-2xl px-4 py-2 flex items-center justify-between transition">
-
+          className="w-full bg-slate-800 hover:bg-slate-900 text-white rounded-2xl px-4 py-2 flex items-center justify-between transition"
+        >
           <div className="flex items-center gap-3">
             <div className="bg-white/10 p-2 rounded-lg">
               <Building2 size={25} />
             </div>
-            <span className="font-medium">
-              Login as Clinic / Hospital
-            </span>
+            <span className="font-medium">Login as Clinic / Hospital</span>
           </div>
-
           <ChevronRight size={20} />
         </button>
       </div>
+
+      {/* Bottom Navigation */}
+      <BottomNav />
     </div>
   );
 }
