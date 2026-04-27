@@ -248,6 +248,7 @@ npm run dev
 ## 🔮 Future Improvements
 
 * Push notifications (Socket.IO)
+* Location based suggestions and search
 * Appointment booking system
 * Clinic onboarding request system
 * Analytics dashboard
