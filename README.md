@@ -249,7 +249,7 @@ npm run dev
 
 * Push notifications (Socket.IO)
 * Location based suggestions and search
-* Appointment booking system
+* Future Appointment booking system
 * Clinic onboarding request system
 * Analytics dashboard
 * PWA support
