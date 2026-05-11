@@ -252,7 +252,7 @@ npm run dev
 * Future Appointment booking system
 * Clinic onboarding request system
 * Analytics dashboard
-* PWA support
+* PWA support (mobile app)
 
 ---
 
