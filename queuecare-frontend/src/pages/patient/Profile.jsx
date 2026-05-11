@@ -89,13 +89,12 @@ export default function Profile() {
 
 
   return (
-    <div className="max-w-md mx-auto px-4 py-6 space-y-6 pb-[calc(70px+env(safe-area-inset-bottom))]">
-
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 pb-[calc(70px+env(safe-area-inset-bottom))]">
       {/* Header */}
       <Header title="My Profile" />
 
-      {/* Profile Card */}
-      <div className=" p-5 flex flex-col items-center space-y-3 relative">
+      {/* Profile Card  */}
+      <div className="max-w-2xl mx-auto w-full p-5 flex flex-col items-center space-y-3 relative bg-white rounded-2xl shadow-md">
         {/* Profile Image */}
         <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-200 relative cursor-pointer">
           {user.profilePic ? (
@@ -138,7 +137,7 @@ export default function Profile() {
         </div>
 
         {/* Name */}
-        <h2 className="text-xl font-bold text-slate-800">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
           {user.name}
         </h2>
 
@@ -146,17 +145,15 @@ export default function Profile() {
         <p className="text-sm text-gray-500">
           {user.email}
         </p>
-
       </div>
 
       {/* Details Section */}
-      <div className="bg-white rounded-2xl shadow-[0_5px_15px_rgba(0,0,0,0.25)] p-4 space-y-3">
-
+      <div className="max-w-2xl mx-auto w-full bg-white rounded-2xl shadow-[0_5px_15px_rgba(0,0,0,0.25)] p-4 sm:p-6 space-y-3">
         {/* Gender */}
         <div className="flex justify-between items-center">
           <span className="text-gray-500 text-sm">Gender</span>
           <span className="text-slate-800 font-medium capitalize">
-            {user.gender}
+            {user.gender || "Not specified"}
           </span>
         </div>
 
@@ -166,11 +163,10 @@ export default function Profile() {
         {/* Email */}
         <div className="flex justify-between items-center">
           <span className="text-gray-500 text-sm">Email</span>
-          <span className="text-slate-800 font-medium">
+          <span className="text-slate-800 font-medium break-all text-right sm:text-left">
             {user.email}
           </span>
         </div>
-
 
         {/* Divider */}
         <hr className="border-gray-200" />
@@ -179,31 +175,27 @@ export default function Profile() {
         <div className="flex justify-between items-center">
           <span className="text-gray-500 text-sm">Joined on</span>
           <span className="text-gray-400 font-medium">
-            {(user.createdAt).slice(0, 10)}
+            {user.createdAt ? user.createdAt.slice(0, 10) : "—"}
           </span>
         </div>
-
       </div>
 
-      {/* Actions */}
-      <div className="space-y-3">
-
+      {/* Actions  */}
+      <div className="max-w-2xl mx-auto w-full space-y-3">
         {/* Edit Profile */}
         <button
           onClick={() => setShowEditModal(true)}
-          className="w-full bg-slate-800 text-white py-3 rounded-4xl font-medium">
+          className="w-full bg-slate-800 text-white py-3 rounded-4xl font-medium hover:bg-slate-700 transition-colors">
           Edit Profile
         </button>
-
       </div>
 
+      {/* Edit Modal  */}
       {showEditModal && (
-        <div className="fixed h-screen inset-0 bg-black/40 flex items-center justify-center z-50">
-
-          <div className="bg-white w-80 rounded-4xl p-8 space-y-4 shadow-2xl">
-
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white w-full max-w-md rounded-4xl p-6 sm:p-8 space-y-4 shadow-2xl">
             {/* Title */}
-            <h2 className="text-xl font-semibold text-center text-slate-800">
+            <h2 className="text-xl sm:text-2xl font-semibold text-center text-slate-800">
               Edit Profile
             </h2>
 
@@ -214,26 +206,27 @@ export default function Profile() {
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              className="w-full border rounded-lg p-2 outline-none"
+              placeholder="Full Name"
+              className="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-slate-400"
             />
 
             {/* Gender Select */}
             <select
               value={formData.gender}
               onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-              className="w-full border rounded-lg p-2 outline-none">
+              className="w-full border rounded-lg p-2 outline-none focus:ring-2 focus:ring-slate-400">
+              <option value="">Select Gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="other">Other</option>
             </select>
 
             {/* Buttons */}
-            <div className="flex flex-col-reverse gap-2 pt-2">
-
+            <div className="flex flex-col sm:flex-row gap-2 pt-2">
               {/* Cancel */}
               <button
                 onClick={() => setShowEditModal(false)}
-                className="w-full bg-gray-200 text-slate-800 py-2 rounded-4xl"
+                className="flex-1 bg-gray-200 text-slate-800 py-2 rounded-4xl hover:bg-gray-300 transition-colors"
               >
                 Cancel
               </button>
@@ -241,20 +234,17 @@ export default function Profile() {
               {/* Save */}
               <button
                 onClick={handleUpdateProfile}
-                className="w-full bg-slate-800 text-white py-2 rounded-4xl"
+                className="flex-1 bg-slate-800 text-white py-2 rounded-4xl hover:bg-slate-700 transition-colors"
               >
                 {loading ? "Saving..." : "Save"}
               </button>
-
             </div>
-
           </div>
         </div>
       )}
 
       {/* Bottom Navigation */}
       <BottomNav />
-
     </div>
   );
 }
