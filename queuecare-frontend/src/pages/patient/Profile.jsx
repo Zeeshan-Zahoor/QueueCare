@@ -61,7 +61,7 @@ export default function Profile() {
       setUser(res.user);
 
       setShowEditModal(false);
-    } catch (error) {
+    } catch {
       console.log("Failed to update profile")
     } finally {
       setLoading(false);
@@ -80,7 +80,7 @@ export default function Profile() {
 
       // update UI instantly
       setUser(res.user);
-    } catch (error) {
+    } catch {
       console.log("Upload failed");
     } finally {
       setImageUploadLoading(false);
