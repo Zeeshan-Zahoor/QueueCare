@@ -49,18 +49,7 @@ export const getAllDoctorsApi = async () => {
 
 export const getAllClinicsApi = async () => {
     const res = await fetch(`${BASE_URL}/clinics`);
-    const data = await res.json();
-    if (Array.isArray(data.clinics)) {
-        data.clinics = data.clinics.filter((clinic) => {
-            const coordinates = clinic?.location?.coordinates;
-            const hasUsableLocation = Array.isArray(coordinates)
-                && coordinates.length >= 2
-                && Number(coordinates[0]) !== 0
-                && Number(coordinates[1]) !== 0;
-            return clinic?.nearbyEnabled !== false && hasUsableLocation;
-        });
-    }
-    return data;
+    return res.json();
 }
 
 export const exitQueueApi = async (doctorId, token) => {

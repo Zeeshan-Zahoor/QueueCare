@@ -413,10 +413,9 @@ const getAllDoctors = async (req, res) => {
 
 const getAllClinics = async (req, res) => {
     try {
-        // A clinic that opts out of nearby discovery must not appear in the
-        // patient-facing directory either. This also covers patients who
-        // have not granted browser location permission.
-        const clinics = await Clinic.find({ nearbyEnabled: { $ne: false } });
+        // The full directory includes every clinic. The nearby-discovery
+        // preference is enforced only by getNearbyClinics below.
+        const clinics = await Clinic.find();
 
         return res.status(200).json({
             success: true,
