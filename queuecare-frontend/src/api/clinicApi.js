@@ -257,5 +257,6 @@ export const resetClinicPasswordApi = async (data) => {
 export const getNearbyClinicsApi = async (latitude, longitude, radius = 25) => {
     const params = new URLSearchParams({ latitude, longitude, radius });
     const res = await fetch(`${BASE_URL}/clinics/nearby?${params}`);
+    if (!res.ok) throw new Error(`Nearby clinics request failed: ${res.status}`);
     return res.json();
 }

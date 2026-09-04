@@ -22,12 +22,20 @@ export default function Home() {
   useEffect(() => {
     const fetchClinics = async () => {
       try {
-        const res = location.status === "available"
-          ? await getNearbyClinicsApi(location.latitude, location.longitude).catch(() => getAllClinicsApi())
-          : await getAllClinicsApi();
+        let res;
+        if (location.status === "available") {
+          try {
+            res = await getNearbyClinicsApi(location.latitude, location.longitude);
+            if (!res.success) res = await getAllClinicsApi();
+          } catch {
+            res = await getAllClinicsApi();
+          }
+        } else {
+          res = await getAllClinicsApi();
+        }
 
         if (res.success) {
-          setClinics(res.clinics);
+          setClinics(res.clinics || []);
         }
       } catch (error) {
         console.log("Failed to fetch clinics");
