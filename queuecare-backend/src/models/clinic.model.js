@@ -17,6 +17,7 @@ const clinicSchema = new mongoose.Schema({
     address: {
         type: String,
     },
+    phone: { type: String, default: "" },
     workingDays: {
         mon: { type: Boolean, default: true },
         tue: { type: Boolean, default: true },

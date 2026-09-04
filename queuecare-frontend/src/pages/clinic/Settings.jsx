@@ -12,8 +12,9 @@ export default function Settings() {
   
   const [clinicSettings, setClinicSettings] = useState({
     name: "",
-    phone: "",
     address: "",
+    phone: "",
+    location: { type: "Point", coordinates: [0, 0] },
     workingDays: {
       mon: false,
       tue: false,
@@ -37,6 +38,7 @@ export default function Settings() {
           setClinicSettings(prev => ({
             ...prev,
             ...res.clinic,
+            location: res.clinic.location || { type: "Point", coordinates: [0, 0] },
             workingDays: res.clinic.workingDays || prev.workingDays
           }));
         }
@@ -164,6 +166,12 @@ export default function Settings() {
                   onChange={(e) =>  handleChange("address", e.target.value)}
                   className="w-full border rounded-md px-3 py-3 text-gray-500 font-semibold"
                 />
+              </div>
+
+              {/* Working Days */}
+              <div className="grid grid-cols-2 gap-6">
+                <div><label className="block text-lg text-slate-600 font-bold mb-1">Latitude</label><input type="number" step="any" value={clinicSettings.location?.coordinates?.[1] || ""} onChange={(e) => handleChange("location", { type: "Point", coordinates: [clinicSettings.location?.coordinates?.[0] || 0, Number(e.target.value)] })} className="w-full border rounded-md px-3 py-3 text-gray-500 font-semibold" /></div>
+                <div><label className="block text-lg text-slate-600 font-bold mb-1">Longitude</label><input type="number" step="any" value={clinicSettings.location?.coordinates?.[0] || ""} onChange={(e) => handleChange("location", { type: "Point", coordinates: [Number(e.target.value), clinicSettings.location?.coordinates?.[1] || 0] })} className="w-full border rounded-md px-3 py-3 text-gray-500 font-semibold" /></div>
               </div>
 
               {/* Working Days */}
