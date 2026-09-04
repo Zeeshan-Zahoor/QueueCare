@@ -16,6 +16,7 @@ export default function Settings() {
     address: "",
     phone: "",
     location: { type: "Point", coordinates: [0, 0] },
+    nearbyEnabled: false,
     workingDays: {
       mon: false,
       tue: false,
@@ -40,6 +41,7 @@ export default function Settings() {
             ...prev,
             ...res.clinic,
             location: res.clinic.location || { type: "Point", coordinates: [0, 0] },
+            nearbyEnabled: res.clinic.nearbyEnabled ?? Boolean(res.clinic.location?.coordinates?.some((coordinate) => Number(coordinate) !== 0)),
             workingDays: res.clinic.workingDays || prev.workingDays
           }));
         }
@@ -58,11 +60,12 @@ export default function Settings() {
     }))
   }
 
-  const locationEnabled = Boolean(clinicSettings.location?.coordinates?.some((coordinate) => Number(coordinate) !== 0));
+  const locationEnabled = Boolean(clinicSettings.nearbyEnabled);
 
   const handleLocationToggle = () => {
     if (locationEnabled) {
       handleChange("location", { type: "Point", coordinates: [0, 0] });
+      handleChange("nearbyEnabled", false);
       setLocationMessage("");
       return;
     }
@@ -74,6 +77,7 @@ export default function Settings() {
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         handleChange("location", { type: "Point", coordinates: [coords.longitude, coords.latitude] });
+        handleChange("nearbyEnabled", true);
         setLocationMessage("Location enabled. Patients can now find your clinic nearby.");
       },
       () => setLocationMessage("Location permission was not granted. You can try again anytime."),

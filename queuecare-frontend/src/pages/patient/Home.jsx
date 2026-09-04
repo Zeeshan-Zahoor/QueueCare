@@ -26,9 +26,8 @@ export default function Home() {
         if (location.status === "available") {
           try {
             res = await getNearbyClinicsApi(location.latitude, location.longitude);
-            if (!res.success) res = await getAllClinicsApi();
           } catch {
-            res = await getAllClinicsApi();
+            res = { success: true, clinics: [] };
           }
         } else {
           res = await getAllClinicsApi();

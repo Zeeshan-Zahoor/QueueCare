@@ -25,7 +25,7 @@ const run = async () => {
   const password = await bcrypt.hash("QueueCare@2026", 10);
   await Doctor.deleteMany({});
   await Clinic.deleteMany({});
-  const insertedClinics = await Clinic.insertMany(clinics.map((clinic) => ({ ...clinic, password, location: { type: "Point", coordinates: clinic.coordinates }, doctorCount: 0 })));
+  const insertedClinics = await Clinic.insertMany(clinics.map((clinic) => ({ ...clinic, password, nearbyEnabled: true, location: { type: "Point", coordinates: clinic.coordinates }, doctorCount: 0 })));
   for (let i = 0; i < doctors.length; i += 1) {
     await Doctor.create({ name: doctors[i][0], specialization: doctors[i][1], category: doctors[i][2], clinicId: insertedClinics[i % insertedClinics.length]._id, status: i % 3 === 0 ? "open" : "closed", consultationStatus: i % 3 === 0 ? "active" : "paused", consultationTime: 15, maxTokens: 30 });
   }
@@ -36,4 +36,3 @@ const run = async () => {
 };
 
 run().catch(async (error) => { console.error(error); await mongoose.disconnect(); process.exitCode = 1; });
-

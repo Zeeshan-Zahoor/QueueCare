@@ -433,7 +433,7 @@ const getNearbyClinics = async (req, res) => {
         const radius = Math.min(Number(req.query.radius) || 25, 100);
         if (!Number.isFinite(latitude) || !Number.isFinite(longitude) || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) return res.status(400).json({ success: false, message: "Valid latitude and longitude are required" });
         const clinics = await Clinic.aggregate([
-            { $geoNear: { near: { type: "Point", coordinates: [longitude, latitude] }, key: "location", distanceField: "distanceMeters", maxDistance: radius * 1000, spherical: true, query: { "location.coordinates.0": { $ne: 0 } } } },
+            { $geoNear: { near: { type: "Point", coordinates: [longitude, latitude] }, key: "location", distanceField: "distanceMeters", maxDistance: radius * 1000, spherical: true, query: { nearbyEnabled: { $ne: false }, "location.coordinates.0": { $ne: 0 } } } },
             { $addFields: { distanceKm: { $round: [{ $divide: ["$distanceMeters", 1000] }, 1] } } },
             { $project: { password: 0, otp: 0, otpExpiry: 0, distanceMeters: 0 } },
         ]);
