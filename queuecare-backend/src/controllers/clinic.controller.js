@@ -427,6 +427,20 @@ const getAllClinics = async (req, res) => {
     }
 }
 
+const getNearbyClinics = async (req, res) => {
+    try {
+        const latitude = Number(req.query.latitude), longitude = Number(req.query.longitude);
+        const radius = Math.min(Number(req.query.radius) || 25, 100);
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude) || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) return res.status(400).json({ success: false, message: "Valid latitude and longitude are required" });
+        const clinics = await Clinic.aggregate([
+            { $geoNear: { near: { type: "Point", coordinates: [longitude, latitude] }, key: "location", distanceField: "distanceMeters", maxDistance: radius * 1000, spherical: true, query: { "location.coordinates.0": { $ne: 0 } } } },
+            { $addFields: { distanceKm: { $round: [{ $divide: ["$distanceMeters", 1000] }, 1] } } },
+            { $project: { password: 0, otp: 0, otpExpiry: 0, distanceMeters: 0 } },
+        ]);
+        return res.status(200).json({ success: true, clinics });
+    } catch (error) { return res.status(500).json({ success: false, message: "Failed to fetch nearby clinics", error: error.message }); }
+}
+
 const updateDoctorSettings = async (req, res) => {
     try {
         const { doctorId } = req.params;
@@ -735,6 +749,7 @@ export {
     getDoctorById,
     getAllDoctors,
     getAllClinics,
+    getNearbyClinics,
     updateDoctorSettings,
     updateClinicSettings,
     getClinic,

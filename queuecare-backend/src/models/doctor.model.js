@@ -24,9 +24,14 @@ const doctorSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    category: {
+        type: String,
+        enum: ["dental", "cardiology", "pulmonology", "general", "neurology", "gastroenterology", "laboratory", "vaccination"],
+        default: "general",
+    },
     clinicId: {
         type: mongoose.Schema.Types.ObjectId,
-        src: "Clinic",
+        ref: "Clinic",
     },
     consultationTime: {
         type: Number,

@@ -12,6 +12,7 @@ import { loginClinic,
          getDoctorById,
          getAllDoctors,
          getAllClinics,
+         getNearbyClinics,
          updateDoctorSettings,
          updateClinicSettings,
          getClinic,
@@ -28,6 +29,7 @@ const router = Router();
 router.route("/login").post(loginClinic);
 
 router.route("/clinics").get(getAllClinics);
+router.route("/clinics/nearby").get(getNearbyClinics);
 router.route("/doctors").get(getAllDoctors);
 
 router.route("/doctor/:doctorId").get(getDoctorById);

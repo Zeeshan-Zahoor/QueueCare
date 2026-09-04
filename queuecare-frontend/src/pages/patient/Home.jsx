@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { getAllClinicsApi } from '../../api/clinicApi.js';
+import { getAllClinicsApi, getNearbyClinicsApi } from '../../api/clinicApi.js';
 import { useNavigate } from 'react-router-dom'
-import { Search, MapPin, Link } from 'lucide-react'
+import { Search, MapPin, Bell, Building2, ArrowRight } from 'lucide-react'
 import ClinicCard from '../../components/patient/ClinicCard';
-import heroImage from "../../assets/heroImage.png"
 import BottomNav from '../../components/common/BottomNav';
 import ClinicCardSkeletonLoader from '../../components/loaders/ClinicCardSkeletonLoader.jsx';
 import { LocationContext } from '../../contexts/LocationContext.jsx';
+import CategoryGrid from '../../components/patient/CategoryGrid.jsx';
+import HeroCarousel from '../../components/patient/HeroCarousel.jsx';
 
 
 export default function Home() {
@@ -21,7 +22,9 @@ export default function Home() {
   useEffect(() => {
     const fetchClinics = async () => {
       try {
-        const res = await getAllClinicsApi();
+        const res = location.status === "available"
+          ? await getNearbyClinicsApi(location.latitude, location.longitude).catch(() => getAllClinicsApi())
+          : await getAllClinicsApi();
 
         if (res.success) {
           setClinics(res.clinics);
@@ -33,7 +36,7 @@ export default function Home() {
       }
     };
     fetchClinics();
-  }, []);
+  }, [location.status, location.latitude, location.longitude]);
 
   const goToLocation = (lat, lon) => {
     const url = `https://www.google.com/maps?q=${lat},${lon}`;
@@ -47,70 +50,55 @@ export default function Home() {
 
     const clinicName = clinic?.name?.toLowerCase() || "";
 
-    return clinicName.includes(searchLower);
+    return clinicName.includes(searchLower) || (clinic.address || "").toLowerCase().includes(searchLower);
   })
 
   return (
-    <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 space-y-2 min-h-dvh pb-[calc(70px+env(safe-area-inset-bottom))]'>
+    <div className='mx-auto min-h-dvh max-w-md bg-[#FCFCFC] px-5 py-4 pb-[calc(82px+env(safe-area-inset-bottom))]'>
 
-      {/* Location */}
-      <span className='text-sm text-slate-500'>Location</span>
-      <div
-        role='button'
-        onClick={() => location.status === "available" && goToLocation(location.latitude, location.longitude)}
-        className='flex items-center gap-2 text-slate-700'>
-        <MapPin className='w-5 h-5 text-[#1C2A3A] cursor-pointer' />
-        <span className='text-sm font-medium cursor-pointer hover:underline'>{location.status === "available" ? (location.suburb) : ("Unavailable")}, {location.state}</span>
+      <div className="mb-3 flex items-start justify-between">
+        <button role='button' onClick={() => location.status === "available" && goToLocation(location.latitude, location.longitude)} className='text-left'>
+          <span className='block text-xs text-slate-500'>Location</span>
+          <span className='mt-1 flex items-center gap-1 text-sm font-bold text-slate-700'><MapPin size={17} fill="currentColor" />{location.status === "available" ? (location.suburb || location.village || location.state) : "Location unavailable"}</span>
+        </button>
+        <button aria-label="Notifications" className="rounded-full bg-slate-100 p-2 text-slate-500"><Bell size={17} /></button>
       </div>
 
       {/* Search Bar */}
-      <div className='bg-gray-200/65 flex items-center rounded-lg mb-4 m-auto px-3'>
-        <Search className='w-5 h-5 ml-3 text-gray-500 shrink-0' />
+      <form onSubmit={(event) => { event.preventDefault(); navigate(`/doctors?search=${encodeURIComponent(searchTerm.trim())}`); }} className='mb-3 flex items-center rounded-lg bg-[#F0F2F4] px-3'>
+        <Search className='ml-1 h-5 w-5 shrink-0 text-gray-400' />
         <input
           type="text"
-          placeholder='Search clinic...'
-          className='text-[#374151] rounded-lg p-2 outline-none flex-1 text-sm sm:text-base'
+          placeholder='Search doctor or clinic...'
+          className='flex-1 rounded-lg bg-transparent p-2 text-sm text-[#374151] outline-none'
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-      </div>
+        <button type="submit" aria-label="Search" className="hidden" />
+      </form>
 
-      {/* Hero section */}
-      <div
-        className='bg-black/40 rounded-2xl bg-cover bg-center flex flex-col justify-center
-             p-4 sm:p-6 md:p-10
-             min-h-55 sm:min-h-70 md:min-h-90'
-        style={{ backgroundImage: `url(${heroImage})` }}
-      >
-        <h2 className='text-xl sm:text-2xl md:text-3xl font-bold text-white max-w-2xl'>
-          Get today's token
-        </h2>
-        <p className="text-sm sm:text-base md:text-lg text-white mt-2 max-w-md sm:max-w-lg md:max-w-xl">
-          Avoid standing in long queues.<br/>Join digitally.
-        </p>
-        <button
-          onClick={() => navigate("/doctors")}
-          className='mt-5 sm:mt-6 bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm sm:text-base font-medium cursor-pointer w-fit'>
-          Find Doctors
-        </button>
-      </div>
+      <HeroCarousel />
+      <div className="mt-4"><CategoryGrid /></div>
 
 
       {/* Medical Centers Section */}
-      <div>
-        <h3 className="text-lg sm:text-xl font-semibold text-slate-700 mb-2 mt-4">
-          Medical Centers
-        </h3>
+      <div className="mt-5">
+        <div className="mb-3 flex items-center justify-between"><h3 className="text-[15px] font-bold text-slate-800">Nearby Medical Centers</h3><button onClick={() => navigate('/clinics')} className="text-xs font-medium text-slate-500">See All</button></div>
 
         {loading && (
           <ClinicCardSkeletonLoader />
         )}
 
         {!loading && filteredClinics.length === 0 && (
-          <p className="text-center text-gray-500 py-8">No clinics found.</p>
+          <div className="my-2 flex w-full flex-col items-center rounded-2xl border border-slate-100 bg-white px-6 py-8 text-center shadow-sm">
+            <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-teal-50 text-teal-700"><Building2 size={23} /></span>
+            <h4 className="text-sm font-bold text-slate-700">No nearby centers yet</h4>
+            <p className="mt-1 max-w-[230px] text-xs leading-5 text-slate-500">We couldn&apos;t find medical centers in your area right now. Explore all available centers instead.</p>
+            <button onClick={() => navigate('/clinics')} className="mt-4 flex items-center gap-1 rounded-full bg-slate-800 px-4 py-2 text-xs font-semibold text-white">Browse medical centers <ArrowRight size={14} /></button>
+          </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="flex gap-3 overflow-x-auto pb-3 [scrollbar-width:none]">
           {filteredClinics.map((clinic) => (
             <ClinicCard key={clinic._id} clinic={clinic} />
           ))}

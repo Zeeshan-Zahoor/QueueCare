@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import DoctorCard from '../../components/patient/DoctorCard'
 import { Search } from 'lucide-react'
 import Header from '../../components/common/Header';
@@ -14,6 +15,10 @@ export default function Doctors() {
   const [clinics, setClinics] = useState({});
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchParams] = useSearchParams();
+  const category = searchParams.get("category") || "";
+  const query = searchParams.get("search") || "";
+  useEffect(() => setSearchTerm(query), [query]);
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -57,10 +62,11 @@ export default function Doctors() {
   const filteredDoctors = doctors.filter((doctor) => {
     const searchLower = searchTerm.toLowerCase();
     const doctorName = doctor.name?.toLowerCase() || '';
+    const specialization = doctor.specialization?.toLowerCase() || '';
     const clinic = clinics[doctor.clinicId];
     const clinicName = clinic?.name?.toLowerCase() || "";
 
-    return doctorName.includes(searchLower) || clinicName.includes(searchLower)
+    return (doctorName.includes(searchLower) || clinicName.includes(searchLower) || specialization.includes(searchLower)) && (!category || doctor.category === category || specialization.includes(category))
   });
 
   return (
