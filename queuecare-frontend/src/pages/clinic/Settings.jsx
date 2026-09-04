@@ -5,6 +5,7 @@ import { updateClinicSettingsApi, getAllClinicsApi, getClinicApi } from '../../a
 
 export default function Settings() {
   const [loading, setLoading] = useState(null);
+  const [locationSaving, setLocationSaving] = useState(false);
   const [locationMessage, setLocationMessage] = useState("");
 
   const navigate = useNavigate();
@@ -62,11 +63,38 @@ export default function Settings() {
 
   const locationEnabled = Boolean(clinicSettings.nearbyEnabled);
 
+  const persistLocationSetting = async (nearbyEnabled, location) => {
+    setLocationSaving(true);
+    try {
+      const res = await updateClinicSettingsApi(clinicId, { nearbyEnabled, location });
+      if (!res.success) throw new Error(res.message || "Failed to update nearby discovery");
+      setClinicSettings(prev => ({
+        ...prev,
+        nearbyEnabled: Boolean(res.clinic?.nearbyEnabled ?? nearbyEnabled),
+        location: res.clinic?.location || location,
+      }));
+      return true;
+    } catch (error) {
+      setLocationMessage("Could not update nearby discovery. Please try again.");
+      return false;
+    } finally {
+      setLocationSaving(false);
+    }
+  };
+
   const handleLocationToggle = () => {
     if (locationEnabled) {
-      handleChange("location", { type: "Point", coordinates: [0, 0] });
+      const previousLocation = clinicSettings.location;
       handleChange("nearbyEnabled", false);
-      setLocationMessage("");
+      handleChange("location", { type: "Point", coordinates: [0, 0] });
+      setLocationMessage("Saving…");
+      persistLocationSetting(false, { type: "Point", coordinates: [0, 0] }).then((saved) => {
+        if (saved) setLocationMessage("Nearby discovery is disabled.");
+        else {
+          handleChange("nearbyEnabled", true);
+          handleChange("location", previousLocation);
+        }
+      });
       return;
     }
     if (!navigator.geolocation) {
@@ -76,9 +104,13 @@ export default function Settings() {
     setLocationMessage("Requesting your location...");
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
-        handleChange("location", { type: "Point", coordinates: [coords.longitude, coords.latitude] });
+        const location = { type: "Point", coordinates: [coords.longitude, coords.latitude] };
+        handleChange("location", location);
         handleChange("nearbyEnabled", true);
-        setLocationMessage("Location enabled. Patients can now find your clinic nearby.");
+        persistLocationSetting(true, location).then((saved) => {
+          if (saved) setLocationMessage("Location enabled. Patients can now find your clinic nearby.");
+          else handleChange("nearbyEnabled", false);
+        });
       },
       () => setLocationMessage("Location permission was not granted. You can try again anytime."),
       { enableHighAccuracy: true, timeout: 10000 }
@@ -202,7 +234,7 @@ export default function Settings() {
                   <span className="mt-0.5 rounded-full bg-white p-2 text-slate-700 shadow-sm"><MapPin size={20} /></span>
                   <div><p className="font-bold text-slate-800">Enable nearby discovery</p><p className="mt-1 text-sm text-slate-500">Let patients find your clinic based on its location.</p></div>
                 </div>
-                <button type="button" role="switch" aria-checked={locationEnabled} onClick={handleLocationToggle} className={`relative h-7 w-12 shrink-0 rounded-full transition ${locationEnabled ? "bg-emerald-500" : "bg-slate-300"}`}><span className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition ${locationEnabled ? "left-6" : "left-1"}`} /></button>
+                <button type="button" role="switch" aria-checked={locationEnabled} aria-busy={locationSaving} disabled={locationSaving} onClick={handleLocationToggle} className={`relative h-7 w-12 shrink-0 rounded-full transition ${locationEnabled ? "bg-emerald-500" : "bg-slate-300"} ${locationSaving ? "cursor-wait opacity-60" : ""}`}><span className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition ${locationEnabled ? "left-6" : "left-1"}`} /></button>
               </div>
               {locationMessage && <p className="text-sm text-slate-500">{locationMessage}</p>}
 
