@@ -65,7 +65,7 @@ export const exitQueueApi = async (doctorId, token) => {
 }
 
 export const advanceTokenApi = async (doctorId) => {
-    const jwt_token = localStorage.getItem("clinic_jwt_token");
+    const jwt_token = localStorage.getItem("jwt_token");
 
     const res = await fetch(`${BASE_URL}/doctor/${doctorId}/advance`, {
         method: "POST",
@@ -82,7 +82,7 @@ export const advanceTokenApi = async (doctorId) => {
 }
 
 export const toggleConsultationApi = async (doctorId) => {
-    const jwt_token = localStorage.getItem("clinic_jwt_token");
+    const jwt_token = localStorage.getItem("jwt_token");
 
     const res = await fetch(`${BASE_URL}/doctor/${doctorId}/toggle-consultation`, {
         method: "POST",
@@ -100,7 +100,7 @@ export const toggleConsultationApi = async (doctorId) => {
 }
 
 export const toggleDayApi = async (doctorId) => {
-    const jwt_token = localStorage.getItem("clinic_jwt_token");
+    const jwt_token = localStorage.getItem("jwt_token");
 
     const res = await  fetch(`${BASE_URL}/doctor/${doctorId}/toggle-day`, {
         method: "POST",
@@ -117,7 +117,7 @@ export const toggleDayApi = async (doctorId) => {
 }
 
 export const updateDoctorSettingsApi = async (doctorId, data) => {
-    const jwt_token = localStorage.getItem("clinic_jwt_token");
+    const jwt_token = localStorage.getItem("jwt_token");
     
     const res = await fetch(`${BASE_URL}/doctor/${doctorId}/settings`, {
         method: "PUT",
@@ -137,7 +137,7 @@ export const updateDoctorSettingsApi = async (doctorId, data) => {
 }
 
 export const updateClinicSettingsApi = async (clinicId, data) => {
-    const jwt_token = localStorage.getItem("clinic_jwt_token");
+    const jwt_token = localStorage.getItem("jwt_token");
 
     const res = await fetch(`${BASE_URL}/${clinicId}`, {
         method: "PUT",
@@ -149,14 +149,14 @@ export const updateClinicSettingsApi = async (clinicId, data) => {
     });
 
     if(res.status === 401) {
-        localStorage.removeItem("clinic_jwt_token");
+        localStorage.removeItem("jwt_token");
         window.location.href("/clinic");
     }
 
     return res.json();
 }
 export const addDoctorApi = async (data) => {
-    const jwt_token = localStorage.getItem("clinic_jwt_token");
+    const jwt_token = localStorage.getItem("jwt_token");
 
     const res = await fetch(`${BASE_URL}/add-doctor`, {
         method: "POST",
@@ -176,7 +176,7 @@ export const addDoctorApi = async (data) => {
 }
 
 export const deleteDoctorApi = async (data) => {
-    const jwt_token = localStorage.getItem("clinic_jwt_token");
+    const jwt_token = localStorage.getItem("jwt_token");
 
     const res = await fetch(`${BASE_URL}/delete-doctor`, {
         method: "POST",
