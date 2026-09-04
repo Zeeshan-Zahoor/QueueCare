@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Building2 } from 'lucide-react';
+import { Building2, MapPin } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { updateClinicSettingsApi, getAllClinicsApi, getClinicApi } from '../../api/clinicApi.js';
 
 export default function Settings() {
   const [loading, setLoading] = useState(null);
+  const [locationMessage, setLocationMessage] = useState("");
 
   const navigate = useNavigate();
   const { clinicId } = useParams();
@@ -56,6 +57,29 @@ export default function Settings() {
       [field]: value
     }))
   }
+
+  const locationEnabled = Boolean(clinicSettings.location?.coordinates?.some((coordinate) => Number(coordinate) !== 0));
+
+  const handleLocationToggle = () => {
+    if (locationEnabled) {
+      handleChange("location", { type: "Point", coordinates: [0, 0] });
+      setLocationMessage("");
+      return;
+    }
+    if (!navigator.geolocation) {
+      setLocationMessage("Location is not supported by this browser.");
+      return;
+    }
+    setLocationMessage("Requesting your location...");
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        handleChange("location", { type: "Point", coordinates: [coords.longitude, coords.latitude] });
+        setLocationMessage("Location enabled. Patients can now find your clinic nearby.");
+      },
+      () => setLocationMessage("Location permission was not granted. You can try again anytime."),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   const handleSave = async () => {
     try {
@@ -168,11 +192,15 @@ export default function Settings() {
                 />
               </div>
 
-              {/* Working Days */}
-              <div className="grid grid-cols-2 gap-6">
-                <div><label className="block text-lg text-slate-600 font-bold mb-1">Latitude</label><input type="number" step="any" value={clinicSettings.location?.coordinates?.[1] || ""} onChange={(e) => handleChange("location", { type: "Point", coordinates: [clinicSettings.location?.coordinates?.[0] || 0, Number(e.target.value)] })} className="w-full border rounded-md px-3 py-3 text-gray-500 font-semibold" /></div>
-                <div><label className="block text-lg text-slate-600 font-bold mb-1">Longitude</label><input type="number" step="any" value={clinicSettings.location?.coordinates?.[0] || ""} onChange={(e) => handleChange("location", { type: "Point", coordinates: [Number(e.target.value), clinicSettings.location?.coordinates?.[1] || 0] })} className="w-full border rounded-md px-3 py-3 text-gray-500 font-semibold" /></div>
+              {/* Nearby discovery */}
+              <div className="flex items-center justify-between gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-start gap-3">
+                  <span className="mt-0.5 rounded-full bg-white p-2 text-slate-700 shadow-sm"><MapPin size={20} /></span>
+                  <div><p className="font-bold text-slate-800">Enable nearby discovery</p><p className="mt-1 text-sm text-slate-500">Let patients find your clinic based on its location.</p></div>
+                </div>
+                <button type="button" role="switch" aria-checked={locationEnabled} onClick={handleLocationToggle} className={`relative h-7 w-12 shrink-0 rounded-full transition ${locationEnabled ? "bg-emerald-500" : "bg-slate-300"}`}><span className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition ${locationEnabled ? "left-6" : "left-1"}`} /></button>
               </div>
+              {locationMessage && <p className="text-sm text-slate-500">{locationMessage}</p>}
 
               {/* Working Days */}
               <div className='border-t border-b border-gray-300 py-5 mt-10'>
