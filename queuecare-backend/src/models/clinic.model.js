@@ -17,6 +17,7 @@ const clinicSchema = new mongoose.Schema({
     address: {
         type: String,
     },
+    phone: { type: String, default: "" },
     workingDays: {
         mon: { type: Boolean, default: true },
         tue: { type: Boolean, default: true },
@@ -49,6 +50,7 @@ const clinicSchema = new mongoose.Schema({
     rating: { type: Number, min: 0, max: 5, default: 0 },
     reviewCount: { type: Number, min: 0, default: 0 },
     isVerified: { type: Boolean, default: false },
+    nearbyEnabled: { type: Boolean, default: true },
     otp: {
         type: String,
     },

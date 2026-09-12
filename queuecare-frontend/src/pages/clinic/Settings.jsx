@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Building2 } from 'lucide-react';
+import { Building2, MapPin } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { updateClinicSettingsApi, getAllClinicsApi, getClinicApi } from '../../api/clinicApi.js';
 
 export default function Settings() {
   const [loading, setLoading] = useState(null);
+  const [locationSaving, setLocationSaving] = useState(false);
+  const [locationMessage, setLocationMessage] = useState("");
 
   const navigate = useNavigate();
   const { clinicId } = useParams();
@@ -12,8 +14,10 @@ export default function Settings() {
   
   const [clinicSettings, setClinicSettings] = useState({
     name: "",
-    phone: "",
     address: "",
+    phone: "",
+    location: { type: "Point", coordinates: [0, 0] },
+    nearbyEnabled: false,
     workingDays: {
       mon: false,
       tue: false,
@@ -37,6 +41,8 @@ export default function Settings() {
           setClinicSettings(prev => ({
             ...prev,
             ...res.clinic,
+            location: res.clinic.location || { type: "Point", coordinates: [0, 0] },
+            nearbyEnabled: res.clinic.nearbyEnabled ?? Boolean(res.clinic.location?.coordinates?.some((coordinate) => Number(coordinate) !== 0)),
             workingDays: res.clinic.workingDays || prev.workingDays
           }));
         }
@@ -54,6 +60,62 @@ export default function Settings() {
       [field]: value
     }))
   }
+
+  const locationEnabled = Boolean(clinicSettings.nearbyEnabled);
+
+  const persistLocationSetting = async (nearbyEnabled, location) => {
+    setLocationSaving(true);
+    try {
+      const res = await updateClinicSettingsApi(clinicId, { nearbyEnabled, location });
+      if (!res.success) throw new Error(res.message || "Failed to update nearby discovery");
+      setClinicSettings(prev => ({
+        ...prev,
+        nearbyEnabled: Boolean(res.clinic?.nearbyEnabled ?? nearbyEnabled),
+        location: res.clinic?.location || location,
+      }));
+      return true;
+    } catch (error) {
+      setLocationMessage("Could not update nearby discovery. Please try again.");
+      return false;
+    } finally {
+      setLocationSaving(false);
+    }
+  };
+
+  const handleLocationToggle = () => {
+    if (locationEnabled) {
+      const previousLocation = clinicSettings.location;
+      handleChange("nearbyEnabled", false);
+      handleChange("location", { type: "Point", coordinates: [0, 0] });
+      setLocationMessage("Saving…");
+      persistLocationSetting(false, { type: "Point", coordinates: [0, 0] }).then((saved) => {
+        if (saved) setLocationMessage("Nearby discovery is disabled.");
+        else {
+          handleChange("nearbyEnabled", true);
+          handleChange("location", previousLocation);
+        }
+      });
+      return;
+    }
+    if (!navigator.geolocation) {
+      setLocationMessage("Location is not supported by this browser.");
+      return;
+    }
+    setLocationMessage("Requesting your location...");
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const location = { type: "Point", coordinates: [coords.longitude, coords.latitude] };
+        handleChange("location", location);
+        handleChange("nearbyEnabled", true);
+        persistLocationSetting(true, location).then((saved) => {
+          if (saved) setLocationMessage("Location enabled. Patients can now find your clinic nearby.");
+          else handleChange("nearbyEnabled", false);
+        });
+      },
+      () => setLocationMessage("Location permission was not granted. You can try again anytime."),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   const handleSave = async () => {
     try {
@@ -165,6 +227,16 @@ export default function Settings() {
                   className="w-full border rounded-md px-3 py-3 text-gray-500 font-semibold"
                 />
               </div>
+
+              {/* Nearby discovery */}
+              <div className="flex items-center justify-between gap-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <div className="flex items-start gap-3">
+                  <span className="mt-0.5 rounded-full bg-white p-2 text-slate-700 shadow-sm"><MapPin size={20} /></span>
+                  <div><p className="font-bold text-slate-800">Enable nearby discovery</p><p className="mt-1 text-sm text-slate-500">Let patients find your clinic based on its location.</p></div>
+                </div>
+                <button type="button" role="switch" aria-checked={locationEnabled} aria-busy={locationSaving} disabled={locationSaving} onClick={handleLocationToggle} className={`relative h-7 w-12 shrink-0 rounded-full transition ${locationEnabled ? "bg-emerald-500" : "bg-slate-300"} ${locationSaving ? "cursor-wait opacity-60" : ""}`}><span className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition ${locationEnabled ? "left-6" : "left-1"}`} /></button>
+              </div>
+              {locationMessage && <p className="text-sm text-slate-500">{locationMessage}</p>}
 
               {/* Working Days */}
               <div className='border-t border-b border-gray-300 py-5 mt-10'>

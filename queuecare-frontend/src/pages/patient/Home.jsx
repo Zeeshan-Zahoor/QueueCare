@@ -22,12 +22,27 @@ export default function Home() {
   useEffect(() => {
     const fetchClinics = async () => {
       try {
-        const res = location.status === "available"
-          ? await getNearbyClinicsApi(location.latitude, location.longitude).catch(() => getAllClinicsApi())
-          : await getAllClinicsApi();
+        let res;
+        if (location.status === "available") {
+          try {
+            res = await getNearbyClinicsApi(location.latitude, location.longitude);
+          } catch {
+            res = { success: true, clinics: [] };
+          }
+        } else {
+          res = await getAllClinicsApi();
+        }
 
         if (res.success) {
-          setClinics(res.clinics);
+          const fetchedClinics = res.clinics || [];
+          // When location is unavailable, the home page uses the general
+          // clinic list as a fallback. It is still a nearby-style section,
+          // so clinics that opted out must not appear here. The full
+          // /clinics page intentionally remains unchanged.
+          const visibleClinics = location.status === "available"
+            ? fetchedClinics
+            : fetchedClinics.filter((clinic) => clinic?.nearbyEnabled !== false);
+          setClinics(visibleClinics);
         }
       } catch (error) {
         console.log("Failed to fetch clinics");
