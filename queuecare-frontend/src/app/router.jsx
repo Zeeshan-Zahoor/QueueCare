@@ -27,6 +27,7 @@ import ResetClinicPassword from "../pages/clinic/ResetClinicPassword.jsx";
 import Dashboard from "../pages/clinic/Dashboard";
 import Settings from "../pages/clinic/Settings";
 import ClinicDetails from "../pages/patient/ClinicDetails";
+import Clinics from "../pages/patient/Clinics";
 
 import ProtectedRoute from "../components/auth/ProtectedRoute.jsx";
 import UserProtectedRoute from "../components/auth/UserProtectedRoute.jsx";
@@ -80,6 +81,10 @@ export const router = createBrowserRouter([
                         <Doctors />
                     </UserProtectedRoute>
                 )
+            },
+            {
+                path: 'clinics',
+                element: <Clinics />
             },
             {
                 path: 'settings',

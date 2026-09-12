@@ -1,41 +1,32 @@
 import { useNavigate } from 'react-router-dom'
-import { MapPin } from 'lucide-react';
+import { Heart, MapPin, Star } from 'lucide-react';
 
 
-export default function ClinicCard({ clinic }) {
+export default function ClinicCard({ clinic, fullWidth = false }) {
     const navigate = useNavigate();
     
     return (
         <div
             onClick={() => navigate(`/clinic/${clinic._id}`)}
-            className="bg-white rounded-xl shadow-[0_10px_25px_rgba(0,0,0,0.2)] p-4 cursor-pointer hover:shadow-[0_20px_40px_rgba(0,0,0,0.25)] transition duration-300"
+            className={`${fullWidth ? "w-full min-w-0" : "w-[188px] shrink-0"} cursor-pointer rounded-xl bg-white p-2 shadow-[0_2px_10px_rgba(15,23,42,0.10)] transition hover:shadow-md`}
         >
-            <div className="w-full h-44 overflow-hidden rounded-xl mb-2">
+            <div className="relative mb-2 h-[98px] w-full overflow-hidden rounded-lg">
                 <img
                     src={clinic.image}
                     alt={clinic.name}
-                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                    onError={(event) => { event.currentTarget.src = "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=500&q=80"; }}
                 />
+                <Heart className="absolute right-2 top-2 rounded-full bg-white/90 p-1 text-slate-500" size={24} />
             </div>
 
-            <h3 className="font-semibold text-slate-800">
+            <h3 className="truncate text-xs font-bold text-slate-700">
                 {clinic.name}
             </h3>
 
-            <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-                <MapPin className="w-4 h-4" />
-                <span>{clinic.address}</span>
-            </div>
-
-            <hr className='text-[#D0D3D9] mt-2' />
-
-            {/* TEMP INFO */}
-            <div className="flex justify-between items-center mt-1 text-sm text-slate-800 font-medium">
-                <span>{clinic.doctorCount} Doctors</span>
-
-                <span className='text-green-600 font-medium'>
-                    Demo Clinic
-                </span>
+            <div className="mt-1 flex items-center justify-between text-[10px] text-gray-500">
+                <span className="flex min-w-0 items-center gap-1 truncate"><MapPin size={12} />{clinic.distanceKm != null ? `${clinic.distanceKm} km away` : (clinic.address || "Nearby")}</span>
+                <span className="ml-1 flex shrink-0 items-center gap-0.5"><Star size={11} className="fill-amber-400 text-amber-400" />{clinic.rating || "New"}</span>
             </div>
 
         </div>

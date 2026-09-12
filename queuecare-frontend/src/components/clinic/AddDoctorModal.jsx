@@ -13,6 +13,7 @@ function AddDoctorModal({
     const [formData, setFormData] = useState({
         name: "",
         specialization: "",
+        category: "general",
         clinicId,
         queue: [],
     })
@@ -88,6 +89,9 @@ function AddDoctorModal({
                     placeholder="Specialization"
                   />
                 </div>
+                <select value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} className="mt-2 w-full rounded-md border border-gray-300 px-3 py-3 text-lg">
+                  <option value="general">General</option><option value="dental">Dental</option><option value="cardiology">Cardiology</option><option value="pulmonology">Pulmonology</option><option value="neurology">Neurology</option><option value="gastroenterology">Gastroenterology</option><option value="laboratory">Laboratory</option><option value="vaccination">Vaccination</option>
+                </select>
               </div>
 
               {error && (

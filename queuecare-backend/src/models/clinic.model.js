@@ -42,6 +42,13 @@ const clinicSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    location: {
+        type: { type: String, enum: ["Point"], default: "Point" },
+        coordinates: { type: [Number], default: [0, 0] },
+    },
+    rating: { type: Number, min: 0, max: 5, default: 0 },
+    reviewCount: { type: Number, min: 0, default: 0 },
+    isVerified: { type: Boolean, default: false },
     otp: {
         type: String,
     },
@@ -53,5 +60,7 @@ const clinicSchema = new mongoose.Schema({
         default: 0,
     }
 }, { timestamps: true });
+
+clinicSchema.index({ location: "2dsphere" });
 
 export const Clinic = mongoose.model("Clinic", clinicSchema);
